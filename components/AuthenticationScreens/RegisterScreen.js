@@ -66,7 +66,8 @@ export default class RegisterScreen extends Component {
           <TextInput 
             underlineColorAndroid={"transparent"}
             allowFontScaling={false}
-            placeholder="Email"
+            secureTextEntry={true}
+            placeholder="Password"
             placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
             placeholderTextColor="#000302"
             style={styles.passwordTextFieldInput}
@@ -78,6 +79,16 @@ export default class RegisterScreen extends Component {
           style={styles.eyeImage}
         />
           </View>
+        </View>
+        <View style={styles.textFieldView}>
+          <TextInput 
+            underlineColorAndroid={"transparent"}
+            allowFontScaling={false}
+            placeholder="Interests; separate with comma, i.e Food, Music"
+            placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
+            placeholderTextColor="#000302"
+            style={styles.textFieldInput}
+          />
         </View>
        <Text style={styles.agreeText}>Agree to the terms of service and privacy policy</Text>
        <View style={styles.nextButton}>

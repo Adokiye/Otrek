@@ -42,10 +42,34 @@ export default class VerificationScreen extends Component {
           </Text>
           <Text style={styles.enterOtp}>ENTER OTP</Text>
           <View style={styles.boxforDash}>
-            <View style={styles.dash}></View>
-            <View style={styles.dash}></View>
-            <View style={styles.dash}></View>
-            <View style={styles.dash}></View>
+            <View style={styles.dash}>
+              <TextInput
+                underlineColorAndroid={"transparent"}
+                allowFontScaling={false}
+                style={styles.dashTextInput}
+              />
+            </View>
+            <View style={styles.dash}>
+              <TextInput
+                underlineColorAndroid={"transparent"}
+                allowFontScaling={false}
+                style={styles.dashTextInput}
+              />
+            </View>
+            <View style={styles.dash}>
+              <TextInput
+                underlineColorAndroid={"transparent"}
+                allowFontScaling={false}
+                style={styles.dashTextInput}
+              />
+            </View>
+            <View style={styles.dash}>
+              <TextInput
+                underlineColorAndroid={"transparent"}
+                allowFontScaling={false}
+                style={styles.dashTextInput}
+              />
+            </View>
           </View>
           <View style={styles.nextButton}>
             <Text style={styles.nextText}>Next</Text>
@@ -105,13 +129,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 3,
-    marginTop: 41,
+    marginTop: 11,
     alignSelf: "center"
   },
   dash: {
     width: "22%",
-    height: 2,
-    backgroundColor: "#707070"
+    height: 32,
+    backgroundColor: "#707070",
+    borderBottomWidth: 2,
+    borderBottomColor: "#707070"
+  },
+  dashTextInput: {
+    height: 30,
+    width: "100%",
+    color: "#000000",
+    fontSize: 14,
+    fontFamily: "mont-medium"
   },
   nextButton: {
     width: 61,

@@ -40,7 +40,7 @@ export default class WelcomeScreen extends Component {
             placeholderStyle={{ fontSize: 16, fontFamily: "mont-reg" }}
             placeholderTextColor="#707070"
             style={styles.numberTextInput}
-          ></TextInput>
+          />
         </View>
         <TouchableOpacity onPress={()=>this.props.navigation.navigate('VerificationScreen')}>
         <View style={styles.sendOtpButton}>
