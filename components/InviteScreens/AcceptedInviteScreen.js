@@ -32,7 +32,7 @@ export default class AcceptedInvitedScreen extends Component {
       <View style={styles.container}>
         <View style={styles.houseView}>
           <Image
-            source={require("../assets/images/check.png")}
+            source={require("../../assets/images/check.png")}
             resizeMode="contain"
             style={styles.checkImage}
           />

@@ -46,7 +46,7 @@ export default class CompletedTrekModal extends Component {
         <Text style={styles.completedText}>Completed!</Text>
         <Text style={styles.meterText}>Meter:20.80 Steps Taken:3000</Text>
         <Image
-          source={require("../assets/images/doe_image.png")}
+          source={require("../../assets/images/doe_image.png")}
           resizeMode="contain"
           style={styles.image}
         />

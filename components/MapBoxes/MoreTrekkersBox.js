@@ -32,7 +32,7 @@ export default class MoreTrekkersBox extends Component {
       <View style={styles.container}>
         <View style={styles.cancelView}>
           <Image
-            source={require("../assets/images/cancel.png")}
+            source={require("../../assets/images/cancel.png")}
             resizeMode="contain"
             style={styles.cancelImage}
           />
@@ -40,7 +40,7 @@ export default class MoreTrekkersBox extends Component {
         <ScrollView>
           <View style={styles.firstView}>
             <Image
-              source={require("../assets/images/doe_image.png")}
+              source={require("../../assets/images/doe_image.png")}
               resizeMode="contain"
               style={styles.profileImage}
             />
@@ -51,12 +51,12 @@ export default class MoreTrekkersBox extends Component {
             </View>
             <View style={styles.iconBox}>
               <Image
-                source={require("../assets/images/phoneCall.png")}
+                source={require("../../assets/images/phoneCall.png")}
                 resizeMode="contain"
                 style={styles.phoneIcon}
               />
               <Image
-                source={require("../assets/images/message.png")}
+                source={require("../../assets/images/message.png")}
                 resizeMode="contain"
                 style={styles.commentIcon}
               />
@@ -67,7 +67,7 @@ export default class MoreTrekkersBox extends Component {
           </View>
           <View style={styles.firstView}>
             <Image
-              source={require("../assets/images/doe_image.png")}
+              source={require("../../assets/images/doe_image.png")}
               resizeMode="contain"
               style={styles.profileImage}
             />
@@ -78,12 +78,12 @@ export default class MoreTrekkersBox extends Component {
             </View>
             <View style={styles.iconBox}>
               <Image
-                source={require("../assets/images/phoneCall.png")}
+                source={require("../../assets/images/phoneCall.png")}
                 resizeMode="contain"
                 style={styles.phoneIcon}
               />
               <Image
-                source={require("../assets/images/message.png")}
+                source={require("../../assets/images/message.png")}
                 resizeMode="contain"
                 style={styles.commentIcon}
               />
@@ -94,7 +94,7 @@ export default class MoreTrekkersBox extends Component {
           </View>
           <View style={styles.firstView}>
             <Image
-              source={require("../assets/images/doe_image.png")}
+              source={require("../../assets/images/doe_image.png")}
               resizeMode="contain"
               style={styles.profileImage}
             />
@@ -105,12 +105,12 @@ export default class MoreTrekkersBox extends Component {
             </View>
             <View style={styles.iconBox}>
               <Image
-                source={require("../assets/images/phoneCall.png")}
+                source={require("../../assets/images/phoneCall.png")}
                 resizeMode="contain"
                 style={styles.phoneIcon}
               />
               <Image
-                source={require("../assets/images/message.png")}
+                source={require("../../assets/images/message.png")}
                 resizeMode="contain"
                 style={styles.commentIcon}
               />

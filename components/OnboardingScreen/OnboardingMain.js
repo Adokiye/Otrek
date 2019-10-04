@@ -76,7 +76,7 @@ export default class OnboardingMain extends Component {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../assets/images/onboardingTop.png")}
+          source={require("../../assets/images/onboardingTop.png")}
           resizeMode="contain"
           style={styles.topImage}
         />

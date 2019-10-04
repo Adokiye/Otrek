@@ -17,6 +17,9 @@ import {
   StatusBar,
   TouchableWithoutFeedback
 } from "react-native";
+import firebase from "react-native-firebase";
+var db = firebase.firestore();
+const haversine = require('haversine');
 export default class FirstTrekkerBox extends Component {
   static navigationOptions = {
     header: null,
@@ -26,13 +29,20 @@ export default class FirstTrekkerBox extends Component {
     super(props);
     this.state = {};
   }
-  componentDidMount() {}
+  componentDidMount() {
+   const {params} = this.props.navigation.state; 
+   console.log(this.getMarker.bind(this));
+  }
+  async getMarker() {
+    const snapshot = await firebase.firestore().collection('users').get();
+    return snapshot.docs.map(doc => doc.data());
+}
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.cancelView}>
           <Image
-            source={require("../assets/images/cancel.png")}
+            source={require("../../assets/images/cancel.png")}
             resizeMode="contain"
             style={styles.cancelImage}
           />
@@ -40,7 +50,7 @@ export default class FirstTrekkerBox extends Component {
         <View style={styles.underView}>
           <View style={styles.firstView}>
             <Image
-              source={require("../assets/images/doe_image.png")}
+              source={require("../../assets/images/doe_image.png")}
               resizeMode="contain"
               style={styles.profileImage}
             />
@@ -51,12 +61,12 @@ export default class FirstTrekkerBox extends Component {
             </View>
             <View style={styles.iconBox}>
               <Image
-                source={require("../assets/images/phoneCall.png")}
+                source={require("../../assets/images/phoneCall.png")}
                 resizeMode="contain"
                 style={styles.phoneIcon}
               />
               <Image
-                source={require("../assets/images/message.png")}
+                source={require("../../assets/images/message.png")}
                 resizeMode="contain"
                 style={styles.commentIcon}
               />
@@ -82,12 +92,14 @@ const styles = StyleSheet.create({
     width: "100%",
     borderTopLeftRadius: 40,
     borderWidth: 1,
-    borderColor: "#707070"
+    borderColor: "#707070",
+    position: 'absolute',
+    bottom: 0
   },
   cancelView: {
     width: 13,
     height: 12,
-    marginLeft: "7.2%",
+    marginLeft: "6%",
     marginTop: 11.03
   },
   cancelImage: {

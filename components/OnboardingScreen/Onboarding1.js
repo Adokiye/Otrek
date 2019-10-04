@@ -20,7 +20,7 @@ export default class Onboarding1 extends Component {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../assets/images/onb1.png")}
+          source={require("../../assets/images/onb1.png")}
           resizeMode="contain"
           style={styles.topImage}
         />

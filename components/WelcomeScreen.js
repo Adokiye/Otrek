@@ -17,6 +17,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback
 } from "react-native";
+
 export default class WelcomeScreen extends Component {
   static navigationOptions = {
     header: null,

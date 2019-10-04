@@ -32,7 +32,7 @@ export default class RejectedInviteScreen extends Component {
       <View style={styles.container}>
         <View style={styles.houseView}>
           <Image
-            source={require("../assets/images/rejectedIcon.png")}
+            source={require("../../assets/images/rejectedIcon.png")}
             resizeMode="contain"
             style={styles.checkImage}
           />

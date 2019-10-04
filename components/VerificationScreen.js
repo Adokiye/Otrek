@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   verificationCode: {
     marginTop: 21,
     alignSelf: "center",
-    fontFamilily: "mont-bold",
+    fontFamily: "mont-bold",
     fontSize: 20,
     color: "#170101"
   },
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   enterOtp: {
     alignSelf: "center",
     marginTop: 21,
-    fontFamilily: "mont-bold",
+    fontFamily: "mont-bold",
     fontSize: 14,
     color: "#170101"
   },
