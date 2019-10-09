@@ -29,6 +29,7 @@ import { createStackNavigator } from "react-navigation";
 import { persistor, store } from "./store/index";
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/es/integration/react';
+import FirstTrekkerBox from "./components/MapBoxes/FirstTrekkerBox";
 //import { setToken, setType } from "./actions/index";
 /*const mapStateToProps = state => ({
   ...state

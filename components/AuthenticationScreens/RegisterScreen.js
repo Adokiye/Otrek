@@ -57,7 +57,10 @@ class reduxRegisterScreen extends Component {
       location: "RegisterScreen",
       eye_of_tiger: true,
       regLoader: false,
-      imageCloud: null
+      imageCloud: null,
+      male: false,
+      female: false,
+      gender: ''
     };
   }
   hideErrorModal = value => {
@@ -91,6 +94,8 @@ class reduxRegisterScreen extends Component {
       this.setState({ error: true, error_message: "Email field is invalid" });
     } else if (!this.state.image) {
       this.setState({ error: true, error_message: "Please upload a Profile Picture" });
+    }else if (!this.state.gender) {
+      this.setState({ error: true, error_message: "Please select a gender" });
     } else {
       this.setState({ regLoader: true });
       let email = this.state.email;
@@ -118,7 +123,8 @@ class reduxRegisterScreen extends Component {
                       interests: this.state.interests,
                       image: this.state.imageCloud,
                       start_location: null,
-                      end_location: null
+                      end_location: null,
+                      gender: this.state.gender
                     }
                 },
                 { merge: true }
@@ -270,6 +276,23 @@ class reduxRegisterScreen extends Component {
               </View>
             </TouchableNativeFeedback>
           </View>
+          <View style={styles.genderView}>
+           <Text style={styles.genderText}>Gender</Text>
+          </View>
+          <View style={styles.genders}>
+           <TouchableOpacity onPress={()=> this.setState({male: true, 
+           female: false, gender: 'M'})}>
+           <Text style={!this.state.male?
+             styles.genderunSelected:styles.genderSelected}>
+               M
+             </Text></TouchableOpacity>
+             <TouchableOpacity onPress={()=> this.setState({male: false, 
+           female: true, gender: 'F'})}>
+           <Text style={!this.state.female?
+             styles.genderunSelected:styles.genderSelected}>
+               F
+             </Text></TouchableOpacity>
+          </View>
           <View style={styles.textFieldView}>
             <TextInput
               underlineColorAndroid={"transparent"}
@@ -313,6 +336,7 @@ class reduxRegisterScreen extends Component {
     );
   }
 }
+
 const RegisterScreen = connect(
   mapStateToProps,
   mapDispatchToProps
@@ -367,6 +391,41 @@ const styles = StyleSheet.create({
     marginTop: 26,
     marginBottom: 10
   },
+  genderView: {
+    width: "100%",
+    alignSelf: "center",
+    height: 37,
+     justifyContent: "center",
+    marginTop: 26,
+    marginBottom: 10
+  },
+   genderText: {
+    color: "#000302",
+    fontFamily: "mont-light",
+    fontSize: 10,
+    marginLeft: 11,
+    alignSelf: 'center'
+   },
+   genderSelected: {
+     color: '#56C391',
+     fontFamily: 'mont-bold',
+     fontSize: 20
+   },
+   genderunSelected: {
+    color: '#ffffff',
+    fontFamily: 'mont-bold',
+    fontSize: 20,
+    textShadowColor: '#E91E63',
+     textShadowOffset: { width: 1, height: 4 },
+      textShadowRadius: 5
+  },
+   genders: {
+      width: 150,
+      justifyContent: 'space-around',
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignSelf: 'center'
+   },
   textFieldInput: {
     height: 33,
     width: "95%",
@@ -398,7 +457,7 @@ const styles = StyleSheet.create({
     paddingLeft: 11
   },
   eyeView: {
-    width: "25%",
+    width: "20%",
     alignItems: "center",
     justifyContent: "center",
     height: 35

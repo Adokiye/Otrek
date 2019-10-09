@@ -28,6 +28,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Geocoder from 'react-native-geocoding';
 import FindTrekkerBox from './MapBoxes/FindTrekkerBox'
 import FirstTrekkerBox from './MapBoxes/FirstTrekkerBox'
+import ChatTrekkerBox from './MapBoxes/ChatTrekkerBox'
 import Polyline from '@mapbox/polyline';
 import Geolocation from '@react-native-community/geolocation';
 const google_api_key = 'AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w';
@@ -206,7 +207,11 @@ class reduxMap extends Component {
            distanceFilter: 1 },
       );
   }
-
+  hideErrorModal = value => {
+    if (value == "true") {
+      this.setState({ error: false });
+    }
+  };
   async requestGeolocationPermission() {
     try{
       const granted = await PermissionsAndroid.request(
@@ -216,10 +221,10 @@ class reduxMap extends Component {
           'message': 'Otrek needs access to your current location'
         }
       );
-
       if(granted === PermissionsAndroid.RESULTS.GRANTED){
         Geolocation.getCurrentPosition(
             (position) => {
+              console.log(JSON.stringify(position.coords))
              /*   var region = this.regionFrom(
                     position.coords.latitude, 
                     position.coords.longitude, 
@@ -253,45 +258,24 @@ class reduxMap extends Component {
                     console.log("Document successfully updated!");
                     }) 
                     )
-          /*        if (Platform.OS === "android") {
-                    if (this.marker) {
-                        console.log("marker exists")
-                      this.marker._component.animateMarkerToCoordinate(
-                        newCoordinate,
-                        500
-                      );
-                     }
-                   } else {
-                    currentCoordinate.timing(newCoordinate).start();
-                   } 
-             /*     Geocoder.from({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                  })
-                  .then((response) => {
-                    // the response object is the same as what's returned in the HTTP API: https://developers.google.com/maps/documentation/geocoding/intro
-          
-                    this.from_region = region; // for storing the region in case the user presses the "reset" button
-          
-                    // update the state to indicate the user's origin on the map (using a marker)
-                    this.setState({
-                      start_location: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                      },
-                      region: region, // the region displayed on the map
-                      from: response.results[0].formatted_address // the descriptive name of the place
-                    }); 
-          
-                  });*/
-          
-      /*        this.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                currentCoordinate: {"latitude": position.coords.latitude, "longitude": position.coords.longitude},
-                error: null,
-                y: {"latitude": position.coords.latitude, "longitude": position.coords.longitude}
-              });*/
+                    Geocoder.from({
+                      latitude: position.coords.latitude,
+                      longitude: position.coords.longitude
+                    })
+                    .then((response) => {
+                      // the response object is the same as what's returned in the HTTP API: https://developers.google.com/maps/documentation/geocoding/intro
+            
+                      this.from_region = region; // for storing the region in case the user presses the "reset" button
+            
+                      // update the state to indicate the user's origin on the map (using a marker)
+                      this.setState({
+                        start_location: {
+                          latitude: position.coords.latitude,
+                          longitude: position.coords.longitude
+                        },
+                        region: region, // the region displayed on the map
+                        from: response.results[0].formatted_address // the descriptive name of the place
+                      }); 
               this.mergeLot();
             },
             (error) => console.log(error.message),
@@ -570,8 +554,10 @@ class reduxMap extends Component {
            </LinearGradient>
            </TouchableNativeFeedback>
            {/* <FindTrekkerBox  start={this.state.from?this.state.from:"Your current Location"} 
-                 endLocation={this.getEndLocation} /> */} 
-                 <FirstTrekkerBox navigation={this.props.navigation}/>
+                 endLocation={this.getEndLocation} start_location={this.state.start_location}
+                 navigation={this.props.navigation}
+                 /> */}
+                 <ChatTrekkerBox />
            </View>
     );
   }
