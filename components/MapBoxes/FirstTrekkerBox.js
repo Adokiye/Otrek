@@ -18,10 +18,15 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import firebase from "react-native-firebase";
+import ChatTrekkerBox from './ChatTrekkerBox'
 var db = firebase.firestore();
 const haversine = require('haversine');
 import LoaderModal from '../Modals/LoaderModal';
-export default class FirstTrekkerBox extends Component {
+import { connect } from "react-redux";
+const mapStateToProps = state => ({
+  ...state
+});
+class reduxFirstTrekkerBox extends Component {
   static navigationOptions = {
     header: null,
     drawerLockMode: "locked-closed"
@@ -30,7 +35,8 @@ export default class FirstTrekkerBox extends Component {
     super(props);
     this.state = {
       trekkers: [],
-      regLoader: false
+      regLoader: false,
+      chat: false
     };
   }
   getLatLonDiffInMeters(lat1, lon1, lat2, lon2) {
@@ -70,11 +76,13 @@ this.setState({ regLoader: true });
             row.details.end_location.longitude, 
             this.props.end_location.latitude, 
             this.props.end_location.longitude);
-          if((diff_in_meters_start <= 100) && (diff_in_meters_end <=100)){
+          if((diff_in_meters_start <= 5000) && (diff_in_meters_end <=5000)){
             console.log("distance checked and true")
-            this.setState(prevState => ({
+            if(row.details.email != this.props.token){
+              this.setState(prevState => ({
               trekkers: [...prevState.trekkers, row]
             }));
+            }
           }
           }  
         }
@@ -84,6 +92,11 @@ this.setState({ regLoader: true });
   async getMarker() {
     const snapshot = await firebase.firestore().collection('users').get();
     return snapshot.docs.map(doc => doc.data());
+}
+chatFalse(value){
+if(value == "false"){
+  this.setState({chat: false})
+}
 }
   render() {
     let trekkers = '';
@@ -108,11 +121,13 @@ this.setState({ regLoader: true });
            resizeMode="contain"
            style={styles.phoneIcon}
          />*/}
+         <TouchableOpacity onPress={()=> this.setState({chat: true})}>
+         <View style={styles.commentIcon}>
          <Image
            source={require("../../assets/images/message.png")}
            resizeMode="contain"
            style={styles.commentIcon}
-         />
+         /></View></TouchableOpacity>
          <View style={styles.inviteButton}>
            <Text style={styles.inviteText}>Invite</Text>
          </View>
@@ -133,7 +148,17 @@ this.setState({ regLoader: true });
        </Text>
     }
     return (
-      <View style={styles.container}>
+   this.state.chat?
+     <ChatTrekkerBox 
+       receiver_email={this.state.trekkers[0]?this.state.trekkers[0].details.email:null}
+       receiver_name={this.state.trekkers[0]?this.state.trekkers[0].details.first_name+" "+
+       this.state.trekkers[0].details.last_name:null}
+       receiver_id={this.state.trekkers[0]?this.state.trekkers[0].details.first_name:null}
+       receiver_image={this.state.trekkers[0]?this.state.trekkers[0].details.image:null}
+       chatFalse={this.chatFalse.bind(this)}
+     />
+  : 
+        <View style={styles.container}>
         <View style={styles.cancelView}>
           <Image
             source={require("../../assets/images/cancel.png")}
@@ -149,6 +174,10 @@ this.setState({ regLoader: true });
     );
   }
 }
+const FirstTrekkerBox = connect(
+  mapStateToProps,
+)(reduxFirstTrekkerBox);
+export default FirstTrekkerBox;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
@@ -162,8 +191,8 @@ const styles = StyleSheet.create({
     bottom: 0
   },
   cancelView: {
-    width: 13,
-    height: 12,
+    width: 20,
+    height: 20,
     marginLeft: "6%",
     marginTop: 11.03
   },
@@ -189,7 +218,8 @@ const styles = StyleSheet.create({
   profileImage: {
     height: 75,
     width: 75,
-    borderRadius: 37.5
+    borderRadius: 37.5,
+    marginLeft: 10
   },
   aboutView: {
     height: 75,
@@ -222,8 +252,8 @@ const styles = StyleSheet.create({
     height: 14.12
   },
   commentIcon: {
-    width: 15.32,
-    height: 15.13
+    width: 20,
+    height: 20
   },
   inviteButton: {
     width: 51,

@@ -17,12 +17,17 @@ import {
   StatusBar,
   TouchableWithoutFeedback
 } from "react-native";
+import _ from 'lodash';
 import firebase from "react-native-firebase";
 import { GiftedChat } from "react-native-gifted-chat";
 var db = firebase.firestore();
 const haversine = require('haversine');
 import LoaderModal from '../Modals/LoaderModal';
-export default class ChatTrekkerBox extends Component {
+import { connect } from "react-redux";
+const mapStateToProps = state => ({
+  ...state
+});
+class reduxChatTrekkerBox extends Component {
   static navigationOptions = {
     header: null,
     drawerLockMode: "locked-closed"
@@ -33,22 +38,15 @@ export default class ChatTrekkerBox extends Component {
       trekkers: [],
       regLoader: false,
       messages: [],
+      fire: '',
+      isTyping: false,
+      oppTyping: false
     };
-  }
-  componentWillMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-  //          name: 'React Native',
-          },
-        },
-      ],
-    })
+    this.onSend = this.onSend.bind(this);
+    this.isTyping = this.isTyping.bind(this);
+    this.notTyping = this.notTyping.bind(this);
+    this.detectTyping = this.detectTyping.bind(this);    
+    this.renderFooter = this.renderFooter.bind(this);
   }
  /* onSend(messages = []) {
     this.setState(previousState => ({
@@ -58,154 +56,305 @@ export default class ChatTrekkerBox extends Component {
   onSend(messages = []) {
     this.setState({messageLoader: true})
     console.log(JSON.stringify(messages)+"\n");
-    const { params } = this.props.navigation.state;
-    messages[0].sent = true;
+       messages[0].sent = true;
     messages[0].received = false;
     messages[0].delivered = false;
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages)
     }));
    // const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    var toBeSent = {text: messages[0].text, user_id: this.props.token, sent: true, 
-      updated_at: firebase.firestore.Timestamp.fromDate(new Date()),
-      receiver_id: params.receiver.id, id: messages[0]._id, createdAt: new Date()};
-    console.log("\n"+"to be sent"+" "+JSON.stringify(toBeSent)+'\n'); 
-    var Ref = db.collection('messages').doc(params.me.email)
-    .collection(params.receiver.email).doc('messages');
+   var letSend = { 
+     _id: Math.round(Math.random() * 100000),
+     text: messages[0].text,
+     createdAt: messages[0].createdAt,
+     user: {
+       _id: this.props.token,
+     },
+     sent: true,
+     received: false,
+     delivered: false
+   }
+    console.log("\n"+"to be sent"+" "+JSON.stringify(letSend)+'\n'); 
+    fire = this.state.fire?this.state.fire:this.props.token+"_"+this.props.receiver_email; 
+    var Ref = db.collection('messages').doc(fire);
     Ref.get().then((doc) => {
       if(doc.exists){
         console.log('doc exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
         Ref.update({messages:
-        firebase.firestore.FieldValue.arrayUnion({text: messages[0].text, user_id: params.me.id, sent: true, 
-        updated_at: firebase.firestore.Timestamp.fromDate(new Date()),
-        receiver_id: params.receiver.id, id: messages[0]._id, read: false,
-      isLaravel: false})})
+        firebase.firestore.FieldValue.arrayUnion(letSend)})
       .then(function(){
-        var config = {
-          headers: {'Authorization': "Bearer " + params.token}
-        };
-        var bodyParameters = {
-         id: params.me.id,
-         receiver_id: params.receiver.id,
-         message: messages[0].text,
-         read: false,
-         sent: true,
-         message_id: messages[0]._id
-        }
-        axios.post(
-            'http://10.0.2.2:8000/api/sendMessage',
-            bodyParameters,
-            config
-        ).then((response) => {
-          var Refnol = db.collection('messages').doc(params.me.email)
-          .collection(params.receiver.email);
-          Refnol.where('messages', 'array-contains', messages[0]._id).get()
-          .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          console.log("\n","\n",'\n','\n','\n', " => ", doc.data(),'\n','\n','\n');
-          });
-          })
-          .catch(function(error) {
-          console.log("Error getting documents: ", error);
-          });
-          this.setState({messageLoader: false})
-        console.log(response);
-        }).catch((error) => {
-          this.setState({messageLoader: false})
-            Alert.alert(
-                'Error',
-                  'Internal Server Error, please try again later',
-                [
-                  {text: 'OK'},
-                ],  );    
-                console.log(error); 
-        }); 
-      }.bind(this));
+
+    }.bind(this));
     }else{
       console.log('doc not exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
       Ref.set({
-        messages: [{text: messages[0].text, user_id: params.me.id, sent: true, 
-          updated_at: firebase.firestore.Timestamp.fromDate(new Date()),
-        receiver_id: params.receiver.id, id: messages[0]._id, read: false,
-        isLaravel: false}]
+        messages: [letSend]
       }, {merge: true}).then(function(){
-        var config = {
-          headers: {'Authorization': "Bearer " + params.token}
-        };
-        var bodyParameters = {
-         id: params.me.id,
-         receiver_id: params.receiver.id,
-         message: messages[0].text,
-         read: false,
-         sent: true,
-         message_id: messages[0]._id
+      }.bind(this));
+      }
+      });
+      }
+      componentWillMount() {
+        var self=this;
+        // this.init is fix as the indicator would run when the app mounts
+          this.init=false;
+          this.startTyping = _.debounce(function () {
+            if (!this.init) return
+            self.setState({isTyping:true})
+          }, 500, { 'leading': true, 'trailing': false })
+          
+          this.stopTyping = _.debounce(function () {
+            if (!this.init) return
+            self.setState({isTyping:false})
+          }, 500)
         }
-        axios.post(
-            'http://10.0.2.2:8000/api/sendMessage',
-            bodyParameters,
-            config
-        ).then((response) => {
-          this.setState({messageLoader: false})
-          var Refnol = db.collection('messages').doc(params.me.email)
-          .collection(params.receiver.email);
-          Refnol.where('messages', 'array-contains', messages[0]._id).get()
-          .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          console.log("\n","\n",'\n','\n','\n', " => ", doc.data(),'\n','\n','\n');
-          });
-          })
-          .catch(function(error) {
-          console.log("Error getting documents: ", error);
-          });
-        console.log(response);
-        }).catch((error) => {
-          this.setState({messageLoader: false})
-            Alert.alert(
-                'Error',
-                  'Internal Server Error, please try again later',
-                [
-                  {text: 'OK'},
-                ],  );    
-                console.log(error); 
-        }); 
-    }.bind(this));
-  }
-  });
-  }
+        detectTyping(text) {
+          if (text!=""){
+            this.init = true;
+          this.startTyping()
+          this.stopTyping();
+          }
+          
+        }
   componentDidMount() {
+    db.collection('messages').doc(this.props.token+"_"+this.props.receiver_email)
+    .onSnapshot(function(doc) {
+      if(doc.data()){
+        this.setState({fire: this.props.token+"_"+this.props.receiver_email})
+        console.log(doc.data()[this.props.receiver_id])
+        this.setState({oppTyping: doc.data()[this.props.receiver_id]}, ()=> doc.data()[this.props.receiver_id]?console.log("isTyping"):console.log("not typing"));
+        console.log("Current data: ", doc.data());
+        if(doc.data().messages){
+           let len = doc.data().messages.length; 
+      if(this.state.messages.length >= 1){ 
+        let state_length = this.state.messages.length;
+        doc.data().messages = doc.data().messages.reverse();
+        console.log("\n"+this.state.messages+"--messages"+"\n"+doc.data().messages);
+        for(let i=0; i < len;i++){
+          console.log("got")
+          console.log(JSON.stringify(doc.data().messages[i]))
+          console.log(JSON.stringify(this.state.messages[i]))
+          console.log(i+"\n")
+          console.log(state_length+"\n")
+          if(i <= state_length-1){
+            let idCheck = this.state.messages[i]._id;
+            console.log(idCheck)
+            if(idCheck == doc.data().messages[i]._id){
+            console.log("dkd")
+            let messages = [...this.state.messages];
+            let message = {...messages[i]};
+            message.received =doc.data().messages[i].received;
+            messages[i] = message;
+            this.setState({messages});
+          }
+          /*else{
+            doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+            this.setState(previousState => ({
+              messages: GiftedChat.append(
+                previousState.messages,
+                doc.data().messages[i]
+              )
+            }));
+          }*/
+          }else{
+            console.log("chei")
+            doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+            this.setState(previousState => ({
+              messages: GiftedChat.append(
+                previousState.messages,
+                doc.data().messages[i]
+              )
+            }));
+          }
+            
+        }
+      }else{
+        for(let i=0;i<len;i++){ 
+        let sender_check = doc.data().messages[i].user._id;
+        if(sender_check != this.props.token){
+          doc.data().messages[i].received = true;
+        }
+        doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+        }
+        this.setState(previousState => ({
+          messages: GiftedChat.append(
+            previousState.messages,
+            doc.data().messages.reverse()
+          )
+        }), ()=>console.log(this.state.messages));
+      }
+        }
+      
+      }
+    }.bind(this));
+    db.collection('messages').doc(this.props.receiver_email+"_"+this.props.token)
+    .onSnapshot(function(doc) {
+      if(doc.data()){
+        this.setState({fire: this.props.receiver_email+"_"+this.props.token})
+          console.log(doc.data()[this.props.receiver_id])
+          this.setState({oppTyping: doc.data()[this.props.receiver_id]}, ()=> doc.data()[this.props.receiver_id]?console.log("isTyping"):console.log("not typing"));
+        console.log("Current data: ", doc.data());
+        if(doc.data().messages){
+           let len = doc.data().messages.length; 
+      if(this.state.messages.length >= 1){ 
+        let state_length = this.state.messages.length;
+        doc.data().messages = doc.data().messages.reverse();
+        console.log("\n"+this.state.messages+"--messages"+"\n"+doc.data().messages);
+        for(let i=0; i < len;i++){
+          console.log("got")
+          console.log(JSON.stringify(doc.data().messages[i]))
+          console.log(JSON.stringify(this.state.messages[i]))
+          console.log(i+"\n")
+          console.log(state_length+"\n")
+          if(i <= state_length-1){
+            let idCheck = this.state.messages[i]._id;
+            console.log(idCheck)
+            if(idCheck == doc.data().messages[i]._id){
+            console.log("dkd")
+            let messages = [...this.state.messages];
+            let message = {...messages[i]};
+            message.received =doc.data().messages[i].received;
+            messages[i] = message;
+            this.setState({messages});
+          }
+          /*else{
+            doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+            this.setState(previousState => ({
+              messages: GiftedChat.append(
+                previousState.messages,
+                doc.data().messages[i]
+              )
+            }));
+          }*/
+          }else{
+            console.log("chei")
+            doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+            this.setState(previousState => ({
+              messages: GiftedChat.append(
+                previousState.messages,
+                doc.data().messages[i]
+              )
+            }));
+          }
+            
+        }
+      }else{
+        for(let i=0;i<len;i++){ 
+        let sender_check = doc.data().messages[i].user._id;
+        if(sender_check != this.props.token){
+          doc.data().messages[i].received = true;
+        }
+        doc.data().messages[i].createdAt = doc.data().messages[i].createdAt.toDate();
+        }
+        this.setState(previousState => ({
+          messages: GiftedChat.append(
+            previousState.messages,
+            doc.data().messages.reverse()
+          )
+        }), ()=>console.log(this.state.messages));
+      }
+        }
+      
+      }
+    }.bind(this));
+    
+  }
+  
+  renderFooter() {
+    if(this.state.oppTyping)  
+        return <Text style={{marginBottom: 10, fontFamily: 'mont-light-italic'}}>{this.props.receiver_id} is typing</Text>
+    else {
+      return null
+    }
+}
+  goBack(){
+    value = "false"
+    this.props.chatFalse(value)
+  }
+  isTyping(){
+    console.log("here "+this.props.received)
+    fire = this.state.fire?this.state.fire:this.props.token+"_"+this.props.receiver_email; 
+    var Ref = db.collection('messages').doc(fire);
+    Ref.get().then((doc) => {
+      if(doc.exists){
+        console.log('doc exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
+        Ref.update({[this.props.receiver_id]: true})
+      .then(function(){
+    }.bind(this));
+    }else{
+      console.log('doc not exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
+      Ref.set({
+        [this.props.receiver_id]: true
+      }, {merge: true}).then(function(){
+      }.bind(this));
+      }
+      });
+  }
+  componentDidUpdate(){
+    if(this.state.isTyping){
+      console.log("is typing fn")
+      this.isTyping();
+    }else{
+      console.log("not typing fn")
+      this.notTyping();
+    }
+  }
+  notTyping(){
+    fire = this.state.fire?this.state.fire:this.props.token+"_"+this.props.receiver_email; 
+    var Ref = db.collection('messages').doc(fire);
+    Ref.get().then((doc) => {
+      if(doc.exists){
+        console.log('doc exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
+        Ref.update({[this.props.receiver_id]: false})
+      .then(function(){
+    }.bind(this));
+    }else{
+      console.log('doc not exists '+'\n'+'\n'+'\n'+'\n'+'\n'+'\n')
+      Ref.set({
+        [this.props.receiver_id]: false
+      }, {merge: true}).then(function(){
+      }.bind(this));
+      }
+      });
   }
   render() {
     return (
       <View style={styles.container}>
+      <TouchableOpacity onPress={this.goBack.bind(this)}>
         <View style={styles.cancelView}>
           <Image
             source={require("../../assets/images/cancel.png")}
             resizeMode="contain"
             style={styles.cancelImage}
           />
-        </View>
+        </View></TouchableOpacity>
         <View style={styles.firstView}>
         <Image
-            source={require("../../assets/images/doe_image.png")}
+            source={{uri: this.props.receiver_image}}
             resizeMode="cover"
             style={styles.profileImage}
           />
-          <Text style={styles.name}>Jane Olaoluwa</Text>
+          <Text style={styles.name}>{this.props.receiver_name}</Text>
         </View>
         <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
+        extraData={this.state}
         user={{
-          _id: 1,
-        }}
+            _id: this.props.token
+          }}
+          onInputTextChanged={this.detectTyping} 
+          renderFooter={this.renderFooter}
       />
         <LoaderModal regLoader={this.state.regLoader} />
       </View>
     );
   }
 }
+const ChatTrekkerBox = connect(
+  mapStateToProps,
+)(reduxChatTrekkerBox);
+export default ChatTrekkerBox;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
@@ -225,8 +374,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   cancelView: {
-    width: 13,
-    height: 12,
+    width: 20,
+    height: 20,
     marginLeft: "6%",
     marginTop: 11.03
   },

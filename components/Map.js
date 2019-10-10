@@ -170,39 +170,11 @@ class reduxMap extends Component {
                  }
                } else {
                 currentCoordinate.timing(newCoordinate).start();
-               } 
-         /*     Geocoder.from({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
-              })
-              .then((response) => {
-                // the response object is the same as what's returned in the HTTP API: https://developers.google.com/maps/documentation/geocoding/intro
-      
-                this.from_region = region; // for storing the region in case the user presses the "reset" button
-      
-                // update the state to indicate the user's origin on the map (using a marker)
-                this.setState({
-                  start_location: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                  },
-                  region: region, // the region displayed on the map
-                  from: response.results[0].formatted_address // the descriptive name of the place
-                }); 
-      
-              });*/
-      
-  /*        this.setState({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            currentCoordinate: {"latitude": position.coords.latitude, "longitude": position.coords.longitude},
-            error: null,
-            y: {"latitude": position.coords.latitude, "longitude": position.coords.longitude}
-          });*/
+               }
           this.mergeLot();
         },
         (error) => console.log(error.message),
-        { enableHighAccuracy: true, timeout: 20000, 
+        { enableHighAccuracy: true, timeout: 10000, 
   //        maximumAge: 0,
            distanceFilter: 1 },
       );
@@ -225,17 +197,6 @@ class reduxMap extends Component {
         Geolocation.getCurrentPosition(
             (position) => {
               console.log(JSON.stringify(position.coords))
-             /*   var region = this.regionFrom(
-                    position.coords.latitude, 
-                    position.coords.longitude, 
-                    position.coords.accuracy
-                  ); */
-                  const newCoordinate = {
-                    latitude:  position.coords.latitude,
-                    longitude:  position.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                 longitudeDelta: LONGITUDE_DELTA
-                  }
                   this.setState({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
@@ -256,32 +217,12 @@ class reduxMap extends Component {
                     })
                     .then(function() {
                     console.log("Document successfully updated!");
-                    }) 
-                    )
-                    Geocoder.from({
-                      latitude: position.coords.latitude,
-                      longitude: position.coords.longitude
-                    })
-                    .then((response) => {
-                      // the response object is the same as what's returned in the HTTP API: https://developers.google.com/maps/documentation/geocoding/intro
-            
-                      this.from_region = region; // for storing the region in case the user presses the "reset" button
-            
-                      // update the state to indicate the user's origin on the map (using a marker)
-                      this.setState({
-                        start_location: {
-                          latitude: position.coords.latitude,
-                          longitude: position.coords.longitude
-                        },
-                        region: region, // the region displayed on the map
-                        from: response.results[0].formatted_address // the descriptive name of the place
-                      }); 
-              this.mergeLot();
+                    }) )
             },
             (error) => console.log(error.message),
-            { enableHighAccuracy: true, timeout: 20000, 
-            //  maximumAge: 1000
-             },
+            {enableHighAccuracy: true, timeout: 10000, 
+              //maximumAge: 3000
+            },
           );
            
       }else{
@@ -367,8 +308,8 @@ class reduxMap extends Component {
               this.mergeLot();
             },
             (error) => console.log(error.message),
-            { enableHighAccuracy: true, timeout: 200000, 
-       //       maximumAge: 1000 
+            {enableHighAccuracy: true, timeout: 10000, 
+              //maximumAge: 3000
             },
           );
         //   timer = setInterval(this.getLocation,3000);
@@ -461,12 +402,12 @@ class reduxMap extends Component {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
+        bottom: 90,
   //      marginBottom: this.state.marginBottom
         }} 
         followsUserLocation={this.state.startTrek}
      //   showsUserLocation={this.state.startTrek}
-    //    showsMyLocationButton={true}
+        showsMyLocationButton={true}
    //     onMapReady={this._onMapReady}
           region={{
             latitude: this.state.latitude?this.state.latitude:default_region.latitude,
@@ -490,6 +431,8 @@ class reduxMap extends Component {
             {
             this.state.start_location &&
             <Marker coordinate={this.state.start_location}
+            draggable
+            onDragEnd={(e) =>  this.setState({start_location: e.nativeEvent.coordinate})}
      //        image={require('../assets/images/person-walking.png')}
              >
                <View style={styles.startCircleBig}>
@@ -553,11 +496,10 @@ class reduxMap extends Component {
                     />
            </LinearGradient>
            </TouchableNativeFeedback>
-           {/* <FindTrekkerBox  start={this.state.from?this.state.from:"Your current Location"} 
+           <FindTrekkerBox  start={this.state.from?this.state.from:"Your current Location"} 
                  endLocation={this.getEndLocation} start_location={this.state.start_location}
                  navigation={this.props.navigation}
-                 /> */}
-                 <ChatTrekkerBox />
+                 /> 
            </View>
     );
   }
