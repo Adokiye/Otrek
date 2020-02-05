@@ -247,9 +247,11 @@ class reduxFirstTrekkerBox extends Component {
     } else if (this.state.invite && !this.state.chat) {
       return (
         <InviteScreen
+        navigation={this.props.navigation}
           receiver_email={
             this.state.trekkers[0] ? this.state.trekkers[0].details.email : null
           }
+          receiver={this.state.trekkers[0].details}
           receiver_name={
             this.state.trekkers[0]
               ? this.state.trekkers[0].details.first_name +
