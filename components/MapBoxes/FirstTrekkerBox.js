@@ -20,6 +20,7 @@ import {
 import firebase from "react-native-firebase";
 import ChatTrekkerBox from "./ChatTrekkerBox";
 import InviteScreen from "../InviteScreens/InviteScreen";
+import InvitingScreen from "../InviteScreens/InvitingScreen";
 var db = firebase.firestore();
 const haversine = require("haversine");
 import SearchModal from "../Modals/SearchModal";
