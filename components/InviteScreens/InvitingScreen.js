@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CancelModal from '../Modals/CancelModal';
+import LoaderModal from '../Modals/LoaderModal';
 import ErrorModal from '../Modals/ErrorModal';
 import { Overlay } from 'react-native-elements';
 import firebase from 'react-native-firebase';
@@ -42,7 +43,8 @@ class reduxInvitingScreen extends Component {
       error: false,
       error_message: '',
       sure: false,
-      fire: ''
+      fire: '',
+      cancelLoader: false
     };
   }
   componentDidMount() {
@@ -121,7 +123,7 @@ class reduxInvitingScreen extends Component {
     }
   };
   cancel() {
-    this.setState({ regLoader: true });
+    this.setState({ cancelLoader: true });
     var Ref = db.collection('invites').doc(this.state.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
@@ -136,7 +138,7 @@ class reduxInvitingScreen extends Component {
         }).then(
           function() {
             this.props.navigation.navigate('Map');
-            this.setState({ regLoader: false });
+            this.setState({ cancelLoader: false });
           }.bind(this)
         );
       } else {
@@ -155,7 +157,8 @@ class reduxInvitingScreen extends Component {
           { merge: true }
         ).then(
           function() {
-            this.setState({ regLoader: false });
+            this.props.navigation.navigate('Map');
+            this.setState({ cancelLoader: false });
           }.bind(this)
         );
       }
@@ -215,7 +218,8 @@ class reduxInvitingScreen extends Component {
           hideError={this.hideErrorModal}
         />
         {sure}
-        <CancelModal regLoader={this.state.regLoader} />
+        <CancelModal regLoader={this.state.cancelLoader} />
+        <LoaderModal regLoader={this.state.regLoader} />
       </LinearGradient>
     );
   }
