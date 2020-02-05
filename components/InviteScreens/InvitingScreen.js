@@ -60,7 +60,7 @@ class reduxInvitingScreen extends Component {
         this.setState({fire: this.props.token+"_" +this.props.receiver_email})
         console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
         Ref.update({
-          invite: false,
+          invite: true,
           reject: false,
           accept: false,
           sender: {
