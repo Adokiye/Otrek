@@ -57,6 +57,7 @@ class reduxInvitingScreen extends Component {
       .doc(this.props.receiver_email + '_' + this.props.token);
     Ref.get().then(doc => {
       if (doc.exists) {
+        this.setState({fire: this.props.token+"_" +this.props.receiver_email})
         console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
         Ref.update({
           invite: false,
@@ -122,6 +123,7 @@ class reduxInvitingScreen extends Component {
       this.setState({ error: false });
     }
   };
+
   cancel() {
     this.setState({ cancelLoader: true });
     var Ref = db.collection('invites').doc(this.state.fire);
@@ -157,7 +159,7 @@ class reduxInvitingScreen extends Component {
           { merge: true }
         ).then(
           function() {
-            this.props.navigation.navigate('Map');
+            this.props.hideInvite();
             this.setState({ cancelLoader: false });
           }.bind(this)
         );
