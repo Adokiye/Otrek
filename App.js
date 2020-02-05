@@ -23,6 +23,10 @@ import FindTrekkerBox from './components/MapBoxes/FindTrekkerBox'
 import LoginScreen from './components/AuthenticationScreens/LoginScreen'
 import RegisterScreen from './components/AuthenticationScreens/RegisterScreen'
 import AccountCreatedScreen from './components/AuthenticationScreens/AccountCreatedScreen'
+import AcceptedInviteScreen from './components/InviteScreens/AcceptedInviteScreen'
+import InviteScreen from './components/InviteScreens/InviteScreen'
+import InvitingScreen from './components/InviteScreens/InvitingScreen'
+import RejectedInviteScreen from './components/InviteScreens/RejectedInviteScreen'
 import Splash from './components/Splash'
 import SplashScreen from 'react-native-splash-screen';
 import { createStackNavigator } from "react-navigation";
@@ -43,7 +47,7 @@ const mapDispatchToProps = dispatch => {
 type Props = {};
 const RootStack = createStackNavigator({
   Home: {
-    screen:  Splash
+    screen: InviteScreen                             //Splash
   },
   WelcomeScreen: {
     screen: WelcomeScreen

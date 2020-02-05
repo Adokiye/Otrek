@@ -18,6 +18,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import { connect } from "react-redux";
+import firebase from "react-native-firebase";
 const mapStateToProps = state => ({
   ...state
 });

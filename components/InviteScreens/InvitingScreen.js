@@ -22,6 +22,7 @@ import LinearGradient from "react-native-linear-gradient";
 import CancelModal from "../Modals/CancelModal";
 import ErrorModal from "../Modals/ErrorModal";
 import { Overlay } from "react-native-elements";
+import firebase from "react-native-firebase";
 var db = firebase.firestore();
 import { connect } from "react-redux";
 const mapStateToProps = state => ({

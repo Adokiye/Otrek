@@ -18,10 +18,10 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import firebase from "react-native-firebase";
-import ChatTrekkerBox from './ChatTrekkerBox'
+import ChatTrekkerBox from "./ChatTrekkerBox";
 var db = firebase.firestore();
-const haversine = require('haversine');
-import SearchModal from '../Modals/SearchModal';
+const haversine = require("haversine");
+import SearchModal from "../Modals/SearchModal";
 import { connect } from "react-redux";
 const mapStateToProps = state => ({
   ...state
@@ -41,14 +41,15 @@ class reduxFirstTrekkerBox extends Component {
   }
   getLatLonDiffInMeters(lat1, lon1, lat2, lon2) {
     var R = 6371; // radius of the earth in km
-    var dLat = this.deg2rad(lat2-lat1);  // deg2rad below
-    var dLon = this.deg2rad(lon2-lon1); 
-    var a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-      ; 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = this.deg2rad(lon2 - lon1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) *
+        Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // distance in km
     return d * 1000;
   }
@@ -58,10 +59,14 @@ class reduxFirstTrekkerBox extends Component {
     Ref.get().then(doc => {
       if (doc.exists) {
         console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
-        Ref.update({ accept: false, reject: true, invite: true,
+        Ref.update({
+          accept: false,
+          reject: true,
+          invite: true,
           sender: {
             email: this.props.receiver_email
-          } }).then(
+          }
+        }).then(
           function() {
             this.setState({ regLoader: false });
           }.bind(this)
@@ -88,112 +93,145 @@ class reduxFirstTrekkerBox extends Component {
       }
     });
   }
-deg2rad(deg) {
-    return deg * (Math.PI/180)
+  deg2rad(deg) {
+    return deg * (Math.PI / 180);
   }
   componentDidMount() {
-   const {params} = this.props.navigation.state; 
-this.setState({ regLoader: true });
-   this.getMarker().then((data) => {
-    console.log(data)  
-    var len = data ? data.length : null;
-        for (let i = 0; i < len; i++) {
-          let row = data[i];
-          if(row.details.start_location && row.details.end_location){
-            console.log(row)
-             let diff_in_meters_start = 
-          this.getLatLonDiffInMeters(row.details.start_location.latitude, 
-            row.details.start_location.longitude, 
-            this.props.start_location.latitude, 
-            this.props.start_location.longitude);
-          let diff_in_meters_end = 
-          this.getLatLonDiffInMeters(row.details.end_location.latitude, 
-            row.details.end_location.longitude, 
-            this.props.end_location.latitude, 
-            this.props.end_location.longitude);
-          if((diff_in_meters_start <= 5000) && (diff_in_meters_end <=5000)){
-            console.log("distance checked and true")
-            if(row.details.email != this.props.token){
+    const { params } = this.props.navigation.state;
+    this.setState({ regLoader: true });
+    this.getMarker().then(data => {
+      console.log(data);
+      var len = data ? data.length : null;
+      for (let i = 0; i < len; i++) {
+        let row = data[i];
+        if (row.details.start_location && row.details.end_location) {
+          console.log(row);
+          let diff_in_meters_start = this.getLatLonDiffInMeters(
+            row.details.start_location.latitude,
+            row.details.start_location.longitude,
+            this.props.start_location.latitude,
+            this.props.start_location.longitude
+          );
+          let diff_in_meters_end = this.getLatLonDiffInMeters(
+            row.details.end_location.latitude,
+            row.details.end_location.longitude,
+            this.props.end_location.latitude,
+            this.props.end_location.longitude
+          );
+          if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
+            console.log("distance checked and true");
+            if (row.details.email != this.props.token) {
               this.setState(prevState => ({
-              trekkers: [...prevState.trekkers, row]
-            }));
+                trekkers: [...prevState.trekkers, row]
+              }));
             }
           }
-          }  
         }
-        this.setState({ regLoader: false });
-  });
+      }
+      this.setState({ regLoader: false });
+    });
   }
   async getMarker() {
-    const snapshot = await firebase.firestore().collection('users').get();
+    const snapshot = await firebase
+      .firestore()
+      .collection("users")
+      .get();
     return snapshot.docs.map(doc => doc.data());
-}
-chatFalse(value){
-if(value == "false"){
-  this.setState({chat: false})
-}
-}
+  }
+  chatFalse(value) {
+    if (value == "false") {
+      this.setState({ chat: false });
+    }
+  }
   render() {
-    let trekkers = '';
-    if(this.state.trekkers[0]){
-     trekkers = <View style={styles.underView}>
-     <View style={styles.firstView}>
-       <Image
-         source={{uri: this.state.trekkers[0].details.image}}
-         resizeMode="cover"
-         style={styles.profileImage}
-       />
-       <View style={styles.aboutView}>
-         <Text style={styles.name}>
-         {this.state.trekkers[0].details.first_name+" "+this.state.trekkers[0].details.last_name}
-         </Text>
-         <Text style={styles.gender}>{this.state.trekkers[0].details.gender}</Text>
-         <Text style={styles.interests}>{this.state.trekkers[0].details.interests}</Text>
-       </View>
-       <View style={styles.iconBox}>
-       {/*  <Image
+    let trekkers = "";
+    if (this.state.trekkers[0]) {
+      trekkers = (
+        <View style={styles.underView}>
+          <View style={styles.firstView}>
+            <Image
+              source={{ uri: this.state.trekkers[0].details.image }}
+              resizeMode="cover"
+              style={styles.profileImage}
+            />
+            <View style={styles.aboutView}>
+              <Text style={styles.name}>
+                {this.state.trekkers[0].details.first_name +
+                  " " +
+                  this.state.trekkers[0].details.last_name}
+              </Text>
+              <Text style={styles.gender}>
+                {this.state.trekkers[0].details.gender}
+              </Text>
+              <Text style={styles.interests}>
+                {this.state.trekkers[0].details.interests}
+              </Text>
+            </View>
+            <View style={styles.iconBox}>
+              {/*  <Image
            source={require("../../assets/images/phoneCall.png")}
            resizeMode="contain"
            style={styles.phoneIcon}
          />*/}
-         <TouchableOpacity onPress={()=> this.setState({chat: true})}>
-         <View style={styles.commentIcon}>
-         <Image
-           source={require("../../assets/images/message.png")}
-           resizeMode="contain"
-           style={styles.commentIcon}
-         /></View></TouchableOpacity>
-         <View style={styles.inviteButton}>
-           <Text style={styles.inviteText}>Invite</Text>
-         </View>
-       </View>
-     </View>
-     <View style={styles.line} />
-     <View style={styles.viewMore}>
-       <Text style={styles.viewMoreText}>View more trekkers</Text>
-     </View>
-   </View>
-    }else{
-       trekkers = <Text style={{alignSelf: 'center', 
-       color: "#000000",
-       fontFamily: "mont-medium",
-       fontSize: 14,
-       marginTop: '30%'}}>
-       Oops!, No trekker available in your location
-       </Text>
+              <TouchableOpacity onPress={() => this.setState({ chat: true })}>
+                <View style={styles.commentIcon}>
+                  <Image
+                    source={require("../../assets/images/message.png")}
+                    resizeMode="contain"
+                    style={styles.commentIcon}
+                  />
+                </View>
+              </TouchableOpacity>
+              <View style={styles.inviteButton}>
+                <Text style={styles.inviteText}>Invite</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.line} />
+          <View style={styles.viewMore}>
+            <Text style={styles.viewMoreText}>View more trekkers</Text>
+          </View>
+        </View>
+      );
+    } else {
+      trekkers = (
+        <Text
+          style={{
+            alignSelf: "center",
+            color: "#000000",
+            fontFamily: "mont-medium",
+            fontSize: 14,
+            marginTop: "30%"
+          }}
+        >
+          Oops!, No trekker available in your location
+        </Text>
+      );
     }
-    return (
-   this.state.chat?
-     <ChatTrekkerBox 
-       receiver_email={this.state.trekkers[0]?this.state.trekkers[0].details.email:null}
-       receiver_name={this.state.trekkers[0]?this.state.trekkers[0].details.first_name+" "+
-       this.state.trekkers[0].details.last_name:null}
-       receiver_id={this.state.trekkers[0]?this.state.trekkers[0].details.first_name:null}
-       receiver_image={this.state.trekkers[0]?this.state.trekkers[0].details.image:null}
-       chatFalse={this.chatFalse.bind(this)}
-     />
-  : 
-        <View style={styles.container}>
+    return this.state.chat ? (
+      <ChatTrekkerBox
+        receiver_email={
+          this.state.trekkers[0] ? this.state.trekkers[0].details.email : null
+        }
+        receiver_name={
+          this.state.trekkers[0]
+            ? this.state.trekkers[0].details.first_name +
+              " " +
+              this.state.trekkers[0].details.last_name
+            : null
+        }
+        receiver_id={
+          this.state.trekkers[0]
+            ? this.state.trekkers[0].details.first_name
+            : null
+        }
+        receiver_image={
+          this.state.trekkers[0] ? this.state.trekkers[0].details.image : null
+        }
+        chatFalse={this.chatFalse.bind(this)}
+      />
+    ) : (
+      <View style={styles.container}>
         <View style={styles.cancelView}>
           <Image
             source={require("../../assets/images/cancel.png")}
@@ -201,17 +239,13 @@ if(value == "false"){
             style={styles.cancelImage}
           />
         </View>
-        <ScrollView>
-        {trekkers}
-        </ScrollView>
+        <ScrollView>{trekkers}</ScrollView>
         <SearchModal regLoader={this.state.regLoader} />
       </View>
     );
   }
 }
-const FirstTrekkerBox = connect(
-  mapStateToProps,
-)(reduxFirstTrekkerBox);
+const FirstTrekkerBox = connect(mapStateToProps)(reduxFirstTrekkerBox);
 export default FirstTrekkerBox;
 const styles = StyleSheet.create({
   container: {
@@ -222,7 +256,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderWidth: 1,
     borderColor: "#707070",
-    position: 'absolute',
+    position: "absolute",
     bottom: 0
   },
   cancelView: {

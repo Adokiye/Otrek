@@ -1,10 +1,12 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable comma-dangle */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
  * @flow
  */
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,11 +19,12 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   ActivityIndicator
-} from "react-native";
-import LoaderModal from "../Modals/LoaderModal";
-import LinearGradient from "react-native-linear-gradient";
+} from 'react-native';
+import firebase from 'react-native-firebase';
+import LoaderModal from '../Modals/LoaderModal';
+import LinearGradient from 'react-native-linear-gradient';
 var db = firebase.firestore();
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 const mapStateToProps = state => ({
   ...state
 });
@@ -29,7 +32,7 @@ const mapStateToProps = state => ({
 class reduxInviteScreen extends Component {
   static navigationOptions = {
     header: null,
-    drawerLockMode: "locked-closed"
+    drawerLockMode: 'locked-closed'
   };
   constructor(props) {
     super(props);
@@ -40,27 +43,31 @@ class reduxInviteScreen extends Component {
   componentDidMount() {}
   accept() {
     this.setState({ regLoader: true });
-    var Ref = db.collection("invites").doc(this.props.fire);
+    var Ref = db.collection('invites').doc(this.props.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
-        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
-        Ref.update({ accept: true, reject: false, invite: false,            
+        console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
+        Ref.update({
+          accept: true,
+          reject: false,
+          invite: false,
           sender: {
-          email: this.props.receiver_email
-        } }).then(
+            email: this.props.receiver_email
+          }
+        }).then(
           function() {
             this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
         console.log(
-          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+          'doc not exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
         );
         Ref.set(
           {
             accept: true,
             reject: false,
-            invite: false,            
+            invite: false,
             sender: {
               email: this.props.receiver_email
             }
@@ -76,21 +83,25 @@ class reduxInviteScreen extends Component {
   }
   reject() {
     this.setState({ regLoader: true });
-    var Ref = db.collection("invites").doc(this.props.fire);
+    var Ref = db.collection('invites').doc(this.props.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
-        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
-        Ref.update({ accept: false, reject: true, invite: false,
+        console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
+        Ref.update({
+          accept: false,
+          reject: true,
+          invite: false,
           sender: {
             email: this.props.receiver_email
-          } }).then(
+          }
+        }).then(
           function() {
             this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
         console.log(
-          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+          'doc not exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
         );
         Ref.set(
           {
@@ -113,7 +124,7 @@ class reduxInviteScreen extends Component {
   render() {
     const { params } = this.props.navigation.state;
     return (
-      <LinearGradient colors={["#57C693", "#377848"]} style={styles.container}>
+      <LinearGradient colors={['#57C693', '#377848']} style={styles.container}>
         <View style={styles.houseView}>
           <View style={styles.checkImageView}>
             <Image
@@ -126,8 +137,8 @@ class reduxInviteScreen extends Component {
             {this.props.receiver_first_name} {this.props.receiver_last_name}
           </Text>
           <Text style={styles.invitingText}>
-            is inviting you to be{" "}
-            {this.state.receiver_gender == "M" ? "his" : "her"} trekpal
+            is inviting you to be{' '}
+            {this.state.receiver_gender == 'M' ? 'his' : 'her'} trekpal
           </Text>
           <TouchableOpacity onPress={this.accept.bind(this)}>
             <View style={styles.acceptView}>
@@ -153,77 +164,77 @@ export default InviteScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   houseView: {
-    flexDirection: "column",
-    alignItems: "center"
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   checkImage: {
     width: 132,
     height: 132,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: 66
   },
   checkImageView: {
     width: 140,
     height: 140,
     borderRadius: 70,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 3,
-    borderColor: "white"
+    borderColor: 'white'
   },
   accountCreatedText: {
-    color: "#ffffff",
-    fontFamily: "mont-bold",
+    color: '#ffffff',
+    fontFamily: 'mont-bold',
     fontSize: 20,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: 30
   },
   rejectView: {
-    backgroundColor: "#B70000",
+    backgroundColor: '#B70000',
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 140,
     height: 37,
     marginTop: 15
   },
   rejectText: {
-    color: "#000",
+    color: '#000',
     fontSize: 13,
-    fontFamily: "mont-semi"
+    fontFamily: 'mont-semi'
   },
   acceptView: {
-    backgroundColor: "#29E934",
+    backgroundColor: '#29E934',
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 140,
     height: 37,
     marginTop: 30
   },
   acceptText: {
-    color: "#000",
+    color: '#000',
     fontSize: 13,
-    fontFamily: "mont-semi"
+    fontFamily: 'mont-semi'
   },
   invitingText: {
-    color: "#ffffff",
-    fontFamily: "mont-bold",
+    color: '#ffffff',
+    fontFamily: 'mont-bold',
     fontSize: 16,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginBottom: 20
   },
   interestText: {
     marginTop: 15,
-    color: "#fff",
-    fontFamily: "mont-italic",
+    color: '#fff',
+    fontFamily: 'mont-italic',
     fontSize: 16,
-    alignSelf: "center"
+    alignSelf: 'center'
   }
 });
