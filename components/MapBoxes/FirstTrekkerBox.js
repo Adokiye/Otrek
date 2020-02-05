@@ -41,7 +41,7 @@ class reduxFirstTrekkerBox extends Component {
       chat: false,
       invite: false
     };
-    this.hideInvite = this.hideInvite.bind(this)
+  //  this.hideInvite = this.hideInvite.bind(this)
   }
   getLatLonDiffInMeters(lat1, lon1, lat2, lon2) {
     var R = 6371; // radius of the earth in km
@@ -101,6 +101,7 @@ class reduxFirstTrekkerBox extends Component {
     return deg * (Math.PI / 180);
   }
   hideInvite(){
+    console.log("sas")
     this.setState({invite: false,})
   }
   componentDidMount() {
@@ -253,7 +254,7 @@ class reduxFirstTrekkerBox extends Component {
       return (
         <InvitingScreen
           navigation={this.props.navigation}
-          hideInvite={this.hideInvite}
+          hideInvite={this.hideInvite.bind(this)}
           receiver_email={
             this.state.trekkers[0] ? this.state.trekkers[0].details.email : null
           }

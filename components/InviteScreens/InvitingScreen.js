@@ -139,7 +139,7 @@ class reduxInvitingScreen extends Component {
           },
         }).then(
           function() {
-            this.props.navigation.navigate('Map');
+            this.props.hideInvite("false");
             this.setState({ cancelLoader: false });
           }.bind(this)
         );
@@ -159,7 +159,7 @@ class reduxInvitingScreen extends Component {
           { merge: true }
         ).then(
           function() {
-            this.props.hideInvite();
+            this.props.hideInvite("false");
             this.setState({ cancelLoader: false });
           }.bind(this)
         );
