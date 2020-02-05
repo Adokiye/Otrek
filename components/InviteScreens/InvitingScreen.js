@@ -1,10 +1,11 @@
+/* eslint-disable prettier/prettier */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
  * @flow
  */
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,52 +17,52 @@ import {
   TextInput,
   StatusBar,
   TouchableWithoutFeedback,
-  ActivityIndicator
-} from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import CancelModal from "../Modals/CancelModal";
-import ErrorModal from "../Modals/ErrorModal";
-import { Overlay } from "react-native-elements";
-import firebase from "react-native-firebase";
+  ActivityIndicator,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import CancelModal from '../Modals/CancelModal';
+import ErrorModal from '../Modals/ErrorModal';
+import { Overlay } from 'react-native-elements';
+import firebase from 'react-native-firebase';
 var db = firebase.firestore();
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 const mapStateToProps = state => ({
-  ...state
+  ...state,
 });
 
 class reduxInvitingScreen extends Component {
   static navigationOptions = {
     header: null,
-    drawerLockMode: "locked-closed"
+    drawerLockMode: 'locked-closed',
   };
   constructor(props) {
     super(props);
     this.state = {
       regLoader: false,
       error: false,
-      error_message: "",
-      sure: false
+      error_message: '',
+      sure: false,
+      fire: ''
     };
   }
-  componentDidMount() {}
-  hideErrorModal = value => {
-    if (value == "true") {
-      this.setState({ error: false });
-    }
-  };
-  cancel() {
+  componentDidMount() {
     this.setState({ regLoader: true });
-    var Ref = db.collection("invites").doc(this.props.fire);
+    var Ref = db
+      .collection('invites')
+      .doc(this.props.token + '_' + this.props.receiver_email);
+    var VRef = db
+      .collection('invites')
+      .doc(this.props.receiver_email + '_' + this.props.token);
     Ref.get().then(doc => {
       if (doc.exists) {
-        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
+        console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
         Ref.update({
           invite: false,
           reject: false,
           accept: false,
           sender: {
-            email: this.props.token
-          }
+            email: this.props.token,
+          },
         }).then(
           function() {
             this.setState({ regLoader: false });
@@ -69,7 +70,78 @@ class reduxInvitingScreen extends Component {
         );
       } else {
         console.log(
-          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+          'doc not exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
+        );
+        VRef.get().then(doc_ => {
+          if (doc_.exists) {
+            console.log(
+              'doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
+            );
+            this.setState({fire: this.props.receiver_email + '_' + this.props.token})
+            VRef.update({
+              invite: true,
+              reject: false,
+              accept: false,
+              sender: {
+                email: this.props.token,
+              },
+            }).then(
+              function() {
+                this.setState({ regLoader: false });
+              }.bind(this)
+            );
+          } else {
+            console.log(
+              'doc not exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
+            );
+            this.setState({fire: this.props.token+"_" +this.props.receiver_email})
+            Ref.set(
+              {
+                invite: true,
+                reject: false,
+                accept: false,
+                sender: {
+                  email: this.props.token,
+                },
+              },
+              { merge: true }
+            ).then(
+              function() {
+                this.setState({ regLoader: false });
+              }.bind(this)
+            );
+          }
+        });
+      }
+    });
+  }
+  hideErrorModal = value => {
+    if (value == 'true') {
+      this.setState({ error: false });
+    }
+  };
+  cancel() {
+    this.setState({ regLoader: true });
+    var Ref = db.collection('invites').doc(this.state.fire);
+    Ref.get().then(doc => {
+      if (doc.exists) {
+        console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
+        Ref.update({
+          invite: false,
+          reject: false,
+          accept: false,
+          sender: {
+            email: this.props.token,
+          },
+        }).then(
+          function() {
+            this.props.navigation.navigate('Map');
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      } else {
+        console.log(
+          'doc not exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n'
         );
         Ref.set(
           {
@@ -77,8 +149,8 @@ class reduxInvitingScreen extends Component {
             reject: false,
             accept: false,
             sender: {
-              email: this.props.token
-            }
+              email: this.props.token,
+            },
           },
           { merge: true }
         ).then(
@@ -118,7 +190,7 @@ class reduxInvitingScreen extends Component {
       </Overlay>
     );
     return (
-      <LinearGradient colors={["#57C693", "#377848"]} style={styles.container}>
+      <LinearGradient colors={['#57C693', '#377848']} style={styles.container}>
         <View style={styles.houseView}>
           <View style={styles.checkImageView}>
             <Image
@@ -128,7 +200,7 @@ class reduxInvitingScreen extends Component {
             />
           </View>
           <Text style={styles.accountCreatedText}>
-            Inviting {this.props.receiver_first_name}
+            Inviting {this.props.receiver.first_name}
           </Text>
           <ActivityIndicator color="#fff" size="small" />
           <TouchableOpacity onPress={() => this.setState({ sure: true })}>
@@ -153,90 +225,90 @@ export default InvitingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   houseView: {
-    flexDirection: "column",
-    alignItems: "center"
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   checkImage: {
     width: 132,
     height: 132,
-    alignSelf: "center",
-    borderRadius: 66
+    alignSelf: 'center',
+    borderRadius: 66,
   },
   checkImageView: {
     width: 140,
     height: 140,
     borderRadius: 70,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 3,
-    borderColor: "white"
+    borderColor: 'white',
   },
   accountCreatedText: {
-    color: "#ffffff",
-    fontFamily: "mont-bold",
+    color: '#ffffff',
+    fontFamily: 'mont-bold',
     fontSize: 20,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: 30,
-    marginBottom: 20
+    marginBottom: 20,
   },
   continueView: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 180,
     height: 37,
-    marginTop: 30
+    marginTop: 30,
   },
   continueText: {
-    color: "#4B8924",
+    color: '#4B8924',
     fontSize: 13,
-    fontFamily: "mont-semi"
+    fontFamily: 'mont-semi',
   },
   sureContainer: {
-    flexDirection: "column",
-    alignItems: "center",
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: 10,
-    justifyContent: "space-evenly",
-    position: "absolute"
+    justifyContent: 'space-evenly',
+    position: 'absolute',
   },
   question: {
     fontSize: 14,
-    color: "black",
-    fontFamily: "mont-reg",
-    textAlign: "center",
-    marginTop: 20
+    color: 'black',
+    fontFamily: 'mont-reg',
+    textAlign: 'center',
+    marginTop: 20,
   },
   buttonRow: {
     width: 210,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 30,
-    alignSelf: "center",
-    marginBottom: 20
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   yesView: {
     width: 100,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "#377848",
+    backgroundColor: '#377848',
     marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    marginBottom: 10
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   yesText: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
-    alignSelf: "center",
-    fontFamily: "mont-reg"
-  }
+    alignSelf: 'center',
+    fontFamily: 'mont-reg',
+  },
 });

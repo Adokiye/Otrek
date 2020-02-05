@@ -134,11 +134,11 @@ class reduxInviteScreen extends Component {
             />
           </View>
           <Text style={styles.accountCreatedText}>
-            {this.props.receiver_first_name} {this.props.receiver_last_name}
+            {this.props.receiver.first_name} {this.props.receiver.last_name}
           </Text>
           <Text style={styles.invitingText}>
             is inviting you to be{' '}
-            {this.state.receiver_gender == 'M' ? 'his' : 'her'} trekpal
+            {this.state.receiver.gender == 'M' ? 'his' : 'her'} trekpal
           </Text>
           <TouchableOpacity onPress={this.accept.bind(this)}>
             <View style={styles.acceptView}>
@@ -151,7 +151,7 @@ class reduxInviteScreen extends Component {
             </View>
           </TouchableOpacity>
           <Text style={styles.interestText}>
-            Interests: {this.props.receiver_interests}
+            Interests: {this.props.receiver.interests}
           </Text>
         </View>
         <LoaderModal regLoader={this.state.regLoader} />
