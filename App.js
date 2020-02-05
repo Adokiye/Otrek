@@ -47,7 +47,7 @@ const mapDispatchToProps = dispatch => {
 type Props = {};
 const RootStack = createStackNavigator({
   Home: {
-    screen: InviteScreen                             //Splash
+    screen: Splash
   },
   WelcomeScreen: {
     screen: WelcomeScreen
