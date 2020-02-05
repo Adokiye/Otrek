@@ -26,7 +26,7 @@ import HideWithKeyboard from "react-native-hide-with-keyboard";
 import AccountCreatedScreen from './AccountCreatedScreen'
 import axios from "axios";
 import { connect } from "react-redux";
-import { setToken } from "../../actions/index";
+import { setToken, setLastName, setFirstName } from "../../actions/index";
 const mapStateToProps = state => ({
   ...state
 });
@@ -34,6 +34,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
   return {
     setToken: token => dispatch(setToken(token)),
+    setLastName: last_name => dispatch(setLastName(last_name)),
+    setFirstName: first_name => dispatch(setFirstName(first_name))
   };
 };
 var SharedPreferences = require("react-native-shared-preferences");
@@ -130,6 +132,8 @@ class reduxRegisterScreen extends Component {
                 { merge: true }
               ).then(function(){
                 this.props.setToken(this.state.email);
+                this.props.setLastName(this.state.last_name);
+                this.props.setFirstName(this.state.first_name);
                 this.setState({ regLoader: false, }, );
                 this.props.navigation.navigate("AccountCreatedScreen");
               }.bind(this)) })  ).catch(error =>
@@ -318,13 +322,14 @@ class reduxRegisterScreen extends Component {
               <Text style={styles.nextText}>Next</Text>
             </View>
           </TouchableNativeFeedback>
-        </ScrollView>
-        <HideWithKeyboard>
+                  <HideWithKeyboard>
         <Image
           source={require("../../assets/images/authBottom.png")}
           resizeMode="cover"
           style={styles.bottomImage}
         /></HideWithKeyboard>
+        </ScrollView>
+
         <ErrorModal
           error={this.state.error}
           error_message={this.state.error_message}

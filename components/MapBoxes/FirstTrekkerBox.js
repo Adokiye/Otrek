@@ -21,7 +21,7 @@ import firebase from "react-native-firebase";
 import ChatTrekkerBox from './ChatTrekkerBox'
 var db = firebase.firestore();
 const haversine = require('haversine');
-import LoaderModal from '../Modals/LoaderModal';
+import SearchModal from '../Modals/SearchModal';
 import { connect } from "react-redux";
 const mapStateToProps = state => ({
   ...state
@@ -52,7 +52,42 @@ class reduxFirstTrekkerBox extends Component {
     var d = R * c; // distance in km
     return d * 1000;
   }
-
+  invite() {
+    this.setState({ regLoader: true });
+    var Ref = db.collection("invites").doc(this.props.fire);
+    Ref.get().then(doc => {
+      if (doc.exists) {
+        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
+        Ref.update({ accept: false, reject: true, invite: true,
+          sender: {
+            email: this.props.receiver_email
+          } }).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      } else {
+        console.log(
+          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+        );
+        Ref.set(
+          {
+            accept: false,
+            reject: true,
+            invite: true,
+            sender: {
+              email: this.props.receiver_email
+            }
+          },
+          { merge: true }
+        ).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      }
+    });
+  }
 deg2rad(deg) {
     return deg * (Math.PI/180)
   }
@@ -169,7 +204,7 @@ if(value == "false"){
         <ScrollView>
         {trekkers}
         </ScrollView>
-        <LoaderModal regLoader={this.state.regLoader} />
+        <SearchModal regLoader={this.state.regLoader} />
       </View>
     );
   }
@@ -256,8 +291,8 @@ const styles = StyleSheet.create({
     height: 20
   },
   inviteButton: {
-    width: 51,
-    height: 16,
+    width: 60,
+    height: 20,
     borderRadius: 4,
     backgroundColor: "#55C18E",
     alignItems: "center",
@@ -266,7 +301,7 @@ const styles = StyleSheet.create({
   inviteText: {
     color: "#ffffff",
     fontFamily: "mont-bold",
-    fontSize: 8
+    fontSize: 10
   },
   line: {
     width: "89.067%",

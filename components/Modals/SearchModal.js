@@ -20,7 +20,7 @@ import {
   TouchableNativeFeedback
 } from "react-native";
 import { Overlay } from 'react-native-elements';
-export default class LoaderModal extends Component {
+export default class SearchModal extends Component {
   static navigationOptions = {
     header: null,
     drawerLockMode: "locked-closed"
@@ -50,7 +50,7 @@ export default class LoaderModal extends Component {
          <View style={styles.bigView}>
         <ActivityIndicator color='#377848' size='small'/>
         <Text style={styles.loadingText}>
-         Loading
+         Searching
          </Text>
          </View>
          </Overlay>

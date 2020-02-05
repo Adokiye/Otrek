@@ -19,10 +19,12 @@ import {
   Platform,
   PermissionsAndroid,
   Alert,
-  TouchableNativeFeedback
-
+  TouchableNativeFeedback,
+  BackHandler,
+  DeviceEventEmitter
 } from "react-native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import MapView, { Marker, Callout, AnimatedRegion, Animated } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Geocoder from 'react-native-geocoding';
@@ -219,17 +221,17 @@ class reduxMap extends Component {
                     console.log("Document successfully updated!");
                     }) )
             },
-            (error) => console.log(error.message),
-            {enableHighAccuracy: true, timeout: 10000, 
-              //maximumAge: 3000
-            },
+            (error) => console.log(error.message+" issues"),
+            // {enableHighAccuracy: false, timeout: 20000, 
+              
+            // },
           );
            
       }else{
         console.log("Geolocation permission denied")
       }
     }catch(err){
-      console.warn(err)
+      console.warn(err+"fkfk")
     }
   }
   async requestGeolocationPermissionSecond() {
@@ -323,6 +325,7 @@ class reduxMap extends Component {
   
   componentDidMount() {
     this.requestGeolocationPermission();
+    console.log(this.props.first_name)
    }
    navigator(){
      if(!this.state.end_location){
@@ -405,6 +408,9 @@ class reduxMap extends Component {
         bottom: 90,
   //      marginBottom: this.state.marginBottom
         }} 
+        // followsUserLocation={true}
+        showsUserLocation={true}
+        // showsMyLocationButton={true}
         followsUserLocation={this.state.startTrek}
      //   showsUserLocation={this.state.startTrek}
         showsMyLocationButton={true}
@@ -420,7 +426,8 @@ class reduxMap extends Component {
      //      customMapStyle={mapStyle}
       //     followUserLocation
    //       loadingEnabled
- //  showsUserLocation={true}
+   showsUserLocation={true}
+//   loadingEnabled={true}
            >
       {/*     {!!this.state.latitude && !!this.state.longitude && <MapView.Marker
               coordinate={{"latitude":this.state.latitude,"longitude":this.state.longitude}}

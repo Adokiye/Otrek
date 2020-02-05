@@ -26,16 +26,17 @@ import HideWithKeyboard from "react-native-hide-with-keyboard";
 var SharedPreferences = require("react-native-shared-preferences");
 var db = firebase.firestore();
 import { connect } from "react-redux";
-import { setToken } from "../../actions/index";
-const mapStateToProps = state => ({
-  ...state
-});
-// setmobilenumber was used instead of setprice :)
+import { setToken, setLastName, setFirstName } from "../../actions/index";
 const mapDispatchToProps = dispatch => {
   return {
     setToken: token => dispatch(setToken(token)),
+    setLastName: last_name => dispatch(setLastName(last_name)),
+    setFirstName: first_name => dispatch(setFirstName(first_name))
   };
 };
+const mapStateToProps = state => ({
+  ...state
+});
 class reduxLoginScreen extends Component {
   static navigationOptions = {
     header: null,
@@ -74,9 +75,23 @@ class reduxLoginScreen extends Component {
           .signInWithEmailAndPassword(this.state.email, this.state.password)
           .then(
             function(){
-              this.props.setToken(this.state.email);
-              this.setState({ regLoader: false, }, );
-              this.props.navigation.navigate("Map");
+              db.collection('users').doc(this.state.email).get().then(function(doc) {
+                if (doc.exists) {
+                    console.log("Document data:", doc.data());
+                    this.props.setFirstName(doc.data().details.first_name);
+                    this.props.setLastName(doc.data().details.last_name);
+                    this.props.setToken(this.state.email);
+                    this.setState({ regLoader: false, }, );
+                    this.props.navigation.navigate("Map");
+                } else {
+                  this.setState({ regLoader: false, }, );
+                    console.log("No such document!");
+                }
+            }.bind(this)).catch(function(error) {
+                console.log("Error getting document:", error);
+                this.setState({ error_message: "Error", error: true, regLoader: false })
+            }.bind(this));
+              
             }.bind(this)).catch(error => 
               this.setState({ error_message: error.message, error: true, regLoader: false }))
         } 

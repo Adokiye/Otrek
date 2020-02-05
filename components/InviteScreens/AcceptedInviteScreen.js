@@ -8,7 +8,7 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
-  Image,
+  Image, 
   Dimensions,
   View,
   ScrollView,
@@ -17,7 +17,11 @@ import {
   StatusBar,
   TouchableWithoutFeedback
 } from "react-native";
-export default class AcceptedInvitedScreen extends Component {
+import { connect } from "react-redux";
+const mapStateToProps = state => ({
+  ...state
+});
+class reduxAcceptedInviteScreen extends Component {
   static navigationOptions = {
     header: null,
     drawerLockMode: "locked-closed"
@@ -36,17 +40,20 @@ export default class AcceptedInvitedScreen extends Component {
             resizeMode="contain"
             style={styles.checkImage}
           />
-          <Text style={styles.name}>Adebayo John</Text>
+          <Text style={styles.name}>{this.props.receiver_first_name} {this.props.receiver_last_name}</Text>
           <Text style={styles.accepted}>Accepted your request</Text>
-          <View style={styles.continueView}>
+       {/*   <View style={styles.continueView}>
             <Text style={styles.continueText}>Continue</Text>
-          </View>
+          </View> */}
         </View>
       </View>
     );
   }
 }
-const dimensions = Dimensions.get("window");
+const AcceptedInviteScreen = connect(
+  mapStateToProps
+)(reduxAcceptedInviteScreen);
+export default AcceptedInviteScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -15,101 +15,215 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ActivityIndicator
 } from "react-native";
-export default class InviteScreen extends Component {
+import LoaderModal from "../Modals/LoaderModal";
+import LinearGradient from "react-native-linear-gradient";
+var db = firebase.firestore();
+import { connect } from "react-redux";
+const mapStateToProps = state => ({
+  ...state
+});
+
+class reduxInviteScreen extends Component {
   static navigationOptions = {
     header: null,
     drawerLockMode: "locked-closed"
   };
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      regLoader: false
+    };
   }
   componentDidMount() {}
+  accept() {
+    this.setState({ regLoader: true });
+    var Ref = db.collection("invites").doc(this.props.fire);
+    Ref.get().then(doc => {
+      if (doc.exists) {
+        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
+        Ref.update({ accept: true, reject: false, invite: false,            
+          sender: {
+          email: this.props.receiver_email
+        } }).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      } else {
+        console.log(
+          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+        );
+        Ref.set(
+          {
+            accept: true,
+            reject: false,
+            invite: false,            
+            sender: {
+              email: this.props.receiver_email
+            }
+          },
+          { merge: true }
+        ).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      }
+    });
+  }
+  reject() {
+    this.setState({ regLoader: true });
+    var Ref = db.collection("invites").doc(this.props.fire);
+    Ref.get().then(doc => {
+      if (doc.exists) {
+        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
+        Ref.update({ accept: false, reject: true, invite: false,
+          sender: {
+            email: this.props.receiver_email
+          } }).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      } else {
+        console.log(
+          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+        );
+        Ref.set(
+          {
+            accept: false,
+            reject: true,
+            invite: false,
+            sender: {
+              email: this.props.receiver_email
+            }
+          },
+          { merge: true }
+        ).then(
+          function() {
+            this.setState({ regLoader: false });
+          }.bind(this)
+        );
+      }
+    });
+  }
   render() {
+    const { params } = this.props.navigation.state;
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={["#57C693", "#377848"]} style={styles.container}>
         <View style={styles.houseView}>
-          <Image
-            source={require("../../assets/images/check.png")}
-            resizeMode="contain"
-            style={styles.checkImage}
-          />
-          <Text style={styles.accountCreatedText}>Account Created</Text>
+          <View style={styles.checkImageView}>
+            <Image
+              source={{ uri: this.props.receiver.image }}
+              resizeMode="cover"
+              style={styles.checkImage}
+            />
+          </View>
+          <Text style={styles.accountCreatedText}>
+            {this.props.receiver_first_name} {this.props.receiver_last_name}
+          </Text>
+          <Text style={styles.invitingText}>
+            is inviting you to be{" "}
+            {this.state.receiver_gender == "M" ? "his" : "her"} trekpal
+          </Text>
+          <TouchableOpacity onPress={this.accept.bind(this)}>
+            <View style={styles.acceptView}>
+              <Text style={styles.acceptText}>Accept</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.reject.bind(this)}>
+            <View style={styles.rejectView}>
+              <Text style={styles.rejectText}>Reject</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.interestText}>
+            Interests: {this.props.receiver_interests}
+          </Text>
         </View>
-      </View>
+        <LoaderModal regLoader={this.state.regLoader} />
+      </LinearGradient>
     );
   }
 }
-const dimensions = Dimensions.get("window");
+const InviteScreen = connect(mapStateToProps)(reduxInviteScreen);
+export default InviteScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    backgroundColor: "#377848",
     alignItems: "center",
+    justifyContent: "center"
   },
-   inviteeView: {
-       width: 167,
-       height: 167,
-       borderWidth: 2,
-       borderColor: '#ffffff',
-       alignSelf: 'center',
-       marginTop:  82- StatusBar.currentHeight,
-       borderRadius: 83.5,
-       alignItems: 'center',
-       justifyContent: 'center'
-   },
-   inviteeImage: {
-       width: 165,
-       height: 165,
-       alignSelf: 'center',
-       borderRadius: 82.5
-   },
-   name: {
-       marginTop: 24,
-       alignSelf: 'center',
-       color: '#ffffff',
-       fontSize: 20,
-       fontFamily: 'mont-bold'
-   },
-   isInviting: {
-       color: '#fffffff',
-       alignSelf: 'center',
-       fontFamily: 'mont-semi',
-       fontSize: 11
-   },
-   acceptView: {
-    alignSelf: 'center',
-   alignItems: 'center',
-   justifyContent: 'center',
-   backgroundColor: '#36FF3E',
-   borderRadius: 6,
-   marginTop: 25
-   },
-    acceptText: {
-    color: '#454040',
-    fontFamily: 'mont-semi',
-    fontSize: 11
-    },
-    rejectView: {
-        alignSelf: 'center',
-       alignItems: 'center',
-       justifyContent: 'center',
-       backgroundColor: '#EB4848',
-       borderRadius: 6,
-       marginTop: 16
-       },
-        acceptText: {
-        color: '#454040',
-        fontFamily: 'mont-semi',
-        fontSize: 11
-        },
-        interests: {
-            marginTop: 16,
-            fontSize: 10,
-            fontFamily: 'mont-medium-italic',
-            color: '#ffffff'
-        }
+  houseView: {
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  checkImage: {
+    width: 132,
+    height: 132,
+    alignSelf: "center",
+    borderRadius: 66
+  },
+  checkImageView: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "white"
+  },
+  accountCreatedText: {
+    color: "#ffffff",
+    fontFamily: "mont-bold",
+    fontSize: 20,
+    alignSelf: "center",
+    marginTop: 30
+  },
+  rejectView: {
+    backgroundColor: "#B70000",
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 140,
+    height: 37,
+    marginTop: 15
+  },
+  rejectText: {
+    color: "#000",
+    fontSize: 13,
+    fontFamily: "mont-semi"
+  },
+  acceptView: {
+    backgroundColor: "#29E934",
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 140,
+    height: 37,
+    marginTop: 30
+  },
+  acceptText: {
+    color: "#000",
+    fontSize: 13,
+    fontFamily: "mont-semi"
+  },
+  invitingText: {
+    color: "#ffffff",
+    fontFamily: "mont-bold",
+    fontSize: 16,
+    alignSelf: "center",
+    marginBottom: 20
+  },
+  interestText: {
+    marginTop: 15,
+    color: "#fff",
+    fontFamily: "mont-italic",
+    fontSize: 16,
+    alignSelf: "center"
+  }
 });
