@@ -28,7 +28,8 @@ import InvitingScreen from "./components/InviteScreens/InvitingScreen";
 import RejectedInviteScreen from "./components/InviteScreens/RejectedInviteScreen";
 import Splash from "./components/Splash";
 import SplashScreen from "react-native-splash-screen";
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator, createAppContainer } from "react-navigation";
+import NavigationService from './components/NavigationService';
 import { persistor, store } from "./store/index";
 import { Provider } from "react-redux";
 import type { Notification, NotificationOpen } from "react-native-firebase";
@@ -73,12 +74,19 @@ const RootStack = createStackNavigator({
     screen: LoginScreen
   }
 });
-
+const AppContainer = createAppContainer(RootStack);
 class App extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      invite: false
+      new_invite: false,
+      accept_invite: false,
+      reject_invite: false,
+      cancel_invite: false,
+      receiver: {},
+      sender: {},
+      fire: '',
+      deviceToken: ''
     };
   }
   async componentDidMount() {
@@ -122,6 +130,7 @@ class App extends Component<Props> {
   }
   componentWillUnmount() {
     this.notificationListener();
+    this.messageListener();
     this.notificationOpenedListener();
     clearTimeout(this.timeout);
   }
@@ -133,6 +142,8 @@ class App extends Component<Props> {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
+        console.log("data===>"+JSON.stringify(notification.data));
+
         console.log("received");
         const localNotification = new firebase.notifications.Notification({
           sound: "default",
@@ -160,7 +171,65 @@ class App extends Component<Props> {
     this.notificationOpenedListener = firebase
       .notifications()
       .onNotificationOpened(notificationOpen => {
-        const { title, body } = notificationOpen.notification;
+        const notification = notificationOpen.notification;
+   //     console.log(JSON.stringify(notificationOpen.notification))
+        if (notification.data.title === "Invite Accepted") {
+          this.setState(
+            {
+              accept_invite: true
+            },
+            () =>
+            NavigationService.navigate("AcceptedInviteScreen", {
+              // chatName: `${data.channelName}`,
+              // chatId: `${data.channelId}`
+            })
+              // this.showAccept.bind(
+              //   this,
+              //   notification.data.receiver.first_name,
+              //   notification.data.receiver.image
+              // )
+          );
+          // this.timeout = setTimeout(() => {
+          //   this.setState(() => ({ invite: false }));
+          // }, 4000);
+        } else if (notification.data.title === "Invite Rejected") {
+          this.setState(
+            {
+              reject_invite: true 
+            },
+            () =>
+            NavigationService.navigate("RejectedInviteScreen", {
+              // chatName: `${data.channelName}`,
+              // chatId: `${data.channelId}`
+            })
+              // this.showReject.bind(
+              //   this,
+              //   notification.data.first_name,
+              //   notification.data.image
+              // )
+         );
+          // this.timeout = setTimeout(() => {
+          //   this.setState(() => ({ invite: false }));
+          // }, 4000);
+        } else if (notification.data.title === "New Invite") {
+          console.log("new new!")
+          this.setState(
+            {
+              new_invite: true,
+              receiver: notification.data.receiver,
+              sender: notification.data.sender
+            },
+            () =>
+            NavigationService.navigate("InviteScreen", {
+              // chatName: `${data.channelName}`,
+              // chatId: `${data.channelId}`
+            })
+          );
+          // this.timeout = setTimeout(() => {
+          //   this.setState(() => ({ invite: false }));
+          // }, 4000);
+        } else if (notification.data.title === "Invite Cancelled") {
+        }
         // NavigationService.navigate("Orders", {
         //   // chatName: `${data.channelName}`,
         //   // chatId: `${data.channelId}`
@@ -176,77 +245,35 @@ class App extends Component<Props> {
       .getInitialNotification();
     if (notificationOpen) {
       const { title, body } = notificationOpen.notification;
+      console.log(JSON.stringify(notificationOpen.notification))
       //   this.showAlert.bind(this, title, body);
     }
     /*
      * Triggered for data only payload in foreground
      * */
     this.messageListener = firebase.messaging().onMessage(message => {
-      console.log(JSON.stringify(message));
+      console.log("data===>"+JSON.stringify(message));
       //process data message
-      if (message.title === "Invite Accepted") {
-        this.setState(
-          {
-            invite: true
-          },
-          () =>
-            this.showAccept.bind(
-              this,
-              message.receiver.first_name,
-              message.receiver.image
-            )
-        );
-        this.timeout = setTimeout(() => {
-          this.setState(() => ({ invite: false }));
-        }, 4000);
-      } else if (message.title === "Invite Rejected") {
-        this.setState(
-          {
-            invite: true
-          },
-          () =>
-            this.showReject.bind(
-              this,
-              message.receiver.first_name,
-              message.receiver.image
-            )
-        );
-        this.timeout = setTimeout(() => {
-          this.setState(() => ({ invite: false }));
-        }, 4000);
-      } else if (message.title === "New Invite") {
-        this.setState(
-          {
-            invite: true
-          },
-          () =>
-            this.showInvite.bind(
-              this,
-              message.receiver,
-              message.sender,
-              message.fire
-            )
-        );
-        this.timeout = setTimeout(() => {
-          this.setState(() => ({ invite: false }));
-        }, 4000);
-      } else if (message.title === "Invite Cancelled") {
-      }
+     
     });
   }
   showReject(name, image) {
-    if (this.state.invite) {
+    // if (this.state.invite) {
+      NavigationService.navigate("Notification", {
+        // chatName: `${data.channelName}`,
+        // chatId: `${data.channelId}`
+      });
       return (
         <RejectedInviteScreen
           receiver_image={image}
           receiver_first_name={name}
         />
       );
-    } else {
-      return null;
-    }
+    // } else {
+    //   return null;
+    // }
   }
-  showAccept(name, image) {
+  showAccept =(name, image) => {
     if (this.state.invite) {
       return (
         <AcceptedInviteScreen
@@ -258,19 +285,35 @@ class App extends Component<Props> {
       return null;
     }
   }
-  showInvite(receiver, sender, fire) {
-    if (this.state.invite) {
-      return <InviteScreen receiver={receiver} fire={fire} sender={sender} />;
-    } else {
-      return null;
-    }
+  showInvite = (receiver, sender, fire, deviceToken) => {
+    // if (this.state.invite) {
+    //   console.log("true  ")
+      return (<InviteScreen receiver={receiver} 
+      fire={fire} sender={sender} 
+        deviceToken={deviceToken}
+      />);
+    // } else {
+    //   console.log("false  ")
+    //   return null;
+    // }
   }
   render() {
+    if(this.state.new_invite){
+
+    }else if(this.state.accept_invite){
+
+    }else if(this.state.reject_invite){
+
+    }else{
+
+    }
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <View style={styles.container}>
-            <RootStack />
+          <AppContainer  ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}/>
           </View>
         </PersistGate>
       </Provider>

@@ -54,8 +54,11 @@ class reduxInvitingScreen extends Component {
   }
   sendPushNotification = async (title, body, token, image, interests) => {
     const FIREBASE_API_KEY = firebaseApiKey;
+    console.log("here!!!"+FIREBASE_API_KEY)    
+      console.log(this.props.receiver.deviceToken+"toks")
     const message = {
-      to: this.props.deviceToken,
+
+      to: this.props.deviceToken?this.props.deviceToken:"token",
       notification: {
         title: title,
         body: body,
@@ -63,13 +66,14 @@ class reduxInvitingScreen extends Component {
         sound: 1,
         show_in_foreground: true,
         priority: "high",
-        content_available: true
+        content_available: true 
       },
       data: {
         title: title,
         body: body,
         receiver: this.props.user,
         sender: this.props.receiver,
+        deviceToken: this.props.deviceToken,
         fire: this.state.fire
       }
     };
@@ -82,8 +86,8 @@ class reduxInvitingScreen extends Component {
       },
       body: JSON.stringify(message)
     });
-    response = await response.json();
-    console.log(response);
+    response = await response.text();
+    console.log(JSON.stringify(response)+"sdssd");
     if (title === "Invite Cancelled") {
       this.props.hideInvite("false");
       this.setState({ cancelLoader: false });
@@ -119,7 +123,6 @@ class reduxInvitingScreen extends Component {
               "New Invite",
               this.props.user.first_name + " has invited you for a trek",
             );
-            //    this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
@@ -149,7 +152,6 @@ class reduxInvitingScreen extends Component {
                   this.props.user.first_name +
                     " has invited you for a trek",
                 );
-                //       this.setState({ regLoader: false });
               }.bind(this)
             );
           } else {
@@ -177,7 +179,6 @@ class reduxInvitingScreen extends Component {
                   this.props.user.first_name +
                     " has invited you for a trek",
                 );
-                //     this.setState({ regLoader: false });
               }.bind(this)
             );
           }
@@ -211,8 +212,9 @@ class reduxInvitingScreen extends Component {
               "Invite Cancelled",
               this.props.user.first_name + " cancelled the invite",
             );
+            
             //  this.props.hideInvite("false");
-            //  this.setState({ cancelLoader: false });
+            //  
           }.bind(this)
         );
       } else {
@@ -236,12 +238,17 @@ class reduxInvitingScreen extends Component {
               "Invite Cancelled",
               this.props.user.first_name + " cancelled the invite",
             );
+
             // this.props.hideInvite("false");
             // this.setState({ cancelLoader: false });
           }.bind(this)
         );
       }
     });
+  }
+  canceller = ()=>{
+    this.props.hideInvite("false");
+              this.setState({ cancelLoader: false });
   }
   render() {
     const { params } = this.props.navigation.state;

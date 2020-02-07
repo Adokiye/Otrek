@@ -88,9 +88,7 @@ class reduxLoginScreen extends Component {
                     this.props.setToken(this.state.email);
                     Ref.update(
                       {
-                        details: {
                             deviceToken: this.state.fcmToken
-                          }
                       }
                     ).then(function(){
                       this.setState({ regLoader: false, }, );

@@ -45,7 +45,7 @@ class reduxInviteScreen extends Component {
   sendPushNotification = async (title, body, token, image, interests) => {
     const FIREBASE_API_KEY = firebaseApiKey;
     const message = {
-      to: this.props.receiver.deviceToken,
+      to: this.props.deviceToken?this.props.deviceToken:"token",
       notification: {
         title: title,
         body: body,
@@ -64,7 +64,7 @@ class reduxInviteScreen extends Component {
         fire: this.props.fire,
       }
     };
-
+   
     let response = await fetch("https://fcm.googleapis.com/fcm/send", {
       method: "POST",
       headers: {
@@ -73,7 +73,7 @@ class reduxInviteScreen extends Component {
       },
       body: JSON.stringify(message)
     });
-    response = await response.json();
+    response = await response.text();
     console.log(response);
       this.setState({ regLoader: false });
     
@@ -97,7 +97,6 @@ class reduxInviteScreen extends Component {
               "Invite Accepted",
               this.props.sender.first_name + " accepted your invite",
             );
-      //      this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
@@ -213,10 +212,13 @@ const InviteScreen = connect(mapStateToProps)(reduxInviteScreen);
 export default InviteScreen;
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: '100%',
+        height: '100%',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    position:'absolute',
+    top: 0
   },
   houseView: {
     flexDirection: 'column',
