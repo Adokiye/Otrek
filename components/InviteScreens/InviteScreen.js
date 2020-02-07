@@ -60,8 +60,8 @@ class reduxInviteScreen extends Component {
         body: body,
         token: token,
         receiver: this.props.sender,
-        sender: this.props.receiver
-        fire: this.props.fire
+        sender: this.props.receiver,
+        fire: this.props.fire,
       }
     };
 
