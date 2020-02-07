@@ -23,6 +23,7 @@ import {
 import firebase from 'react-native-firebase';
 import LoaderModal from '../Modals/LoaderModal';
 import LinearGradient from 'react-native-linear-gradient';
+import { firebaseApiKey } from "../../config/firebase.js";
 var db = firebase.firestore();
 import { connect } from 'react-redux';
 const mapStateToProps = state => ({
@@ -41,6 +42,42 @@ class reduxInviteScreen extends Component {
     };
   }
   componentDidMount() {}
+  sendPushNotification = async (title, body, token, image, interests) => {
+    const FIREBASE_API_KEY = firebaseApiKey;
+    const message = {
+      to: this.props.receiver.deviceToken,
+      notification: {
+        title: title,
+        body: body,
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: "high",
+        content_available: true
+      },
+      data: {
+        title: title,
+        body: body,
+        token: token,
+        receiver: this.props.sender,
+        sender: this.props.receiver
+        fire: this.props.fire
+      }
+    };
+
+    let response = await fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "key=" + FIREBASE_API_KEY
+      },
+      body: JSON.stringify(message)
+    });
+    response = await response.json();
+    console.log(response);
+      this.setState({ regLoader: false });
+    
+  };
   accept() {
     this.setState({ regLoader: true });
     var Ref = db.collection('invites').doc(this.props.fire);
@@ -52,11 +89,15 @@ class reduxInviteScreen extends Component {
           reject: false,
           invite: false,
           sender: {
-            email: this.props.receiver_email
+            email: this.props.receiver.email
           }
         }).then(
           function() {
-            this.setState({ regLoader: false });
+            this.sendPushNotification(
+              "Invite Accepted",
+              this.props.sender.first_name + " accepted your invite",
+            );
+      //      this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
@@ -69,13 +110,16 @@ class reduxInviteScreen extends Component {
             reject: false,
             invite: false,
             sender: {
-              email: this.props.receiver_email
+              email: this.props.receiver.email
             }
           },
           { merge: true }
         ).then(
           function() {
-            this.setState({ regLoader: false });
+            this.sendPushNotification(
+              "Invite Accepted",
+              this.props.sender.first_name + " accepted your invite",
+            );
           }.bind(this)
         );
       }
@@ -92,11 +136,14 @@ class reduxInviteScreen extends Component {
           reject: true,
           invite: false,
           sender: {
-            email: this.props.receiver_email
+            email: this.props.receiver.email
           }
         }).then(
           function() {
-            this.setState({ regLoader: false });
+            this.sendPushNotification(
+              "Invite Rejected",
+              this.props.sender.first_name + " has rejected your invite",
+            );
           }.bind(this)
         );
       } else {
@@ -109,13 +156,16 @@ class reduxInviteScreen extends Component {
             reject: true,
             invite: false,
             sender: {
-              email: this.props.receiver_email
+              email: this.props.receiver.email
             }
           },
           { merge: true }
         ).then(
           function() {
-            this.setState({ regLoader: false });
+            this.sendPushNotification(
+              "Invite Rejected",
+              this.props.sender.first_name + " has rejected your invite",
+            );
           }.bind(this)
         );
       }
@@ -138,7 +188,7 @@ class reduxInviteScreen extends Component {
           </Text>
           <Text style={styles.invitingText}>
             is inviting you to be{' '}
-            {this.state.receiver.gender == 'M' ? 'his' : 'her'} trekpal
+            {this.props.receiver.gender == 'M' ? 'his' : 'her'} trekpal
           </Text>
           <TouchableOpacity onPress={this.accept.bind(this)}>
             <View style={styles.acceptView}>

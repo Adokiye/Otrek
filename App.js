@@ -190,17 +190,19 @@ class App extends Component<Props> {
     />
    );
   }
-  showAccept(){
+  showAccept(name, image){
     return(
     <AcceptedInviteScreen
-
+          receiver_image={image}
+    receiver_first_name={name}
     />
     )
   }
-  showInvite(){
+  showInvite(receiver, fire){
     return(
       <InviteScreen
-
+        receiver={receiver}
+        fire={fire}
       />
     )
   }

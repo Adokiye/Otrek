@@ -52,108 +52,6 @@ class reduxInvitingScreen extends Component {
       deviceToken: ""
     };
   }
-  update = () => {
-    console.log("here");
-    var listener = db.collection("invites").doc(this.props.token);
-    listener.get().then(doc => {
-      if (doc.exists) {
-        if (doc.data().invite) {
-          listener
-            .update({
-              invites: firebase.firestore.FieldValue.arrayUnion(this.state.fire)
-            })
-            .then(
-              function() {
-                this.setState({ regLoader: false });
-              }.bind(this)
-            );
-        } else {
-          listener
-            .update({
-              invite: true,
-              invites: firebase.firestore.FieldValue.arrayUnion(this.state.fire)
-            })
-            .then(
-              function() {
-                this.setState({ regLoader: false });
-              }.bind(this)
-            );
-        }
-      } else {
-        console.log(
-          "invite not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
-        );
-        listener
-          .set(
-            {
-              invite: true,
-              invites: [this.state.fire]
-            },
-            { merge: true }
-          )
-          .then(
-            function() {
-              this.setState({ regLoader: false });
-            }.bind(this)
-          );
-      }
-    });
-  };
-  cancelUpdate = () => {
-    console.log(" cancel here");
-    var listener = db.collection("invites").doc(this.props.token);
-    listener.get().then(doc => {
-      if (doc.exists) {
-        if (doc.data().invite) {
-          var invites = doc.data().invites;
-          if (doc.data().invites.length > 1) {
-            listener
-              .update({
-                invites: invites.filter(invite => invite !== this.state.fire)
-              })
-              .then(
-                function() {
-                  this.props.hideInvite("false");
-
-                  this.setState({ cancelLoader: false });
-                }.bind(this)
-              );
-          } else {
-            listener
-              .update({
-                invite: false,
-                invites: invites.filter(invite => invite !== this.state.fire)
-              })
-              .then(
-                function() {
-                  this.props.hideInvite("false");
-
-                  this.setState({ cancelLoader: false });
-                }.bind(this)
-              );
-          }
-        }
-      } else {
-        console.log(
-          "cance invite not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
-        );
-        listener
-          .set(
-            {
-              invite: false
-            },
-            { merge: true }
-          )
-          .then(
-            function() {
-              this.props.hideInvite("false");
-
-              this.setState({ cancelLoader: false });
-            }.bind(this)
-          );
-      }
-    });
-  };
   sendPushNotification = async (title, body, token, image, interests) => {
     const FIREBASE_API_KEY = firebaseApiKey;
     const message = {
@@ -170,9 +68,9 @@ class reduxInvitingScreen extends Component {
       data: {
         title: title,
         body: body,
-        image: image,
-        interests: interests,
-        token: token
+        receiver: this.props.user,
+        sender: this.props.receiver,
+        fire: this.state.fire
       }
     };
 
@@ -219,9 +117,7 @@ class reduxInvitingScreen extends Component {
             //  this.update();
             this.sendPushNotification(
               "New Invite",
-              this.props.receiver.first_name + " has invited you for a trek",
-              this.props.receiver_email,
-              this.props.receiver_image
+              this.props.user.first_name + " has invited you for a trek",
             );
             //    this.setState({ regLoader: false });
           }.bind(this)
@@ -250,10 +146,8 @@ class reduxInvitingScreen extends Component {
                 //   this.update();
                 this.sendPushNotification(
                   "New Invite",
-                  this.props.receiver.first_name +
+                  this.props.user.first_name +
                     " has invited you for a trek",
-                  this.props.receiver_email,
-                  this.props.receiver_image
                 );
                 //       this.setState({ regLoader: false });
               }.bind(this)
@@ -280,10 +174,8 @@ class reduxInvitingScreen extends Component {
                 // this.update();
                 this.sendPushNotification(
                   "New Invite",
-                  this.props.receiver.first_name +
+                  this.props.user.first_name +
                     " has invited you for a trek",
-                  this.props.receiver_email,
-                  this.props.receiver_image
                 );
                 //     this.setState({ regLoader: false });
               }.bind(this)
@@ -317,9 +209,7 @@ class reduxInvitingScreen extends Component {
             //     this.cancelUpdate();
             this.sendPushNotification(
               "Invite Cancelled",
-              this.props.receiver.first_name + " cancelled the invite",
-              this.props.receiver_email,
-              this.props.receiver_image
+              this.props.user.first_name + " cancelled the invite",
             );
             //  this.props.hideInvite("false");
             //  this.setState({ cancelLoader: false });
@@ -344,9 +234,7 @@ class reduxInvitingScreen extends Component {
             //   this.cancelUpdate();
             this.sendPushNotification(
               "Invite Cancelled",
-              this.props.receiver.first_name + " cancelled the invite",
-              this.props.receiver_email,
-              this.props.receiver_image
+              this.props.user.first_name + " cancelled the invite",
             );
             // this.props.hideInvite("false");
             // this.setState({ cancelLoader: false });
