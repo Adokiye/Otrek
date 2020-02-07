@@ -18,6 +18,7 @@ import {
   TouchableWithoutFeedback,
   TouchableNativeFeedback
 } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
 import firebase from "react-native-firebase";
 import ErrorModal from "../Modals/ErrorModal";
 import LoaderModal from "../Modals/LoaderModal";
@@ -51,7 +52,8 @@ class reduxLoginScreen extends Component {
       error: false,
       error_message: null,
       location: 'LoginScreen',
-      eye_of_tiger: true
+      eye_of_tiger: true,
+      fcmToken: ''
     };
   }
   hideErrorModal = value => {
@@ -96,7 +98,52 @@ class reduxLoginScreen extends Component {
               this.setState({ error_message: error.message, error: true, regLoader: false }))
         } 
   }
-  componentDidMount() {}
+  async componentDidMount(){
+    this.checkPermission();
+  }
+  async checkPermission() {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+        console.log("enabled")
+        this.getToken();
+    } else {
+      console.log("unenabled")
+        this.requestPermission();
+    }
+  }
+  
+    //3
+  async getToken() {
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!fcmToken) {
+        fcmToken = await firebase.messaging().getToken();
+        if (fcmToken) {
+            // user has a device token
+            this.setState({fcmToken});
+            console.log(fcmToken);
+            await AsyncStorage.setItem('fcmToken', fcmToken);
+        }else{
+          console.log("\n"+"\n"+"no token"+"\n"+"\n")
+        }
+    }else{
+      console.log("here")
+      this.setState({fcmToken});
+      console.log(fcmToken);
+    }
+  }
+  
+    //2
+  async requestPermission() {
+    try {
+        await firebase.messaging().requestPermission();
+        console.log("admin authorised")
+        // User has authorised
+        this.getToken();
+    } catch (error) {
+        // User has rejected permissions
+        console.log('permission rejected');
+    }
+  }
   render() {
     return (
       <View style={styles.container}>
