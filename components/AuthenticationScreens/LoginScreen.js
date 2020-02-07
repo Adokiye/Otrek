@@ -91,8 +91,7 @@ class reduxLoginScreen extends Component {
                         details: {
                             deviceToken: this.state.fcmToken
                           }
-                      },
-                      { merge: true }
+                      }
                     ).then(function(){
                       this.setState({ regLoader: false, }, );
                       this.props.navigation.navigate("Map");
