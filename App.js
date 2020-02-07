@@ -182,6 +182,28 @@ class App extends Component<Props> {
       console.log(JSON.stringify(message));
     });
   }
+  showreject(name, image){
+   return(
+    <RejectedInviteScreen 
+    receiver_image={image}
+    receiver_first_name={name}
+    />
+   );
+  }
+  showAccept(){
+    return(
+    <AcceptedInviteScreen
+
+    />
+    )
+  }
+  showInvite(){
+    return(
+      <InviteScreen
+
+      />
+    )
+  }
   render() {
             return (
               <Provider store={store}>

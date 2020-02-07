@@ -41,7 +41,14 @@ class reduxRejectedInviteScreen extends Component {
             resizeMode="contain"
             style={styles.checkImage}
           />
-          <Text style={styles.name}>{this.props.receiver_first_name} {this.props.receiver_last_name}</Text>
+                    <View style={styles.checkImageView}>
+            <Image
+              source={{ uri: this.props.receiver_image }}
+              resizeMode="cover"
+              style={styles.checkImage}
+            />
+          </View>
+          <Text style={styles.name}>{this.props.receiver_first_name}</Text>
           <Text style={styles.accepted}>Rejected your request</Text>
     {/*   <View style={styles.continueView}>
             <Text style={styles.continueText}>Continue</Text>
@@ -63,6 +70,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#B70000",
     alignItems: "center"
   },
+  houseView: {
+    flexDirection: "column",
+    alignItems: "center"
+  },
   checkImage: {
     width: "30%",
     height: 107,
@@ -80,6 +91,16 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontFamily: "mont-bold",
     fontSize: 20
+  },
+  checkImageView: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "white"
   },
   continueView: {
     marginBottom: "25.5%",
