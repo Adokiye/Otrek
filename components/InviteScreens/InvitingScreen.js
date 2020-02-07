@@ -153,6 +153,36 @@ class reduxInvitingScreen extends Component {
       }
     });
   }
+  sendPushNotification = async () => {
+    const FIREBASE_API_KEY = "xxxxxxxxxxxxx";
+    const message = {
+     registration_ids: ["cWDVKttVMsA:APA91bFUlHrNqoIMdNE5_qWOADFue_tTzxWaRe_gWwoX28r2OKviHp4OZR0KsvpxPr_yARwbsnF-p69ao7lcZ0yz0JL74ZnwVzp8tXDDcqrHckIEhP2t2bC4Fg1-r1-xxxxxx_xxxxxx", "xxxxx...."], 
+      notification: {
+        title: "india vs south africa test",
+        body: "IND chose to bat",
+        "vibrate": 1,
+        "sound": 1,
+        "show_in_foreground": true,
+        "priority": "high",
+        "content_available": true,
+      },
+      data: {
+        title: "india vs south africa test",
+        body: "IND chose to bat",
+        score: 50,
+        wicket: 1
+      }
+  }
+  
+    let headers = new Headers({
+      "Content-Type": "application/json",
+      "Authorization": "key=" + FIREBASE_API_KEY
+    });
+  
+    let response = await fetch("https://fcm.googleapis.com/fcm/send", { method: "POST", headers, body: JSON.stringify(message) })
+    response = await response.json();
+    console.log(response);
+  }
   componentDidMount() {
     this.setState({ regLoader: true });
     var Ref = db
