@@ -180,38 +180,39 @@ class App extends Component<Props> {
      * Triggered for data only payload in foreground
      * */
     this.messageListener = firebase.messaging().onMessage(message => {
+      console.log(JSON.stringify(message));
       //process data message
-      if(message.data.title === 'Invite Accepted'){
+      if(message.title === 'Invite Accepted'){
         this.setState({
           invite: true
         }, ()=>
-         this.showAccept.bind(this, message.data.receiver.first_name, message.data.receiver.image)
+         this.showAccept.bind(this, message.receiver.first_name, message.receiver.image)
         )
         this.timeout = setTimeout(() => { 
           this.setState(() => ({invite: false}))
         }, 4000);
-      }else if(message.data.title === 'Invite Rejected'){
+      }else if(message.title === 'Invite Rejected'){
         this.setState({
           invite: true
-        }, ()=> this.showReject.bind(this, message.data.receiver.first_name, message.data.receiver.image)
+        }, ()=> this.showReject.bind(this, message.receiver.first_name, message.receiver.image)
         )
         this.timeout = setTimeout(() => { 
           this.setState(() => ({invite: false}))
         }, 4000);
        
-      }else if(message.data.title === 'New Invite'){
+      }else if(message.title === 'New Invite'){
         this.setState({
           invite: true
-        }, ()=> this.showInvite.bind(this, message.data.receiver, message.data.sender, message.data.fire)
+        }, ()=> this.showInvite.bind(this, message.receiver, message.sender, message.fire)
         )
         this.timeout = setTimeout(() => { 
           this.setState(() => ({invite: false}))
         }, 4000);
 
-      }else if(message.data.title === 'Invite Cancelled'){
+      }else if(message.title === 'Invite Cancelled'){
 
       }
-      console.log(JSON.stringify(message));
+
     });
   }
   showReject(name, image){
