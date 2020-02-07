@@ -52,6 +52,15 @@ const RootStack = createStackNavigator({
   Home: {
     screen: Splash
   },
+  InviteScreen: {
+    screen: InviteScreen
+  },
+  AcceptedInviteScreen: {
+    screen: AcceptedInviteScreen
+  },
+  RejectedInviteScreen: {
+    screen: RejectedInviteScreen
+  },
   WelcomeScreen: {
     screen: WelcomeScreen
   },
