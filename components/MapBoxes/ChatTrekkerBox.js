@@ -170,7 +170,7 @@ class reduxChatTrekkerBox extends Component {
                   }));
                 } else {
                   console.log("else ");
-                  for (let i = 0; i < doc.data().messages.length; i++) {
+                  for (let i = doc.data().messages.length-1; i < 0; i--) {
                     let messages = [...this.state.messages];
                     let message = { ...messages[i] };
                     message.received = doc.data().messages[i].received;
@@ -246,7 +246,7 @@ class reduxChatTrekkerBox extends Component {
                   }));
                 } else {
                   console.log("else ");
-                  for (let i = 0; i < doc.data().messages.length; i++) {
+                  for(let i = doc.data().messages.length-1; i < 0; i--){
                     let messages = [...this.state.messages];
                     let message = { ...messages[i] };
                     message.received = doc.data().messages[i].received;

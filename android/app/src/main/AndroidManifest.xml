@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 <permission
 android:name="android.permission.ACCESS_COARSE_LOCATION"
 android:protectionLevel="signature" />
@@ -18,6 +21,16 @@ android:protectionLevel="signature"/>
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+                          <meta-data
+    android:name="com.google.firebase.messaging.default_notification_icon"
+    android:resource="@drawable/ic_stat_otrek" />
+    <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+    android:resource="@color/gradient_end" />
+      <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+    <intent-filter>
+      <action android:name="com.google.firebase.MESSAGING_EVENT" />
+    </intent-filter>
+  </service>
       <meta-data
      android:name="com.google.android.geo.API_KEY"
      android:value="AIzaSyCabaQ0gls7rfTgLU2gW8vDBxlrTNZ1CW4"/>

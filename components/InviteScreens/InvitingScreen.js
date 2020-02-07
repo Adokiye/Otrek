@@ -50,14 +50,15 @@ class reduxInvitingScreen extends Component {
       cancelLoader: false
     };
   }
-  update() {
+  update = () => {
+    console.log("here");
     var listener = db.collection("invites").doc(this.props.token);
     listener.get().then(doc => {
       if (doc.exists) {
         if (doc.data().invite) {
           listener
             .update({
-              invites: firebase.firestore.FieldValue.arrayUnion(this.state.fire)
+              invites: firebase.firestore.FieldValue.arrayUnion(this.state.fire),
             })
             .then(
               function() {
@@ -96,6 +97,62 @@ class reduxInvitingScreen extends Component {
       }
     });
   }
+  cancelUpdate = () => {
+    console.log(" cancel here");
+    var listener = db.collection("invites").doc(this.props.token);
+    listener.get().then(doc => {
+      if (doc.exists) {
+        if (doc.data().invite ) {
+          var invites = doc.data().invites;
+          if(doc.data().invites.length > 1){
+          listener
+            .update({
+              invites: invites.filter(invite => invite !== this.state.fire),
+            })
+            .then(
+              function() {
+                this.props.hideInvite("false");
+
+                this.setState({ cancelLoader: false });
+              }.bind(this)
+            );
+          }else{
+            listener
+            .update({
+              invite: false,
+              invites: invites.filter(invite => invite !== this.state.fire),
+            })
+            .then(
+              function() {
+                this.props.hideInvite("false");
+
+                this.setState({ cancelLoader: false });
+              }.bind(this)
+            );
+          }
+
+        } 
+      } else {
+        console.log(
+          "cance invite not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+        );
+        listener
+          .set(
+            {
+              invite: false,
+            },
+            { merge: true }
+          )
+          .then(
+            function() {
+              this.props.hideInvite("false");
+
+              this.setState({ cancelLoader: false });
+            }.bind(this)
+          );
+      }
+    });
+  }
   componentDidMount() {
     this.setState({ regLoader: true });
     var Ref = db
@@ -119,8 +176,8 @@ class reduxInvitingScreen extends Component {
           }
         }).then(
           function() {
-            this.update.bind(this);
-            //       this.setState({ regLoader: false });
+          //  this.update();
+                   this.setState({ regLoader: false });
           }.bind(this)
         );
       } else {
@@ -144,8 +201,8 @@ class reduxInvitingScreen extends Component {
               }
             }).then(
               function() {
-                this.update.bind(this);
-                //    this.setState({ regLoader: false });
+             //   this.update();
+                    this.setState({ regLoader: false });
               }.bind(this)
             );
           } else {
@@ -167,8 +224,8 @@ class reduxInvitingScreen extends Component {
               { merge: true }
             ).then(
               function() {
-                this.update.bind(this);
-                //         this.setState({ regLoader: false });
+               // this.update();
+                         this.setState({ regLoader: false });
               }.bind(this)
             );
           }
@@ -197,8 +254,9 @@ class reduxInvitingScreen extends Component {
           }
         }).then(
           function() {
-            this.props.hideInvite("false");
-            this.setState({ cancelLoader: false });
+       //     this.cancelUpdate();
+           this.props.hideInvite("false");
+           this.setState({ cancelLoader: false });
           }.bind(this)
         );
       } else {
@@ -217,6 +275,7 @@ class reduxInvitingScreen extends Component {
           { merge: true }
         ).then(
           function() {
+         //   this.cancelUpdate();
             this.props.hideInvite("false");
             this.setState({ cancelLoader: false });
           }.bind(this)
