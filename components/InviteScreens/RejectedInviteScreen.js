@@ -31,8 +31,17 @@ class reduxRejectedInviteScreen extends Component {
     super(props);
     this.state = {};
   }
-  componentDidMount() {}
+  componentDidMount() {
+    setTimeout(
+      function() {
+          this.props.navigation.navigate('Map');
+      }
+      .bind(this),
+      3000
+  );
+  }
   render() {
+    const { params } = this.props.navigation.state;
     return (
       <View style={styles.container}>
         <View style={styles.houseView}>
@@ -43,12 +52,12 @@ class reduxRejectedInviteScreen extends Component {
           />
                     <View style={styles.checkImageView}>
             <Image
-              source={{ uri: this.props.receiver_image }}
+              source={{ uri: params.receiver_image }}
               resizeMode="cover"
               style={styles.checkImage}
             />
           </View>
-          <Text style={styles.name}>{this.props.receiver_first_name}</Text>
+          <Text style={styles.name}>{params.receiver_first_name}</Text>
           <Text style={styles.accepted}>Rejected your request</Text>
     {/*   <View style={styles.continueView}>
             <Text style={styles.continueText}>Continue</Text>

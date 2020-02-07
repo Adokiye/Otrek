@@ -190,8 +190,8 @@ class App extends Component<Props> {
             },
             () =>
             NavigationService.navigate("AcceptedInviteScreen", {
-              // chatName: `${data.channelName}`,
-              // chatId: `${data.channelId}`
+              receiver_image: notification.data.receiver.image,
+              receiver_first_name:notification.data.receiver.first_name
             })
               // this.showAccept.bind(
               //   this,
@@ -209,8 +209,8 @@ class App extends Component<Props> {
             },
             () =>
             NavigationService.navigate("RejectedInviteScreen", {
-              // chatName: `${data.channelName}`,
-              // chatId: `${data.channelId}`
+              receiver_image: notification.data.receiver.image,
+              receiver_first_name:notification.data.receiver.first_name
             })
               // this.showReject.bind(
               //   this,
@@ -231,6 +231,10 @@ class App extends Component<Props> {
             },
             () =>
             NavigationService.navigate("InviteScreen", {
+              receiver: notification.data.receiver,
+fire: notification.data.fire,
+sender: notification.data.sender,
+deviceToken: notification.data.deviceToken
               // chatName: `${data.channelName}`,
               // chatId: `${data.channelId}`
             })

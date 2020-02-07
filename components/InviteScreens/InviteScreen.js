@@ -43,9 +43,10 @@ class reduxInviteScreen extends Component {
   }
   componentDidMount() {}
   sendPushNotification = async (title, body, token, image, interests) => {
+    const { params } = this.props.navigation.state;
     const FIREBASE_API_KEY = firebaseApiKey;
     const message = {
-      to: this.props.deviceToken?this.props.deviceToken:"token",
+      to: params.deviceToken?params.deviceToken:"token",
       notification: {
         title: title,
         body: body,
@@ -59,9 +60,9 @@ class reduxInviteScreen extends Component {
         title: title,
         body: body,
         token: token,
-        receiver: this.props.sender,
-        sender: this.props.receiver,
-        fire: this.props.fire,
+        receiver: params.sender,
+        sender: params.receiver,
+        fire: params.fire,
       }
     };
    
@@ -80,7 +81,8 @@ class reduxInviteScreen extends Component {
   };
   accept() {
     this.setState({ regLoader: true });
-    var Ref = db.collection('invites').doc(this.props.fire);
+    const { params } = this.props.navigation.state;
+    var Ref = db.collection('invites').doc(params.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
         console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
@@ -89,13 +91,13 @@ class reduxInviteScreen extends Component {
           reject: false,
           invite: false,
           sender: {
-            email: this.props.receiver.email
+            email: params.receiver.email
           }
         }).then(
           function() {
             this.sendPushNotification(
               "Invite Accepted",
-              this.props.sender.first_name + " accepted your invite",
+              params.sender.first_name + " accepted your invite",
             );
           }.bind(this)
         );
@@ -109,7 +111,7 @@ class reduxInviteScreen extends Component {
             reject: false,
             invite: false,
             sender: {
-              email: this.props.receiver.email
+              email: params.receiver.email
             }
           },
           { merge: true }
@@ -117,7 +119,7 @@ class reduxInviteScreen extends Component {
           function() {
             this.sendPushNotification(
               "Invite Accepted",
-              this.props.sender.first_name + " accepted your invite",
+              params.sender.first_name + " accepted your invite",
             );
           }.bind(this)
         );
@@ -126,7 +128,8 @@ class reduxInviteScreen extends Component {
   }
   reject() {
     this.setState({ regLoader: true });
-    var Ref = db.collection('invites').doc(this.props.fire);
+    const { params } = this.props.navigation.state;
+    var Ref = db.collection('invites').doc(params.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
         console.log('doc exists ' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
@@ -135,13 +138,13 @@ class reduxInviteScreen extends Component {
           reject: true,
           invite: false,
           sender: {
-            email: this.props.receiver.email
+            email: params.receiver.email
           }
         }).then(
           function() {
             this.sendPushNotification(
               "Invite Rejected",
-              this.props.sender.first_name + " has rejected your invite",
+              params.sender.first_name + " has rejected your invite",
             );
           }.bind(this)
         );
@@ -155,7 +158,7 @@ class reduxInviteScreen extends Component {
             reject: true,
             invite: false,
             sender: {
-              email: this.props.receiver.email
+              email: params.receiver.email
             }
           },
           { merge: true }
@@ -163,7 +166,7 @@ class reduxInviteScreen extends Component {
           function() {
             this.sendPushNotification(
               "Invite Rejected",
-              this.props.sender.first_name + " has rejected your invite",
+              params.sender.first_name + " has rejected your invite",
             );
           }.bind(this)
         );
@@ -177,17 +180,17 @@ class reduxInviteScreen extends Component {
         <View style={styles.houseView}>
           <View style={styles.checkImageView}>
             <Image
-              source={{ uri: this.props.receiver.image }}
+              source={{ uri: params.receiver.image }}
               resizeMode="cover"
               style={styles.checkImage}
             />
           </View>
           <Text style={styles.accountCreatedText}>
-            {this.props.receiver.first_name} {this.props.receiver.last_name}
+            {params.receiver.first_name} {params.receiver.last_name}
           </Text>
           <Text style={styles.invitingText}>
             is inviting you to be{' '}
-            {this.props.receiver.gender == 'M' ? 'his' : 'her'} trekpal
+            {params.receiver.gender == 'M' ? 'his' : 'her'} trekpal
           </Text>
           <TouchableOpacity onPress={this.accept.bind(this)}>
             <View style={styles.acceptView}>
@@ -200,7 +203,7 @@ class reduxInviteScreen extends Component {
             </View>
           </TouchableOpacity>
           <Text style={styles.interestText}>
-            Interests: {this.props.receiver.interests}
+            Interests: {params.receiver.interests}
           </Text>
         </View>
         <LoaderModal regLoader={this.state.regLoader} />
