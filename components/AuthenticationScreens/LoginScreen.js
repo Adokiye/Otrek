@@ -63,6 +63,9 @@ class reduxLoginScreen extends Component {
   };
   logIn(){
     let regg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var Ref = db
+    .collection("users")
+    .doc(this.state.email);
     if (!this.state.password || this.state.password < 8) {
           this.setState({
             error: true,
@@ -83,8 +86,17 @@ class reduxLoginScreen extends Component {
                     this.props.setFirstName(doc.data().details.first_name);
                     this.props.setLastName(doc.data().details.last_name);
                     this.props.setToken(this.state.email);
-                    this.setState({ regLoader: false, }, );
-                    this.props.navigation.navigate("Map");
+                    Ref.update(
+                      {
+                        details: {
+                            deviceToken: this.state.fcmToken
+                          }
+                      },
+                      { merge: true }
+                    ).then(function(){
+                      this.setState({ regLoader: false, }, );
+                      this.props.navigation.navigate("Map");
+                    }.bind(this));
                 } else {
                   this.setState({ regLoader: false, }, );
                     console.log("No such document!");

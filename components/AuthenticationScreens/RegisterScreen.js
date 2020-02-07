@@ -23,7 +23,8 @@ import firebase from "react-native-firebase";
 import ErrorModal from "../Modals/ErrorModal";
 import LoaderModal from "../Modals/LoaderModal";
 import HideWithKeyboard from "react-native-hide-with-keyboard";
-import AccountCreatedScreen from './AccountCreatedScreen'
+import AccountCreatedScreen from './AccountCreatedScreen';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from "axios";
 import { connect } from "react-redux";
 import { setToken, setLastName, setFirstName } from "../../actions/index";
@@ -62,7 +63,8 @@ class reduxRegisterScreen extends Component {
       imageCloud: null,
       male: false,
       female: false,
-      gender: ''
+      gender: '',
+      fcmToken: ''
     };
   }
   hideErrorModal = value => {
@@ -110,7 +112,7 @@ class reduxRegisterScreen extends Component {
         .then(() =>
           Ref.get().then(doc => {
               console.log(
-                "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
+                "doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
               );
               Ref.set(
                 {
@@ -126,7 +128,8 @@ class reduxRegisterScreen extends Component {
                       image: this.state.imageCloud,
                       start_location: null,
                       end_location: null,
-                      gender: this.state.gender
+                      gender: this.state.gender,
+                      deviceToken: this.state.fcmToken
                     }
                 },
                 { merge: true }
@@ -181,7 +184,52 @@ class reduxRegisterScreen extends Component {
       })
       .catch(e => console.log(e));
   }
-  componentDidMount() {}
+  async componentDidMount(){
+    this.checkPermission();
+  }
+  async checkPermission() {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+        console.log("enabled")
+        this.getToken();
+    } else {
+      console.log("unenabled")
+        this.requestPermission();
+    }
+  }
+  
+    //3
+  async getToken() {
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!fcmToken) {
+        fcmToken = await firebase.messaging().getToken();
+        if (fcmToken) {
+            // user has a device token
+            this.setState({fcmToken});
+            console.log(fcmToken);
+            await AsyncStorage.setItem('fcmToken', fcmToken);
+        }else{
+          console.log("\n"+"\n"+"no token"+"\n"+"\n")
+        }
+    }else{
+      console.log("here")
+      this.setState({fcmToken});
+      console.log(fcmToken);
+    }
+  }
+  
+    //2
+  async requestPermission() {
+    try {
+        await firebase.messaging().requestPermission();
+        console.log("admin authorised")
+        // User has authorised
+        this.getToken();
+    } catch (error) {
+        // User has rejected permissions
+        console.log('permission rejected');
+    }
+  }
   render() {
     if (this.state.imageCloud) {
       picture = (
