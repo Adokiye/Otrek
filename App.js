@@ -78,6 +78,7 @@ class App extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
+      invite: false
     };
   }
   async componentDidMount() {
@@ -122,6 +123,7 @@ class App extends Component<Props> {
   componentWillUnmount() {
     this.notificationListener();
     this.notificationOpenedListener();
+    clearTimeout(this.timeout);
   }
   async createNotificationListeners() {
     /*
@@ -179,32 +181,76 @@ class App extends Component<Props> {
      * */
     this.messageListener = firebase.messaging().onMessage(message => {
       //process data message
+      if(message.data.title === 'Invite Accepted'){
+        this.setState({
+          invite: true
+        }, ()=>
+         this.showAccept.bind(this, message.data.receiver.first_name, message.data.receiver.image)
+        )
+        this.timeout = setTimeout(() => { 
+          this.setState(() => ({invite: false}))
+        }, 4000);
+      }else if(message.data.title === 'Invite Rejected'){
+        this.setState({
+          invite: true
+        }, ()=> this.showReject.bind(this, message.data.receiver.first_name, message.data.receiver.image)
+        )
+        this.timeout = setTimeout(() => { 
+          this.setState(() => ({invite: false}))
+        }, 4000);
+       
+      }else if(message.data.title === 'New Invite'){
+        this.setState({
+          invite: true
+        }, ()=> this.showInvite.bind(this, message.data.receiver, message.data.sender, message.data.fire)
+        )
+        this.timeout = setTimeout(() => { 
+          this.setState(() => ({invite: false}))
+        }, 4000);
+
+      }else if(message.data.title === 'Invite Cancelled'){
+
+      }
       console.log(JSON.stringify(message));
     });
   }
-  showreject(name, image){
+  showReject(name, image){
+    if(this.state.invite){
    return(
     <RejectedInviteScreen 
     receiver_image={image}
     receiver_first_name={name}
     />
    );
+    }else{
+      return null
+    }
+
   }
   showAccept(name, image){
+    if(this.state.invite){
     return(
     <AcceptedInviteScreen
           receiver_image={image}
     receiver_first_name={name}
     />
     )
+    }else{
+      return null
+    }
   }
-  showInvite(receiver, fire){
+  showInvite(receiver, sender, fire){
+    if(this.state.invite){
     return(
       <InviteScreen
         receiver={receiver}
         fire={fire}
+        sender={sender}
       />
     )
+    }else{
+      return null
+    }
   }
   render() {
             return (
