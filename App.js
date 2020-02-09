@@ -235,7 +235,12 @@ class App extends Component<Props> {
 fire: notification.data.fire,
 sender: notification.data.sender,
 deviceToken: notification.data.deviceToken,
-receiver_first_name: notification.data.receiver.first_name
+receiver_first_name: notification.data.receiver.first_name,
+receiver_last_name: notification.data.receiver.last_name,
+receiver_email: notification.data.receiver.email,
+receiver_interests: notification.data.receiver.interests,
+receiver_image: notification.data.receiver.image,
+sender_first_name: notification.data.sender.first_name
               // chatName: `${data.channelName}`,
               // chatId: `${data.channelId}`
             })

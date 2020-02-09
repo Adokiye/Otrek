@@ -191,7 +191,7 @@ class reduxInviteScreen extends Component {
         <View style={styles.houseView}>
           <View style={styles.checkImageView}>
             <Image
-              source={{ uri: this.state.receiver.image }}
+              source={{ uri: params.receiver_image }}
               resizeMode="cover"
               style={styles.checkImage}
             />
