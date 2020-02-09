@@ -71,9 +71,16 @@ class reduxInvitingScreen extends Component {
       data: {
         title: title,
         body: body,
-        receiver: this.props.user,
-        sender: this.props.receiver,
-        deviceToken: this.props.deviceToken,
+    //    receiver: this.props.user,
+        receiver_first_name: this.props.user.first_name,
+receiver_last_name: this.props.user.last_name,
+receiver_email: this.props.user.email,
+receiver_interests: this.props.user.interests,
+receiver_image: this.props.user.image,
+receiver_gender: this.props.user.gender,
+sender_first_name: this.props.receiver.first_name,
+  //      sender: this.props.receiver,
+        deviceToken: this.props.receiver.deviceToken,
         fire: this.state.fire
       }
     };

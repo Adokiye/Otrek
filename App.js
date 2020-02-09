@@ -190,8 +190,14 @@ class App extends Component<Props> {
             },
             () =>
             NavigationService.navigate("AcceptedInviteScreen", {
-              receiver_image: notification.data.receiver.image,
-              receiver_first_name:notification.data.receiver.first_name
+              deviceToken: notification.data.deviceToken,
+              receiver_first_name: notification.data.receiver_first_name,
+              receiver_last_name: notification.data.receiver_last_name,
+              receiver_email: notification.data.receiver_email,
+              receiver_interests: notification.data.receiver_interests,
+              receiver_image: notification.data.receiver_image,
+              receiver_gender: notification.data.receiver_gender,
+              sender_first_name: notification.data.sender_first_name
             })
               // this.showAccept.bind(
               //   this,
@@ -209,8 +215,14 @@ class App extends Component<Props> {
             },
             () =>
             NavigationService.navigate("RejectedInviteScreen", {
-              receiver_image: notification.data.receiver.image,
-              receiver_first_name:notification.data.receiver.first_name
+              deviceToken: notification.data.deviceToken,
+              receiver_first_name: notification.data.receiver_first_name,
+              receiver_last_name: notification.data.receiver_last_name,
+              receiver_email: notification.data.receiver_email,
+              receiver_interests: notification.data.receiver_interests,
+              receiver_image: notification.data.receiver_image,
+              receiver_gender: notification.data.receiver_gender,
+              sender_first_name: notification.data.sender_first_name
             })
               // this.showReject.bind(
               //   this,
@@ -235,12 +247,13 @@ class App extends Component<Props> {
 fire: notification.data.fire,
 sender: notification.data.sender,
 deviceToken: notification.data.deviceToken,
-receiver_first_name: notification.data.receiver.first_name,
-receiver_last_name: notification.data.receiver.last_name,
-receiver_email: notification.data.receiver.email,
-receiver_interests: notification.data.receiver.interests,
-receiver_image: notification.data.receiver.image,
-sender_first_name: notification.data.sender.first_name
+receiver_first_name: notification.data.receiver_first_name,
+receiver_last_name: notification.data.receiver_last_name,
+receiver_email: notification.data.receiver_email,
+receiver_interests: notification.data.receiver_interests,
+receiver_image: notification.data.receiver_image,
+receiver_gender: notification.data.receiver_gender,
+sender_first_name: notification.data.sender_first_name
               // chatName: `${data.channelName}`,
               // chatId: `${data.channelId}`
             })

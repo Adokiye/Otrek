@@ -184,7 +184,7 @@ class reduxInviteScreen extends Component {
   render() {
     const { params } = this.props.navigation.state;
    // console.log(params.receiver[0].first_name)
-    console.log(params.receiver_first_name)
+    console.log(params.receiver_first_name+"j")
  //   console.log(JSON.parse(JSON.stringify(params.receiver.first_name)))
     return (
       <LinearGradient colors={['#57C693', '#377848']} style={styles.container}>
