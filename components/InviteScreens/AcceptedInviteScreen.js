@@ -32,13 +32,13 @@ class reduxAcceptedInviteScreen extends Component {
     this.state = {};
   }
   componentDidMount() {
-    setTimeout(
-      function() {
-          this.props.navigation.navigate('Map');
-      }
-      .bind(this),
-      3000
-  );
+  //   setTimeout(
+  //     function() {
+  //         this.props.navigation.navigate('Map');
+  //     }
+  //     .bind(this),
+  //     3000
+  // );
   }
   render() {
     const { params } = this.props.navigation.state;
