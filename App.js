@@ -192,12 +192,7 @@ class App extends Component<Props> {
             NavigationService.navigate("AcceptedInviteScreen", {
               deviceToken: notification.data.deviceToken,
               receiver_first_name: notification.data.receiver_first_name,
-              receiver_last_name: notification.data.receiver_last_name,
-              receiver_email: notification.data.receiver_email,
-              receiver_interests: notification.data.receiver_interests,
               receiver_image: notification.data.receiver_image,
-              receiver_gender: notification.data.receiver_gender,
-              sender_first_name: notification.data.sender_first_name
             })
               // this.showAccept.bind(
               //   this,
@@ -217,12 +212,7 @@ class App extends Component<Props> {
             NavigationService.navigate("RejectedInviteScreen", {
               deviceToken: notification.data.deviceToken,
               receiver_first_name: notification.data.receiver_first_name,
-              receiver_last_name: notification.data.receiver_last_name,
-              receiver_email: notification.data.receiver_email,
-              receiver_interests: notification.data.receiver_interests,
               receiver_image: notification.data.receiver_image,
-              receiver_gender: notification.data.receiver_gender,
-              sender_first_name: notification.data.sender_first_name
             })
               // this.showReject.bind(
               //   this,

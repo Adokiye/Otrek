@@ -264,6 +264,7 @@ class reduxFirstTrekkerBox extends Component {
           }
           receiver={this.state.trekkers[0].details}
           user={this.state.row.details}
+          user_d_t={this.state.row.deviceToken}
           deviceToken={this.state.trekkers[0].deviceToken}
           receiver_name={
             this.state.trekkers[0]

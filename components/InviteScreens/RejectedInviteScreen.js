@@ -37,7 +37,7 @@ class reduxRejectedInviteScreen extends Component {
           this.props.navigation.navigate('Map');
       }
       .bind(this),
-      3000
+      4000
   );
   }
   render() {

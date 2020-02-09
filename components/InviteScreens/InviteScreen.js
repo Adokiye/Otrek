@@ -51,7 +51,7 @@ class reduxInviteScreen extends Component {
       ()=> this.setState({regLoader: false}))
   }
   sendPushNotification = async (title, body, token, image, interests) => {
-    //const { params } = this.props.navigation.state;
+    const { params } = this.props.navigation.state;
     const FIREBASE_API_KEY = firebaseApiKey;
     const message = {
       to: this.state.deviceToken?this.state.deviceToken:"token",
@@ -71,6 +71,8 @@ class reduxInviteScreen extends Component {
         receiver: this.state.sender,
         sender: this.state.receiver,
         fire: this.state.fire,
+        receiver_first_name: params.sender_first_name,
+        receiver_image: params.sender_image,
       }
     };
    

@@ -79,8 +79,9 @@ receiver_interests: this.props.user.interests,
 receiver_image: this.props.user.image,
 receiver_gender: this.props.user.gender,
 sender_first_name: this.props.receiver.first_name,
+sender_image: this.props.receiver.image,
   //      sender: this.props.receiver,
-        deviceToken: this.props.receiver.deviceToken,
+        deviceToken: this.props.user_d_t,
         fire: this.state.fire
       }
     };
