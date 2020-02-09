@@ -131,6 +131,13 @@ sender_image: this.props.receiver.image,
               "New Invite",
               this.props.user.first_name + " has invited you for a trek",
             );
+            setTimeout(
+              function() {
+                this.props.hideInvite("false");
+              }
+              .bind(this),
+              2000
+          );
           }.bind(this)
         );
       } else {
@@ -160,6 +167,13 @@ sender_image: this.props.receiver.image,
                   this.props.user.first_name +
                     " has invited you for a trek",
                 );
+                setTimeout(
+                  function() {
+                    this.props.hideInvite("false");
+                  }
+                  .bind(this),
+                  2000
+              );
               }.bind(this)
             );
           } else {
@@ -187,6 +201,13 @@ sender_image: this.props.receiver.image,
                   this.props.user.first_name +
                     " has invited you for a trek",
                 );
+                setTimeout(
+                  function() {
+                    this.props.hideInvite("false");
+                  }
+                  .bind(this),
+                  2000
+              );
               }.bind(this)
             );
           }
