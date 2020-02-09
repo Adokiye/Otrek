@@ -222,7 +222,7 @@ class App extends Component<Props> {
           //   this.setState(() => ({ invite: false }));
           // }, 4000);
         } else if (notification.data.title === "New Invite") {
-          console.log("new new!")
+          console.log("new new!"+notification.data.fire)
           this.setState(
             {
               new_invite: true,
@@ -234,7 +234,8 @@ class App extends Component<Props> {
               receiver: notification.data.receiver,
 fire: notification.data.fire,
 sender: notification.data.sender,
-deviceToken: notification.data.deviceToken
+deviceToken: notification.data.deviceToken,
+receiver_first_name: notification.data.receiver.first_name
               // chatName: `${data.channelName}`,
               // chatId: `${data.channelId}`
             })
