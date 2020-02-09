@@ -413,7 +413,7 @@ class reduxMap extends Component {
         // showsMyLocationButton={true}
         followsUserLocation={this.state.startTrek}
      //   showsUserLocation={this.state.startTrek}
-        showsMyLocationButton={true}
+//        showsMyLocationButton={true}
    //     onMapReady={this._onMapReady}
           region={{
             latitude: this.state.latitude?this.state.latitude:default_region.latitude,
@@ -426,7 +426,7 @@ class reduxMap extends Component {
      //      customMapStyle={mapStyle}
       //     followUserLocation
    //       loadingEnabled
-   showsUserLocation={true}
+ //  showsUserLocation={true}
 //   loadingEnabled={true}
            >
       {/*     {!!this.state.latitude && !!this.state.longitude && <MapView.Marker

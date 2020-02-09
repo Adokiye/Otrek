@@ -45,18 +45,14 @@ class reduxAcceptedInviteScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.houseView}>
+
+          <View style={styles.checkImageView}>
           <Image
             source={require("../../assets/images/check.png")}
             resizeMode="contain"
             style={styles.checkImage}
           />
-          {/* <View style={styles.checkImageView}>
-            <Image
-              source={{ uri: params.receiver_image }}
-              resizeMode="cover"
-              style={styles.checkImage}
-            />
-          </View> */}
+          </View>
           <Text style={styles.name}>{params.receiver_first_name}</Text>
           <Text style={styles.accepted}>Accepted your request</Text>
        {/*   <View style={styles.continueView}>
