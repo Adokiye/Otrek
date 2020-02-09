@@ -136,7 +136,7 @@ sender_image: this.props.receiver.image,
                 this.props.hideInvite("false");
               }
               .bind(this),
-              2000
+              5000
           );
           }.bind(this)
         );
@@ -172,7 +172,7 @@ sender_image: this.props.receiver.image,
                     this.props.hideInvite("false");
                   }
                   .bind(this),
-                  2000
+                  5000
               );
               }.bind(this)
             );
@@ -206,7 +206,7 @@ sender_image: this.props.receiver.image,
                     this.props.hideInvite("false");
                   }
                   .bind(this),
-                  2000
+                  5000
               );
               }.bind(this)
             );

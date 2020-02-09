@@ -54,7 +54,7 @@ class reduxInviteScreen extends Component {
     const { params } = this.props.navigation.state;
     const FIREBASE_API_KEY = firebaseApiKey;
     const message = {
-      to: this.state.deviceToken?this.state.deviceToken:"token",
+      to: params.deviceToken?params.deviceToken:"token",
       notification: {
         title: title,
         body: body,

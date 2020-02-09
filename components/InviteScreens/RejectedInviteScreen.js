@@ -50,13 +50,13 @@ class reduxRejectedInviteScreen extends Component {
             resizeMode="contain"
             style={styles.checkImage}
           />
-                    <View style={styles.checkImageView}>
+                    {/* <View style={styles.checkImageView}>
             <Image
               source={{ uri: params.receiver_image }}
               resizeMode="cover"
               style={styles.checkImage}
             />
-          </View>
+          </View> */}
           <Text style={styles.name}>{params.receiver_first_name}</Text>
           <Text style={styles.accepted}>Rejected your request</Text>
     {/*   <View style={styles.continueView}>
