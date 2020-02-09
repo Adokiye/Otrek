@@ -89,7 +89,7 @@ class reduxInviteScreen extends Component {
   };
   accept() {
     this.setState({ regLoader: true });
- //   const { params } = this.props.navigation.state;
+   const { params } = this.props.navigation.state;
     var Ref = db.collection('invites').doc(this.state.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
@@ -99,13 +99,13 @@ class reduxInviteScreen extends Component {
           reject: false,
           invite: false,
           sender: {
-            email: this.state.receiver.email
+            email: params.receiver_email
           }
         }).then(
           function() {
             this.sendPushNotification(
               "Invite Accepted",
-              this.state.sender.first_name + " accepted your invite",
+              params.sender_first_name + " accepted your invite",
             );
           }.bind(this)
         );
@@ -119,7 +119,7 @@ class reduxInviteScreen extends Component {
             reject: false,
             invite: false,
             sender: {
-              email: this.state.receiver.email
+              email: params.receiver_email
             }
           },
           { merge: true }
@@ -127,7 +127,7 @@ class reduxInviteScreen extends Component {
           function() {
             this.sendPushNotification(
               "Invite Accepted",
-              this.state.sender.first_name + " accepted your invite",
+              params.sender_first_name + " accepted your invite",
             );
           }.bind(this)
         );
@@ -136,7 +136,7 @@ class reduxInviteScreen extends Component {
   }
   reject() {
     this.setState({ regLoader: true });
-  //  const { params } = this.props.navigation.state;
+   const { params } = this.props.navigation.state;
     var Ref = db.collection('invites').doc(this.state.fire);
     Ref.get().then(doc => {
       if (doc.exists) {
@@ -146,13 +146,13 @@ class reduxInviteScreen extends Component {
           reject: true,
           invite: false,
           sender: {
-            email: this.state.receiver.email
+            email: params.receiver_email
           }
         }).then(
           function() {
             this.sendPushNotification(
               "Invite Rejected",
-              this.state.sender.first_name + " has rejected your invite",
+              params.sender_first_name + " has rejected your invite",
             );
           }.bind(this)
         );
@@ -166,7 +166,7 @@ class reduxInviteScreen extends Component {
             reject: true,
             invite: false,
             sender: {
-              email: this.state.receiver.email
+              email: params.receiver_email
             }
           },
           { merge: true }
@@ -174,7 +174,7 @@ class reduxInviteScreen extends Component {
           function() {
             this.sendPushNotification(
               "Invite Rejected",
-              this.state.sender.first_name + " has rejected your invite",
+              params.sender_first_name + " has rejected your invite",
             );
           }.bind(this)
         );
@@ -197,11 +197,11 @@ class reduxInviteScreen extends Component {
             />
           </View>
           <Text style={styles.accountCreatedText}>
-            {this.state.receiver?this.state.receiver.first_name:null} {this.state.receiver.last_name}
+            {params.receiver_first_name} {params.receiver_last_name}
           </Text>
           <Text style={styles.invitingText}>
             is inviting you to be{' '}
-            {this.state.receiver.gender == 'M' ? 'his' : 'her'} trekpal
+            {params.receiver_gender == 'M' ? 'his' : 'her'} trekpal
           </Text>
           <TouchableOpacity onPress={this.accept.bind(this)}>
             <View style={styles.acceptView}>
@@ -214,7 +214,7 @@ class reduxInviteScreen extends Component {
             </View>
           </TouchableOpacity>
           <Text style={styles.interestText}>
-            Interests: {this.state.receiver.interests}
+            Interests: {params.receiver_interests}
           </Text>
         </View>
         <LoaderModal regLoader={this.state.regLoader} />
