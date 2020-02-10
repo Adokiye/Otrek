@@ -86,7 +86,9 @@ class reduxChatTrekkerBox extends Component {
         //      console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
         Ref.update({
           messages: firebase.firestore.FieldValue.arrayUnion(letSend)
-        }).then(function() {}.bind(this));
+        }).then(function() {
+
+        }.bind(this));
       } else {
         // console.log(
         //   "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
@@ -96,7 +98,9 @@ class reduxChatTrekkerBox extends Component {
             messages: [letSend]
           },
           { merge: true }
-        ).then(function() {}.bind(this));
+        ).then(function() {
+          
+        }.bind(this));
       }
     });
   }
