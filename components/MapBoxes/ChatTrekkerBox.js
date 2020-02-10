@@ -1,3 +1,6 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
+/* eslint-disable quotes */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -51,12 +54,8 @@ class reduxChatTrekkerBox extends Component {
     this.detectTyping = this.detectTyping.bind(this);
     this.renderFooter = this.renderFooter.bind(this);
   }
-  /* onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
-  }*/
   onSend(messages = []) {
+    let fire;
     this.setState({ messageLoader: true });
     console.log(JSON.stringify(messages) + "\n");
     messages[0].sent = true;
@@ -87,12 +86,14 @@ class reduxChatTrekkerBox extends Component {
         //      console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
         Ref.update({
           messages: firebase.firestore.FieldValue.arrayUnion(letSend)
-        }).then(function() {
-          this.sendPushNotification(
-            "New Message",
-            this.props.receiver.first_name + ":"+messages[0].text ,
-          );
-        }.bind(this));
+        }).then(
+          function() {
+            this.sendPushNotification(
+              "New Message",
+              this.props.receiver.first_name + ":" + messages[0].text
+            );
+          }.bind(this)
+        );
       } else {
         // console.log(
         //   "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
@@ -102,21 +103,23 @@ class reduxChatTrekkerBox extends Component {
             messages: [letSend]
           },
           { merge: true }
-        ).then(function() {
-          this.sendPushNotification(
-            "New Message",
-            this.props.receiver_first_name + ":"+messages[0].text ,
-          );
-        }.bind(this));
+        ).then(
+          function() {
+            this.sendPushNotification(
+              "New Message",
+              this.props.receiver_first_name + ":" + messages[0].text
+            );
+          }.bind(this)
+        );
       }
     });
   }
-  sendPushNotification = async (title, body, ) => {
+  sendPushNotification = async (title, body) => {
     const FIREBASE_API_KEY = firebaseApiKey;
-    console.log("here!!!"+FIREBASE_API_KEY)    
-      console.log(this.props.receiver.deviceToken+"toks")
+    console.log("here!!!" + FIREBASE_API_KEY);
+    console.log(this.props.receiver.deviceToken + "toks");
     const message = {
-      to: this.props.deviceToken?this.props.deviceToken:"token",
+      to: this.props.deviceToken ? this.props.deviceToken : "token",
       notification: {
         title: title,
         body: body,
@@ -124,13 +127,13 @@ class reduxChatTrekkerBox extends Component {
         sound: 1,
         show_in_foreground: true,
         priority: "high",
-        content_available: true 
+        content_available: true
       },
       data: {
         title: title,
         body: body,
         receiver: this.props.receiver,
-  //      sender: this.props.receiver,
+        //      sender: this.props.receiver,
         deviceToken: this.props.user_d_t,
         fire: this.state.fire
       }
@@ -145,7 +148,7 @@ class reduxChatTrekkerBox extends Component {
       body: JSON.stringify(message)
     });
     response = await response.text();
-    console.log(JSON.stringify(response)+"chat");
+    console.log(JSON.stringify(response) + "chat");
   };
   componentWillMount() {
     var self = this;
@@ -213,11 +216,11 @@ class reduxChatTrekkerBox extends Component {
                     messages: GiftedChat.append(
                       previousState.messages,
                       doc.data().messages[0]
-                    )
+                    ),
                   }));
                 } else {
                   console.log("else ");
-                  for (let i = doc.data().messages.length-1; i < 0; i--) {
+                  for (let i = doc.data().messages.length - 1; i < 0; i--) {
                     let messages = [...this.state.messages];
                     let message = { ...messages[i] };
                     message.received = doc.data().messages[i].received;
@@ -293,7 +296,7 @@ class reduxChatTrekkerBox extends Component {
                   }));
                 } else {
                   console.log("else ");
-                  for(let i = doc.data().messages.length-1; i < 0; i--){
+                  for (let i = doc.data().messages.length - 1; i < 0; i--) {
                     let messages = [...this.state.messages];
                     let message = { ...messages[i] };
                     message.received = doc.data().messages[i].received;

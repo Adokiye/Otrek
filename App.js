@@ -252,6 +252,8 @@ sender_first_name: notification.data.sender_first_name
           //   this.setState(() => ({ invite: false }));
           // }, 4000);
         } else if (notification.data.title === "Invite Cancelled") {
+        } else if (notification.data.title === "New Message") {
+          
         }
         // NavigationService.navigate("Orders", {
         //   // chatName: `${data.channelName}`,
