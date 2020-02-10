@@ -21,6 +21,7 @@ import _ from "lodash";
 import firebase from "react-native-firebase";
 import { GiftedChat } from "react-native-gifted-chat";
 var db = firebase.firestore();
+import { firebaseApiKey } from "../../config/firebase.js";
 // const fs = require('fs');
 const haversine = require("haversine");
 import LoaderModal from "../Modals/LoaderModal";
@@ -87,7 +88,10 @@ class reduxChatTrekkerBox extends Component {
         Ref.update({
           messages: firebase.firestore.FieldValue.arrayUnion(letSend)
         }).then(function() {
-
+          this.sendPushNotification(
+            "New Message",
+            this.props.receiver.first_name + ":"+messages[0].text ,
+          );
         }.bind(this));
       } else {
         // console.log(
@@ -99,11 +103,50 @@ class reduxChatTrekkerBox extends Component {
           },
           { merge: true }
         ).then(function() {
-          
+          this.sendPushNotification(
+            "New Message",
+            this.props.receiver_first_name + ":"+messages[0].text ,
+          );
         }.bind(this));
       }
     });
   }
+  sendPushNotification = async (title, body, ) => {
+    const FIREBASE_API_KEY = firebaseApiKey;
+    console.log("here!!!"+FIREBASE_API_KEY)    
+      console.log(this.props.receiver.deviceToken+"toks")
+    const message = {
+      to: this.props.deviceToken?this.props.deviceToken:"token",
+      notification: {
+        title: title,
+        body: body,
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: "high",
+        content_available: true 
+      },
+      data: {
+        title: title,
+        body: body,
+        receiver: this.props.receiver,
+  //      sender: this.props.receiver,
+        deviceToken: this.props.user_d_t,
+        fire: this.state.fire
+      }
+    };
+
+    let response = await fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "key=" + FIREBASE_API_KEY
+      },
+      body: JSON.stringify(message)
+    });
+    response = await response.text();
+    console.log(JSON.stringify(response)+"chat");
+  };
   componentWillMount() {
     var self = this;
     // this.init is fix as the indicator would run when the app mounts
