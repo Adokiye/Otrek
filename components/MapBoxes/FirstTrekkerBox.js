@@ -16,6 +16,7 @@ import {
   TextInput,
   StatusBar,
   TouchableWithoutFeedback,
+  FlatList
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import ChatTrekkerBox from './ChatTrekkerBox';
@@ -40,7 +41,10 @@ class reduxFirstTrekkerBox extends Component {
       regLoader: false,
       chat: false,
       invite: false,
-      row: {}
+      row: {},
+      more: false,
+      receiver: {},
+      sender: {}
     };
     //  this.hideInvite = this.hideInvite.bind(this)
   }
@@ -158,7 +162,8 @@ class reduxFirstTrekkerBox extends Component {
   render() {
     let trekkers = '';
     if (this.state.trekkers[0]) {
-      trekkers = (
+      if(!this.state.more){
+              trekkers = (
         <View style={styles.underView}>
           <View style={styles.firstView}>
             <Image
@@ -188,7 +193,8 @@ class reduxFirstTrekkerBox extends Component {
               <TouchableOpacity
                 activeOpacity={0.7}
                 hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                onPress={() => this.setState({ chat: true, invite: false })}
+                onPress={() => this.setState({ receiver: this.state.trekkers[0],  },
+                ()=> this.setState({chat: true, invite: false }))}
               >
                 <View style={styles.commentIcon}>
                   <Image
@@ -201,7 +207,8 @@ class reduxFirstTrekkerBox extends Component {
               <TouchableOpacity
                 activeOpacity={0.7}
                 hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                onPress={() => this.setState({ chat: false, invite: true })}
+                onPress={() => this.setState({ receiver: this.state.trekkers[0],  },
+                ()=> this.setState({chat: false, invite: true }))}
               >
                 <View style={styles.inviteButton}>
                   <Text style={styles.inviteText}>Invite</Text>
@@ -210,11 +217,88 @@ class reduxFirstTrekkerBox extends Component {
             </View>
           </View>
           <View style={styles.line} />
+          <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={()=> this.setState({more: true})}
+                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}>
           <View style={styles.viewMore}>
             <Text style={styles.viewMoreText}>View more trekkers</Text>
           </View>
+          </TouchableOpacity>
         </View>
       );
+      }else{
+       trekkers =       (<FlatList
+       data={this.state.trekkers}
+       extraData={this.state}
+       renderItem={({item, index}) => (
+        <View style={styles.underView}>
+          <View style={styles.firstView}>
+            <Image
+              source={{ uri: item.details.image }}
+              resizeMode="cover"
+              style={styles.profileImage}
+            />
+            <View style={styles.aboutView}>
+              <Text style={styles.name}>
+                {item.details.first_name +
+                  ' ' +
+                  item.details.last_name}
+              </Text>
+              <Text style={styles.gender}>
+                {item.details.gender}
+              </Text>
+              <Text style={styles.interests}>
+                {item.details.interests}
+              </Text>
+            </View>
+            <View style={styles.iconBox}>
+              {/*  <Image
+           source={require("../../assets/images/phoneCall.png")}
+           resizeMode="contain"
+           style={styles.phoneIcon}
+         />*/}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
+                onPress={() => this.setState({ receiver: item,  },
+                ()=> this.setState({chat: true, invite: false }))}
+              >
+                <View style={styles.commentIcon}>
+                  <Image
+                    source={require('../../assets/images/message.png')}
+                    resizeMode="contain"
+                    style={styles.commentIcon}
+                  />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
+                onPress={() => this.setState({ receiver: item,  },
+                ()=> this.setState({chat: false, invite: true }))}
+              >
+                <View style={styles.inviteButton}>
+                  <Text style={styles.inviteText}>Invite</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* <View style={styles.line} />
+          <TouchableOpacity
+                activeOpacity={0.7}
+                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}>
+          <View style={styles.viewMore}>
+            <Text style={styles.viewMoreText}>View more trekkers</Text>
+          </View>
+          </TouchableOpacity> */}
+        </View>
+       )}
+       keyExtractor={(item, index) => `list-item-${index}`}
+     />
+       );
+      }
+
     } else {
       trekkers = (
         <Text
@@ -234,22 +318,22 @@ class reduxFirstTrekkerBox extends Component {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.state.trekkers[0] ? this.state.trekkers[0].details.email : null
+            this.state.receiver ? this.state.receiver.details.email : null
           }
           receiver_name={
-            this.state.trekkers[0]
-              ? this.state.trekkers[0].details.first_name +
+            this.state.receiver
+              ? this.state.receiver.details.first_name +
                 ' ' +
-                this.state.trekkers[0].details.last_name
+                this.state.receiver.details.last_name
               : null
           }
           receiver_id={
-            this.state.trekkers[0]
-              ? this.state.trekkers[0].details.first_name
+            this.state.receiver
+              ? this.state.receiver.details.first_name
               : null
           }
           receiver_image={
-            this.state.trekkers[0] ? this.state.trekkers[0].details.image : null
+            this.state.receiver ? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />
@@ -260,33 +344,33 @@ class reduxFirstTrekkerBox extends Component {
           navigation={this.props.navigation}
           hideInvite={this.hideInvite.bind(this)}
           receiver_email={
-            this.state.trekkers[0] ? this.state.trekkers[0].details.email : null
+            this.state.receiver ? this.state.receiver.details.email : null
           }
-          receiver={this.state.trekkers[0].details}
+          receiver={this.state.receiver.details}
           user={this.state.row.details}
           user_d_t={this.state.row.deviceToken}
-          deviceToken={this.state.trekkers[0].deviceToken}
+          deviceToken={this.state.receiver.deviceToken}
           receiver_name={
-            this.state.trekkers[0]
-              ? this.state.trekkers[0].details.first_name +
+            this.state.receiver
+              ? this.state.receiver.details.first_name +
                 ' ' +
-                this.state.trekkers[0].details.last_name
+                this.state.receiver.details.last_name
               : null
           }
           receiver_id={
-            this.state.trekkers[0]
-              ? this.state.trekkers[0].details.first_name
+            this.state.receiver
+              ? this.state.receiver.details.first_name
               : null
           }
           receiver_image={
-            this.state.trekkers[0] ? this.state.trekkers[0].details.image : null
+            this.state.receiver ? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />
       );
     } else {
       return (
-        <View style={styles.container}>
+        <View style={this.state.more?styles.more_container:styles.container}>
           <View style={styles.cancelView}>
             <Image
               source={require('../../assets/images/cancel.png')}
@@ -308,6 +392,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#ffffff',
     height: 226,
+    width: '100%',
+    borderTopLeftRadius: 40,
+    borderWidth: 1,
+    borderColor: '#707070',
+    position: 'absolute',
+    bottom: 0,
+  },
+  more_container: {
+    flexDirection: 'column',
+    backgroundColor: '#ffffff',
+    height: "80%",
     width: '100%',
     borderTopLeftRadius: 40,
     borderWidth: 1,
