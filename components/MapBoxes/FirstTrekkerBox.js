@@ -113,6 +113,12 @@ class reduxFirstTrekkerBox extends Component {
   }
   componentDidMount() {
     const { params } = this.props.navigation.state;
+    if(this.props.chat){
+      this.props.chat = false;
+      console.log(JSON.stringify(this.props.receiver))
+      this.setState({receiver: this.props.receiver,
+     }, ()=> this.setState({chat: true, invite: false}))
+          }
     this.setState({ regLoader: true });
     this.getMarker().then(data => {
       console.log(data);
@@ -165,8 +171,10 @@ class reduxFirstTrekkerBox extends Component {
    componentDidUpdate(){
      if(this.props.chat){
        this.props.chat = false;
-       
-     }
+       console.log(JSON.stringify(this.props.receiver))
+       this.setState({receiver: this.props.receiver,
+      }, ()=> this.setState({chat: true, invite: false}))
+           }
    }
 
 
