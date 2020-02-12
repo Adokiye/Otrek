@@ -91,6 +91,14 @@ export default class FindTrekkerBox extends Component {
   getEndLocation = (lat, long) => {
     this.props.endLocation(lat, long);
   };
+  componentDidUpdate(){
+    if(this.props.chat){
+      this.props.chat = false;
+      console.log(JSON.stringify(this.props.receiver))
+      this.setState({receiver: this.props.receiver,
+     }, ()=> this.setState({chat: true, invite: false}))
+          }
+  }
   componentDidMount() {}
   render() {
     let main = "";
@@ -100,6 +108,9 @@ export default class FindTrekkerBox extends Component {
           start_location={this.state.start_location}
           end_location={this.state.end_location}
           navigation={this.props.navigation}
+          receiver={this.state.receiver}
+                 fire={this.state.fire}
+                 deviceToken={this.state.deviceToken}
         />
       );
     } else if (this.state.find) {
