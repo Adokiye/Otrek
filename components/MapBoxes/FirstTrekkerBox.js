@@ -163,7 +163,10 @@ class reduxFirstTrekkerBox extends Component {
   }
   
    componentDidUpdate(){
-     
+     if(this.props.chat){
+       this.props.chat = false;
+       
+     }
    }
 
 
