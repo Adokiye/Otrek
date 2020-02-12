@@ -20,6 +20,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback
 } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
 import _ from "lodash";
 import firebase from "react-native-firebase";
 import { GiftedChat } from "react-native-gifted-chat";
@@ -46,7 +47,8 @@ class reduxChatTrekkerBox extends Component {
       fire: "",
       isTyping: false,
       oppTyping: false,
-      lastId: ""
+      lastId: "",
+      fcmToken
     };
     this.onSend = this.onSend.bind(this);
     this.isTyping = this.isTyping.bind(this);
@@ -133,7 +135,7 @@ class reduxChatTrekkerBox extends Component {
         body: body,
         receiver: this.props.receiver,
         //      sender: this.props.receiver,
-        deviceToken: this.props.user_d_t,
+        deviceToken: this.state.fcmToken,
         fire: this.state.fire
       }
     };
@@ -174,7 +176,8 @@ class reduxChatTrekkerBox extends Component {
       this.stopTyping();
     }
   }
-  componentDidMount() {
+  async componentDidMount() {
+    await this.checkPermission();
     db.collection("messages")
       .doc(this.props.token + "_" + this.props.receiver_email)
       .onSnapshot(
@@ -327,6 +330,50 @@ class reduxChatTrekkerBox extends Component {
           }
         }.bind(this)
       );
+  }
+
+  async checkPermission() {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+        console.log("enabled")
+        this.getToken();
+    } else {
+      console.log("unenabled")
+        this.requestPermission();
+    }
+  }
+  
+    //3
+  async getToken() {
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!fcmToken) {
+        fcmToken = await firebase.messaging().getToken();
+        if (fcmToken) {
+            // user has a device token
+            this.setState({fcmToken});
+            console.log(fcmToken);
+            await AsyncStorage.setItem('fcmToken', fcmToken);
+        }else{
+          console.log("\n"+"\n"+"no token"+"\n"+"\n")
+        }
+    }else{
+      console.log("here")
+      this.setState({fcmToken});
+      console.log(fcmToken);
+    }
+  }
+  
+    //2
+  async requestPermission() {
+    try {
+        await firebase.messaging().requestPermission();
+        console.log("admin authorised")
+        // User has authorised
+        this.getToken();
+    } catch (error) {
+        // User has rejected permissions
+        console.log('permission rejected');
+    }
   }
 
   renderFooter() {

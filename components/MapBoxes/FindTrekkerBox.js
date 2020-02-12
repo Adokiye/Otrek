@@ -40,8 +40,13 @@ export default class FindTrekkerBox extends Component {
       start_location: null,
       error: false,
       error_message: "",
-      location: "dk"
+      location: "dk",
+      receiver: '',
+      chat: false
     };
+  }
+  find = () => {
+    this.setState({ first: false, find: true, more: false });
   }
   view() {
     if (this.state.end_location) {
@@ -96,10 +101,17 @@ export default class FindTrekkerBox extends Component {
       this.props.chat = false;
       console.log(JSON.stringify(this.props.receiver))
       this.setState({receiver: this.props.receiver,
-     }, ()=> this.setState({chat: true, invite: false}))
+     }, ()=> this.setState({chat: true, first: true, find: false}))
           }
   }
-  componentDidMount() {}
+  componentDidMount() {
+    if(this.props.chat){
+      this.props.chat = false;
+      console.log(JSON.stringify(this.props.receiver))
+      this.setState({receiver: this.props.receiver,
+     }, ()=> this.setState({chat: true, first: true, find: false}))
+          }
+  }
   render() {
     let main = "";
     if (this.state.first) {
@@ -108,9 +120,11 @@ export default class FindTrekkerBox extends Component {
           start_location={this.state.start_location}
           end_location={this.state.end_location}
           navigation={this.props.navigation}
-          receiver={this.state.receiver}
-                 fire={this.state.fire}
-                 deviceToken={this.state.deviceToken}
+          receiver={this.props.receiver}
+                 fire={this.props.fire}
+                 deviceToken={this.props.deviceToken}
+                 chat={this.state.chat}
+                 find={this.find.bind(this)}
         />
       );
     } else if (this.state.find) {

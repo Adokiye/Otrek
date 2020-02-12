@@ -113,13 +113,17 @@ class reduxFirstTrekkerBox extends Component {
   }
   componentDidMount() {
     const { params } = this.props.navigation.state;
+    // this.setState({ regLoader: true });
     if(this.props.chat){
       this.props.chat = false;
       console.log(JSON.stringify(this.props.receiver))
       this.setState({receiver: this.props.receiver,
      }, ()=> this.setState({chat: true, invite: false}))
+
           }
-    this.setState({ regLoader: true });
+          if(this.props.start_location
+            && this.props.end_location){
+                  this.setState({ regLoader: true });
     this.getMarker().then(data => {
       console.log(data);
       var len = data ? data.length : null;
@@ -153,6 +157,8 @@ class reduxFirstTrekkerBox extends Component {
       }
       this.setState({ regLoader: false });
     });
+            }
+
   }
   async getMarker() {
     const snapshot = await firebase
@@ -163,8 +169,12 @@ class reduxFirstTrekkerBox extends Component {
   }
   async getUser() {}
   chatFalse(value) {
-    if (value == "false") {
-      this.setState({ chat: false });
+    if (value == "false") {  
+      if(this.props.start_location
+        && this.props.end_location){
+          this.props.find; 
+          this.setState({ chat: false });
+        }
     }
   }
   
