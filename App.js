@@ -28,9 +28,9 @@ import InvitingScreen from "./components/InviteScreens/InvitingScreen";
 import RejectedInviteScreen from "./components/InviteScreens/RejectedInviteScreen";
 import Splash from "./components/Splash";
 import SplashScreen from "react-native-splash-screen";
-import {createStackNavigator} from 'react-navigation-stack';
-import {  createAppContainer } from "react-navigation";
-import NavigationService from './components/NavigationService';
+import { createStackNavigator } from "react-navigation-stack";
+import { createAppContainer } from "react-navigation";
+import NavigationService from "./components/NavigationService";
 import { persistor, store } from "./store/index";
 import { Provider } from "react-redux";
 import type { Notification, NotificationOpen } from "react-native-firebase";
@@ -95,8 +95,8 @@ class App extends Component<Props> {
       cancel_invite: false,
       receiver: {},
       sender: {},
-      fire: '',
-      deviceToken: ''
+      fire: "",
+      deviceToken: ""
     };
   }
   async componentDidMount() {
@@ -152,7 +152,7 @@ class App extends Component<Props> {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        console.log("data===>"+JSON.stringify(notification.data));
+        console.log("data===>" + JSON.stringify(notification.data));
 
         console.log("received");
         const localNotification = new firebase.notifications.Notification({
@@ -182,23 +182,23 @@ class App extends Component<Props> {
       .notifications()
       .onNotificationOpened(notificationOpen => {
         const notification = notificationOpen.notification;
-   //     console.log(JSON.stringify(notificationOpen.notification))
+        //     console.log(JSON.stringify(notificationOpen.notification))
         if (notification.data.title === "Invite Accepted") {
           this.setState(
             {
               accept_invite: true
             },
             () =>
-            NavigationService.navigate("AcceptedInviteScreen", {
-              deviceToken: notification.data.deviceToken,
-              receiver_first_name: notification.data.receiver_first_name,
-              receiver_image: notification.data.receiver_image,
-            })
-              // this.showAccept.bind(
-              //   this,
-              //   notification.data.receiver.first_name,
-              //   notification.data.receiver.image
-              // )
+              NavigationService.navigate("AcceptedInviteScreen", {
+                deviceToken: notification.data.deviceToken,
+                receiver_first_name: notification.data.receiver_first_name,
+                receiver_image: notification.data.receiver_image
+              })
+            // this.showAccept.bind(
+            //   this,
+            //   notification.data.receiver.first_name,
+            //   notification.data.receiver.image
+            // )
           );
           // this.timeout = setTimeout(() => {
           //   this.setState(() => ({ invite: false }));
@@ -206,25 +206,25 @@ class App extends Component<Props> {
         } else if (notification.data.title === "Invite Rejected") {
           this.setState(
             {
-              reject_invite: true 
+              reject_invite: true
             },
             () =>
-            NavigationService.navigate("RejectedInviteScreen", {
-              deviceToken: notification.data.deviceToken,
-              receiver_first_name: notification.data.receiver_first_name,
-              receiver_image: notification.data.receiver_image,
-            })
-              // this.showReject.bind(
-              //   this,
-              //   notification.data.first_name,
-              //   notification.data.image
-              // )
-         );
+              NavigationService.navigate("RejectedInviteScreen", {
+                deviceToken: notification.data.deviceToken,
+                receiver_first_name: notification.data.receiver_first_name,
+                receiver_image: notification.data.receiver_image
+              })
+            // this.showReject.bind(
+            //   this,
+            //   notification.data.first_name,
+            //   notification.data.image
+            // )
+          );
           // this.timeout = setTimeout(() => {
           //   this.setState(() => ({ invite: false }));
           // }, 4000);
         } else if (notification.data.title === "New Invite") {
-          console.log("new new!"+notification.data.fire)
+          console.log("new new!" + notification.data.fire);
           this.setState(
             {
               new_invite: true,
@@ -232,34 +232,35 @@ class App extends Component<Props> {
               sender: notification.data.sender
             },
             () =>
-            NavigationService.navigate("InviteScreen", {
-              receiver: notification.data.receiver,
-fire: notification.data.fire,
-sender: notification.data.sender,
-deviceToken: notification.data.deviceToken,
-receiver_first_name: notification.data.receiver_first_name,
-receiver_last_name: notification.data.receiver_last_name,
-receiver_email: notification.data.receiver_email,
-receiver_interests: notification.data.receiver_interests,
-receiver_image: notification.data.receiver_image,
-receiver_gender: notification.data.receiver_gender,
-sender_first_name: notification.data.sender_first_name
-              // chatName: `${data.channelName}`,
-              // chatId: `${data.channelId}`
-            })
+              NavigationService.navigate("InviteScreen", {
+                receiver: notification.data.receiver,
+                fire: notification.data.fire,
+                sender: notification.data.sender,
+                deviceToken: notification.data.deviceToken,
+                receiver_first_name: notification.data.receiver_first_name,
+                receiver_last_name: notification.data.receiver_last_name,
+                receiver_email: notification.data.receiver_email,
+                receiver_interests: notification.data.receiver_interests,
+                receiver_image: notification.data.receiver_image,
+                receiver_gender: notification.data.receiver_gender,
+                sender_first_name: notification.data.sender_first_name
+                // chatName: `${data.channelName}`,
+                // chatId: `${data.channelId}`
+              })
           );
           // this.timeout = setTimeout(() => {
           //   this.setState(() => ({ invite: false }));
           // }, 4000);
         } else if (notification.data.title === "Invite Cancelled") {
         } else if (notification.data.title === "New Message") {
-          
+          NavigationService.navigate("Map", {
+            receiver: notification.data.receiver,
+            fire: notification.data.fire,
+            deviceToken: notification.data.deviceToken,
+            notification: true,
+            chat: true
+          })
         }
-        // NavigationService.navigate("Orders", {
-        //   // chatName: `${data.channelName}`,
-        //   // chatId: `${data.channelId}`
-        // });
-        //     this.showAlert.bind(this, title, body);
       });
 
     /*
@@ -270,35 +271,31 @@ sender_first_name: notification.data.sender_first_name
       .getInitialNotification();
     if (notificationOpen) {
       const { title, body } = notificationOpen.notification;
-      console.log(JSON.stringify(notificationOpen.notification))
+      console.log(JSON.stringify(notificationOpen.notification));
       //   this.showAlert.bind(this, title, body);
     }
     /*
      * Triggered for data only payload in foreground
      * */
     this.messageListener = firebase.messaging().onMessage(message => {
-      console.log("data===>"+JSON.stringify(message));
+      console.log("data===>" + JSON.stringify(message));
       //process data message
-     
     });
   }
   showReject(name, image) {
     // if (this.state.invite) {
-      NavigationService.navigate("Notification", {
-        // chatName: `${data.channelName}`,
-        // chatId: `${data.channelId}`
-      });
-      return (
-        <RejectedInviteScreen
-          receiver_image={image}
-          receiver_first_name={name}
-        />
-      );
+    NavigationService.navigate("Notification", {
+      // chatName: `${data.channelName}`,
+      // chatId: `${data.channelId}`
+    });
+    return (
+      <RejectedInviteScreen receiver_image={image} receiver_first_name={name} />
+    );
     // } else {
     //   return null;
     // }
   }
-  showAccept =(name, image) => {
+  showAccept = (name, image) => {
     if (this.state.invite) {
       return (
         <AcceptedInviteScreen
@@ -309,36 +306,38 @@ sender_first_name: notification.data.sender_first_name
     } else {
       return null;
     }
-  }
+  };
   showInvite = (receiver, sender, fire, deviceToken) => {
     // if (this.state.invite) {
     //   console.log("true  ")
-      return (<InviteScreen receiver={receiver} 
-      fire={fire} sender={sender} 
+    return (
+      <InviteScreen
+        receiver={receiver}
+        fire={fire}
+        sender={sender}
         deviceToken={deviceToken}
-      />);
+      />
+    );
     // } else {
     //   console.log("false  ")
     //   return null;
     // }
-  }
+  };
   render() {
-    if(this.state.new_invite){
-
-    }else if(this.state.accept_invite){
-
-    }else if(this.state.reject_invite){
-
-    }else{
-
+    if (this.state.new_invite) {
+    } else if (this.state.accept_invite) {
+    } else if (this.state.reject_invite) {
+    } else {
     }
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <View style={styles.container}>
-          <AppContainer  ref={navigatorRef => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}/>
+            <AppContainer
+              ref={navigatorRef => {
+                NavigationService.setTopLevelNavigator(navigatorRef);
+              }}
+            />
           </View>
         </PersistGate>
       </Provider>
@@ -361,6 +360,6 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
   }
 });

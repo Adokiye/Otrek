@@ -114,7 +114,11 @@ class reduxMap extends Component {
        start_location: null,
        end_location: null,
        email: null,
-       startTrek: false
+       startTrek: false,
+       chat: false,
+        receiver: {},
+        fire: '',
+        deviceToken: ''
     };
     this.mergeLot = this.mergeLot.bind(this);
     this.getDirectionsTo = this.getDirectionsTo.bind(this);
@@ -124,6 +128,19 @@ class reduxMap extends Component {
     clearInterval(this.intervalId);
     Geolocation.clearWatch(this.watchID);
   }
+
+  componentDidUpdate(){
+    const {params} = this.props.navigation.state;
+    if(params.chat){
+      params.chat = false;
+      this.setState({
+        receiver: params.receiver,
+        fire: params.fire,
+        deviceToken: params.deviceToken
+      }, ()=> this.setState({chat: true}))
+    }
+  }
+
    regionFrom(lat, lon, accuracy) {
     const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
     const circumference = (40075 / 360) * 1000;
@@ -324,6 +341,15 @@ class reduxMap extends Component {
   }
   
   componentDidMount() {
+    const {params} = this.props.navigation.state;
+    if(params.chat){
+      params.chat = false;
+      this.setState({
+        receiver: params.receiver,
+        fire: params.fire,
+        deviceToken: params.deviceToken
+      }, ()=> this.setState({chat: true}))
+    }
     this.requestGeolocationPermission();
     console.log(this.props.first_name)
    }
@@ -506,6 +532,10 @@ class reduxMap extends Component {
            <FindTrekkerBox  start={this.state.from?this.state.from:"Your current Location"} 
                  endLocation={this.getEndLocation} start_location={this.state.start_location}
                  navigation={this.props.navigation}
+                 chat={this.state.chat}
+                 receiver={this.state.receiver}
+                 fire={this.state.fire}
+                 deviceToken={this.state.deviceToken}
                  /> 
            </View>
     );

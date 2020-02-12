@@ -161,6 +161,12 @@ class reduxFirstTrekkerBox extends Component {
       this.setState({ chat: false });
     }
   }
+  
+   componentDidUpdate(){
+     
+   }
+
+
   render() {
     let trekkers = "";
     if (this.state.trekkers[0]) {

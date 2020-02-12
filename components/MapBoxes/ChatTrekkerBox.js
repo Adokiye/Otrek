@@ -117,7 +117,6 @@ class reduxChatTrekkerBox extends Component {
   sendPushNotification = async (title, body) => {
     const FIREBASE_API_KEY = firebaseApiKey;
     console.log("here!!!" + FIREBASE_API_KEY);
-    console.log(this.props.receiver.deviceToken + "toks");
     const message = {
       to: this.props.deviceToken ? this.props.deviceToken : "token",
       notification: {
