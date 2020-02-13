@@ -54,11 +54,10 @@ class reduxInvitingScreen extends Component {
   }
   sendPushNotification = async (title, body, token, image, interests) => {
     const FIREBASE_API_KEY = firebaseApiKey;
-    console.log("here!!!"+FIREBASE_API_KEY)    
-      console.log(this.props.receiver.deviceToken+"toks")
+    console.log("here!!!" + FIREBASE_API_KEY);
+    console.log(this.props.receiver.deviceToken + "toks");
     const message = {
-
-      to: this.props.deviceToken?this.props.deviceToken:"token",
+      to: this.props.deviceToken ? this.props.deviceToken : "token",
       notification: {
         title: title,
         body: body,
@@ -66,21 +65,21 @@ class reduxInvitingScreen extends Component {
         sound: 1,
         show_in_foreground: true,
         priority: "high",
-        content_available: true 
+        content_available: true
       },
       data: {
         title: title,
         body: body,
-    //    receiver: this.props.user,
+        //    receiver: this.props.user,
         receiver_first_name: this.props.user.first_name,
-receiver_last_name: this.props.user.last_name,
-receiver_email: this.props.user.email,
-receiver_interests: this.props.user.interests,
-receiver_image: this.props.user.image,
-receiver_gender: this.props.user.gender,
-sender_first_name: this.props.receiver.first_name,
-sender_image: this.props.receiver.image,
-  //      sender: this.props.receiver,
+        receiver_last_name: this.props.user.last_name,
+        receiver_email: this.props.user.email,
+        receiver_interests: this.props.user.interests,
+        receiver_image: this.props.user.image,
+        receiver_gender: this.props.user.gender,
+        sender_first_name: this.props.receiver.first_name,
+        sender_image: this.props.receiver.image,
+        //      sender: this.props.receiver,
         deviceToken: this.props.user_d_t,
         fire: this.state.fire
       }
@@ -95,7 +94,7 @@ sender_image: this.props.receiver.image,
       body: JSON.stringify(message)
     });
     response = await response.text();
-    console.log(JSON.stringify(response)+"sdssd");
+    console.log(JSON.stringify(response) + "sdssd");
     if (title === "Invite Cancelled") {
       this.props.hideInvite("false");
       this.setState({ cancelLoader: false });
@@ -129,15 +128,14 @@ sender_image: this.props.receiver.image,
             //  this.update();
             this.sendPushNotification(
               "New Invite",
-              this.props.user.first_name + " has invited you for a trek",
+              this.props.user.first_name + " has invited you for a trek"
             );
             setTimeout(
               function() {
                 this.props.hideInvite("false");
-              }
-              .bind(this),
+              }.bind(this),
               5000
-          );
+            );
           }.bind(this)
         );
       } else {
@@ -164,16 +162,14 @@ sender_image: this.props.receiver.image,
                 //   this.update();
                 this.sendPushNotification(
                   "New Invite",
-                  this.props.user.first_name +
-                    " has invited you for a trek",
+                  this.props.user.first_name + " has invited you for a trek"
                 );
                 setTimeout(
                   function() {
                     this.props.hideInvite("false");
-                  }
-                  .bind(this),
+                  }.bind(this),
                   5000
-              );
+                );
               }.bind(this)
             );
           } else {
@@ -198,16 +194,14 @@ sender_image: this.props.receiver.image,
                 // this.update();
                 this.sendPushNotification(
                   "New Invite",
-                  this.props.user.first_name +
-                    " has invited you for a trek",
+                  this.props.user.first_name + " has invited you for a trek"
                 );
                 setTimeout(
                   function() {
                     this.props.hideInvite("false");
-                  }
-                  .bind(this),
+                  }.bind(this),
                   5000
-              );
+                );
               }.bind(this)
             );
           }
@@ -239,11 +233,11 @@ sender_image: this.props.receiver.image,
             //     this.cancelUpdate();
             this.sendPushNotification(
               "Invite Cancelled",
-              this.props.user.first_name + " cancelled the invite",
+              this.props.user.first_name + " cancelled the invite"
             );
-            
+
             //  this.props.hideInvite("false");
-            //  
+            //
           }.bind(this)
         );
       } else {
@@ -265,7 +259,7 @@ sender_image: this.props.receiver.image,
             //   this.cancelUpdate();
             this.sendPushNotification(
               "Invite Cancelled",
-              this.props.user.first_name + " cancelled the invite",
+              this.props.user.first_name + " cancelled the invite"
             );
 
             // this.props.hideInvite("false");
@@ -275,10 +269,10 @@ sender_image: this.props.receiver.image,
       }
     });
   }
-  canceller = ()=>{
+  canceller = () => {
     this.props.hideInvite("false");
-              this.setState({ cancelLoader: false });
-  }
+    this.setState({ cancelLoader: false });
+  };
   render() {
     const { params } = this.props.navigation.state;
     let sure = (
