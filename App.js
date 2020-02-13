@@ -191,6 +191,7 @@ class App extends Component<Props> {
             () =>
               NavigationService.navigate("AcceptedInviteScreen", {
                 deviceToken: notification.data.deviceToken,
+                receiver_start_location: notification.data.receiver_start_location,
                 receiver_first_name: notification.data.receiver_first_name,
                 receiver_image: notification.data.receiver_image
               })
@@ -259,7 +260,7 @@ class App extends Component<Props> {
             deviceToken: notification.data.deviceToken,
             notification: true,
             chat: true
-          })
+          });
         }
       });
 
@@ -360,6 +361,6 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#ffffff"
   }
 });
