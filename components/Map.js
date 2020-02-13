@@ -497,6 +497,13 @@ class reduxMap extends Component {
             image={require('../assets/images/person-walking.png')}
             coordinate={this.state.currentCoordinate}
             />  }
+                    { this.state.invited_location  && <Marker.Animated
+            ref={marker => {
+            this.marker = marker;
+            }}
+            image={require('../assets/images/personwalk.png')}
+            coordinate={this.state.invited_location}
+            />  }
             {
             this.state.start_location && this.state.end_location &&
             <MapViewDirections
