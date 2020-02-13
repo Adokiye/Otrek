@@ -72,6 +72,7 @@ class reduxInviteScreen extends Component {
         sender: this.state.receiver,
         fire: this.state.fire,
         receiver_first_name: params.sender_first_name,
+        receiver_start_location: params.sender_start_location,
         receiver_image: params.sender_image,
       }
     };
