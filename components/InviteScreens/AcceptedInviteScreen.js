@@ -8,7 +8,7 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
-  Image, 
+  Image,
   Dimensions,
   View,
   ScrollView,
@@ -32,30 +32,32 @@ class reduxAcceptedInviteScreen extends Component {
     this.state = {};
   }
   componentDidMount() {
+    const { params } = this.props.navigation.state;
     setTimeout(
       function() {
-          this.props.navigation.navigate('Map');
-      }
-      .bind(this),
+        this.props.navigation.navigate("Map", {
+          invite: true,
+          start_location: params.receiver_start_location
+        });
+      }.bind(this),
       4000
-  );
+    );
   }
   render() {
     const { params } = this.props.navigation.state;
     return (
       <View style={styles.container}>
         <View style={styles.houseView}>
-
           <View style={styles.checkImageView}>
-          <Image
-            source={require("../../assets/images/check.png")}
-            resizeMode="contain"
-            style={styles.checkImage}
-          />
+            <Image
+              source={require("../../assets/images/check.png")}
+              resizeMode="contain"
+              style={styles.checkImage}
+            />
           </View>
           <Text style={styles.name}>{params.receiver_first_name}</Text>
           <Text style={styles.accepted}>Accepted your request</Text>
-       {/*   <View style={styles.continueView}>
+          {/*   <View style={styles.continueView}>
             <Text style={styles.continueText}>Continue</Text>
           </View> */}
         </View>
@@ -63,9 +65,9 @@ class reduxAcceptedInviteScreen extends Component {
     );
   }
 }
-const AcceptedInviteScreen = connect(
-  mapStateToProps
-)(reduxAcceptedInviteScreen);
+const AcceptedInviteScreen = connect(mapStateToProps)(
+  reduxAcceptedInviteScreen
+);
 export default AcceptedInviteScreen;
 const styles = StyleSheet.create({
   container: {
@@ -120,5 +122,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 3,
     borderColor: "white"
-  },
+  }
 });
