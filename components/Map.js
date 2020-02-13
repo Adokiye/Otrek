@@ -30,6 +30,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Geocoder from 'react-native-geocoding';
 import FindTrekkerBox from './MapBoxes/FindTrekkerBox'
 import FirstTrekkerBox from './MapBoxes/FirstTrekkerBox'
+import ChosenTrekkerBox from './MapBoxes/ChosenTrekkerBox'
 import ChatTrekkerBox from './MapBoxes/ChatTrekkerBox'
 import Polyline from '@mapbox/polyline';
 import Geolocation from '@react-native-community/geolocation';
