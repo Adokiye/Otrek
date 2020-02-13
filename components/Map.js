@@ -118,7 +118,8 @@ class reduxMap extends Component {
        chat: false,
         receiver: {},
         fire: '',
-        deviceToken: ''
+        deviceToken: '',
+        invited_location:null
     };
     this.mergeLot = this.mergeLot.bind(this);
     this.getDirectionsTo = this.getDirectionsTo.bind(this);
@@ -138,6 +139,10 @@ class reduxMap extends Component {
         fire: params.fire,
         deviceToken: params.deviceToken
       }, ()=> this.setState({chat: true}))
+    }
+    if(params.invite){
+      params.invite = false;
+      this.setState({invited_location: params.start_location})
     }
   }
 
