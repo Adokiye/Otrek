@@ -149,7 +149,8 @@ class reduxMap extends Component {
     }
     if(params.chosen){
       params.chosen = false;
-      
+      this.setState({reciever: params.receiver},
+        ()=> this.setState({find: false}))
     }
   }
 

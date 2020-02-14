@@ -37,6 +37,7 @@ class reduxAcceptedInviteScreen extends Component {
       function() {
         this.props.navigation.navigate("Map", {
           invite: true,
+          chosen: true,
           start_location: params.receiver_start_location
         });
       }.bind(this),
