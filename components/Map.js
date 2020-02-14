@@ -147,6 +147,10 @@ class reduxMap extends Component {
       params.invite = false;
       this.setState({invited_location: params.start_location})
     }
+    if(params.chosen){
+      params.chosen = false;
+      
+    }
   }
 
    regionFrom(lat, lon, accuracy) {
