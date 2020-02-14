@@ -153,7 +153,46 @@ class App extends Component<Props> {
       .notifications()
       .onNotification(notification => {
         console.log("data===>" + JSON.stringify(notification.data));
-
+        if (notification.data.title === "Invite Accepted") {
+          NavigationService.navigate("AcceptedInviteScreen", {
+            deviceToken: notification.data.deviceToken,
+            receiver_start_location: notification.data.receiver_start_location,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_image: notification.data.receiver_image,
+            receiver: notification.data.receiver
+          });
+        } else if (notification.data.title === "Invite Rejected") {
+          NavigationService.navigate("RejectedInviteScreen", {
+            deviceToken: notification.data.deviceToken,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_image: notification.data.receiver_image
+          });
+        } else if (notification.data.title === "New Invite") {
+          NavigationService.navigate("InviteScreen", {
+            receiver: notification.data.receiver,
+            fire: notification.data.fire,
+            sender: notification.data.sender,
+            deviceToken: notification.data.deviceToken,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_last_name: notification.data.receiver_last_name,
+            receiver_email: notification.data.receiver_email,
+            receiver_interests: notification.data.receiver_interests,
+            receiver_image: notification.data.receiver_image,
+            receiver_gender: notification.data.receiver_gender,
+            sender_first_name: notification.data.sender_first_name
+            // chatName: `${data.channelName}`,
+            // chatId: `${data.channelId}`
+          });
+        } else if (notification.data.title === "Invite Cancelled") {
+        } else if (notification.data.title === "New Message") {
+          NavigationService.navigate("Map", {
+            receiver: notification.data.receiver,
+            fire: notification.data.fire,
+            deviceToken: notification.data.deviceToken,
+            notification: true,
+            chat: true
+          });
+        }
         console.log("received");
         const localNotification = new firebase.notifications.Notification({
           sound: "default",
@@ -184,75 +223,35 @@ class App extends Component<Props> {
         const notification = notificationOpen.notification;
         //     console.log(JSON.stringify(notificationOpen.notification))
         if (notification.data.title === "Invite Accepted") {
-          this.setState(
-            {
-              accept_invite: true
-            },
-            () =>
-              NavigationService.navigate("AcceptedInviteScreen", {
-                deviceToken: notification.data.deviceToken,
-                receiver_start_location: notification.data.receiver_start_location,
-                receiver_first_name: notification.data.receiver_first_name,
-                receiver_image: notification.data.receiver_image,
-                receiver: notification.data.receiver
-              })
-            // this.showAccept.bind(
-            //   this,
-            //   notification.data.receiver.first_name,
-            //   notification.data.receiver.image
-            // )
-          );
-          // this.timeout = setTimeout(() => {
-          //   this.setState(() => ({ invite: false }));
-          // }, 4000);
+          NavigationService.navigate("AcceptedInviteScreen", {
+            deviceToken: notification.data.deviceToken,
+            receiver_start_location: notification.data.receiver_start_location,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_image: notification.data.receiver_image,
+            receiver: notification.data.receiver
+          });
         } else if (notification.data.title === "Invite Rejected") {
-          this.setState(
-            {
-              reject_invite: true
-            },
-            () =>
-              NavigationService.navigate("RejectedInviteScreen", {
-                deviceToken: notification.data.deviceToken,
-                receiver_first_name: notification.data.receiver_first_name,
-                receiver_image: notification.data.receiver_image
-              })
-            // this.showReject.bind(
-            //   this,
-            //   notification.data.first_name,
-            //   notification.data.image
-            // )
-          );
-          // this.timeout = setTimeout(() => {
-          //   this.setState(() => ({ invite: false }));
-          // }, 4000);
+          NavigationService.navigate("RejectedInviteScreen", {
+            deviceToken: notification.data.deviceToken,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_image: notification.data.receiver_image
+          });
         } else if (notification.data.title === "New Invite") {
-          console.log("new new!" + notification.data.fire);
-          this.setState(
-            {
-              new_invite: true,
-              receiver: notification.data.receiver,
-              sender: notification.data.sender
-            },
-            () =>
-              NavigationService.navigate("InviteScreen", {
-                receiver: notification.data.receiver,
-                fire: notification.data.fire,
-                sender: notification.data.sender,
-                deviceToken: notification.data.deviceToken,
-                receiver_first_name: notification.data.receiver_first_name,
-                receiver_last_name: notification.data.receiver_last_name,
-                receiver_email: notification.data.receiver_email,
-                receiver_interests: notification.data.receiver_interests,
-                receiver_image: notification.data.receiver_image,
-                receiver_gender: notification.data.receiver_gender,
-                sender_first_name: notification.data.sender_first_name
-                // chatName: `${data.channelName}`,
-                // chatId: `${data.channelId}`
-              })
-          );
-          // this.timeout = setTimeout(() => {
-          //   this.setState(() => ({ invite: false }));
-          // }, 4000);
+          NavigationService.navigate("InviteScreen", {
+            receiver: notification.data.receiver,
+            fire: notification.data.fire,
+            sender: notification.data.sender,
+            deviceToken: notification.data.deviceToken,
+            receiver_first_name: notification.data.receiver_first_name,
+            receiver_last_name: notification.data.receiver_last_name,
+            receiver_email: notification.data.receiver_email,
+            receiver_interests: notification.data.receiver_interests,
+            receiver_image: notification.data.receiver_image,
+            receiver_gender: notification.data.receiver_gender,
+            sender_first_name: notification.data.sender_first_name
+            // chatName: `${data.channelName}`,
+            // chatId: `${data.channelId}`
+          });
         } else if (notification.data.title === "Invite Cancelled") {
         } else if (notification.data.title === "New Message") {
           NavigationService.navigate("Map", {
