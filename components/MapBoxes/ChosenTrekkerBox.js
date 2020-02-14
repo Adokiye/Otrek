@@ -22,8 +22,6 @@ import {
 } from "react-native";
 import firebase from "react-native-firebase";
 import ChatTrekkerBox from "./ChatTrekkerBox";
-import InviteScreen from "../InviteScreens/InviteScreen";
-import InvitingScreen from "../InviteScreens/InvitingScreen";
 var db = firebase.firestore();
 const haversine = require("haversine");
 import SearchModal from "../Modals/SearchModal";
@@ -64,46 +62,6 @@ class reduxChosenTrekkerBox extends Component {
     var d = R * c; // distance in km
     return d * 1000;
   }
-  invite() {
-    this.setState({ regLoader: true });
-    var Ref = db.collection("invites").doc(this.props.fire);
-    Ref.get().then(doc => {
-      if (doc.exists) {
-        console.log("doc exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
-        Ref.update({
-          accept: false,
-          reject: true,
-          invite: true,
-          sender: {
-            email: this.props.receiver_email
-          }
-        }).then(
-          function() {
-            this.setState({ regLoader: false });
-          }.bind(this)
-        );
-      } else {
-        console.log(
-          "doc not exists " + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
-        );
-        Ref.set(
-          {
-            accept: false,
-            reject: true,
-            invite: true,
-            sender: {
-              email: this.props.receiver_email
-            }
-          },
-          { merge: true }
-        ).then(
-          function() {
-            this.setState({ regLoader: false });
-          }.bind(this)
-        );
-      }
-    });
-  }
   deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
@@ -114,51 +72,49 @@ class reduxChosenTrekkerBox extends Component {
   componentDidMount() {
     const { params } = this.props.navigation.state;
     // this.setState({ regLoader: true });
-    if(this.props.chat){
+    if (this.props.chat) {
       this.props.chat = false;
-      console.log(JSON.stringify(this.props.receiver))
-      this.setState({receiver: this.props.receiver,
-     }, ()=> this.setState({chat: true, invite: false}))
-
-          }
-          if(this.props.start_location
-            && this.props.end_location){
-                  this.setState({ regLoader: true });
-    this.getMarker().then(data => {
-      console.log(data);
-      var len = data ? data.length : null;
-      for (let i = 0; i < len; i++) {
-        let row = data[i];
-        if (row.details.start_location && row.details.end_location) {
-          console.log(row);
-          let diff_in_meters_start = this.getLatLonDiffInMeters(
-            row.details.start_location.latitude,
-            row.details.start_location.longitude,
-            this.props.start_location.latitude,
-            this.props.start_location.longitude
-          );
-          let diff_in_meters_end = this.getLatLonDiffInMeters(
-            row.details.end_location.latitude,
-            row.details.end_location.longitude,
-            this.props.end_location.latitude,
-            this.props.end_location.longitude
-          );
-          if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
-            console.log("distance checked and true");
-            if (row.details.email != this.props.token) {
-              this.setState(prevState => ({
-                trekkers: [...prevState.trekkers, row]
-              }));
-            } else {
-              this.setState({ row });
+      console.log(JSON.stringify(this.props.receiver));
+      this.setState({ receiver: this.props.receiver }, () =>
+        this.setState({ chat: true, invite: false })
+      );
+    }
+    if (this.props.start_location && this.props.end_location) {
+      this.setState({ regLoader: true });
+      this.getMarker().then(data => {
+        console.log(data);
+        var len = data ? data.length : null;
+        for (let i = 0; i < len; i++) {
+          let row = data[i];
+          if (row.details.start_location && row.details.end_location) {
+            console.log(row);
+            let diff_in_meters_start = this.getLatLonDiffInMeters(
+              row.details.start_location.latitude,
+              row.details.start_location.longitude,
+              this.props.start_location.latitude,
+              this.props.start_location.longitude
+            );
+            let diff_in_meters_end = this.getLatLonDiffInMeters(
+              row.details.end_location.latitude,
+              row.details.end_location.longitude,
+              this.props.end_location.latitude,
+              this.props.end_location.longitude
+            );
+            if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
+              console.log("distance checked and true");
+              if (row.details.email != this.props.token) {
+                this.setState(prevState => ({
+                  trekkers: [...prevState.trekkers, row]
+                }));
+              } else {
+                this.setState({ row });
+              }
             }
           }
         }
-      }
-      this.setState({ regLoader: false });
-    });
-            }
-
+        this.setState({ regLoader: false });
+      });
+    }
   }
   async getMarker() {
     const snapshot = await firebase
@@ -169,24 +125,23 @@ class reduxChosenTrekkerBox extends Component {
   }
   async getUser() {}
   chatFalse(value) {
-    if (value == "false") {  
-      if(this.props.start_location
-        && this.props.end_location){
-          this.props.find; 
-          this.setState({ chat: false });
-        }
+    if (value == "false") {
+      if (this.props.start_location && this.props.end_location) {
+        this.props.find;
+        this.setState({ chat: false });
+      }
     }
   }
-  
-   componentDidUpdate(){
-     if(this.props.chat){
-       this.props.chat = false;
-       console.log(JSON.stringify(this.props.receiver))
-       this.setState({receiver: this.props.receiver,
-      }, ()=> this.setState({chat: true, invite: false}))
-           }
-   }
 
+  componentDidUpdate() {
+    if (this.props.chat) {
+      this.props.chat = false;
+      console.log(JSON.stringify(this.props.receiver));
+      this.setState({ receiver: this.props.receiver }, () =>
+        this.setState({ chat: true, invite: false })
+      );
+    }
+  }
 
   render() {
     let trekkers = "";
@@ -234,19 +189,6 @@ class reduxChosenTrekkerBox extends Component {
                       resizeMode="contain"
                       style={styles.commentIcon}
                     />
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                  onPress={() =>
-                    this.setState({ receiver: this.state.trekkers[0] }, () =>
-                      this.setState({ chat: false, invite: true })
-                    )
-                  }
-                >
-                  <View style={styles.inviteButton}>
-                    <Text style={styles.inviteText}>Invite</Text>
                   </View>
                 </TouchableOpacity>
               </View>
