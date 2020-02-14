@@ -134,38 +134,30 @@ class reduxChosenTrekkerBox extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.chat) {
-      this.props.chat = false;
-      console.log(JSON.stringify(this.props.receiver));
-      this.setState({ receiver: this.props.receiver }, () =>
-        this.setState({ chat: true, invite: false })
-      );
-    }
   }
 
   render() {
     let trekkers = "";
-    if (this.state.trekkers[0]) {
-      if (!this.state.more) {
+    if (this.props.receiver) {
         trekkers = (
           <View style={styles.underView}>
             <View style={styles.firstView}>
               <Image
-                source={{ uri: this.state.trekkers[0].details.image }}
+                source={{ uri: this.props.receiver.details.image }}
                 resizeMode="cover"
                 style={styles.profileImage}
               />
               <View style={styles.aboutView}>
                 <Text style={styles.name}>
-                  {this.state.trekkers[0].details.first_name +
+                  {this.props.receiver.details.first_name +
                     " " +
-                    this.state.trekkers[0].details.last_name}
+                    this.props.receiver.details.last_name}
                 </Text>
                 <Text style={styles.gender}>
-                  {this.state.trekkers[0].details.gender}
+                  {this.props.receiver.details.gender}
                 </Text>
                 <Text style={styles.interests}>
-                  {this.state.trekkers[0].details.interests}
+                  {this.props.receiver.details.interests}
                 </Text>
               </View>
               <View style={styles.iconBox}>
@@ -178,7 +170,7 @@ class reduxChosenTrekkerBox extends Component {
                   activeOpacity={0.7}
                   hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
                   onPress={() =>
-                    this.setState({ receiver: this.state.trekkers[0] }, () =>
+                    this.setState({ receiver: this.props.receiver }, () =>
                       this.setState({ chat: true, invite: false })
                     )
                   }
@@ -194,91 +186,8 @@ class reduxChosenTrekkerBox extends Component {
               </View>
             </View>
             <View style={styles.line} />
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => this.setState({ more: true })}
-              hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-            >
-              <View style={styles.viewMore}>
-                <Text style={styles.viewMoreText}>View more trekkers</Text>
-              </View>
-            </TouchableOpacity>
           </View>
         );
-      } else {
-        trekkers = (
-          <FlatList
-            data={this.state.trekkers}
-            extraData={this.state}
-            renderItem={({ item, index }) => (
-              <View style={styles.underView}>
-                <View style={styles.firstView}>
-                  <Image
-                    source={{ uri: item.details.image }}
-                    resizeMode="cover"
-                    style={styles.profileImage}
-                  />
-                  <View style={styles.aboutView}>
-                    <Text style={styles.name}>
-                      {item.details.first_name + " " + item.details.last_name}
-                    </Text>
-                    <Text style={styles.gender}>{item.details.gender}</Text>
-                    <Text style={styles.interests}>
-                      {item.details.interests}
-                    </Text>
-                  </View>
-                  <View style={styles.iconBox}>
-                    {/*  <Image
-           source={require("../../assets/images/phoneCall.png")}
-           resizeMode="contain"
-           style={styles.phoneIcon}
-         />*/}
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                      onPress={() =>
-                        this.setState({ receiver: item }, () =>
-                          this.setState({ chat: true, invite: false })
-                        )
-                      }
-                    >
-                      <View style={styles.commentIcon}>
-                        <Image
-                          source={require("../../assets/images/message.png")}
-                          resizeMode="contain"
-                          style={styles.commentIcon}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                      onPress={() =>
-                        this.setState({ receiver: item }, () =>
-                          this.setState({ chat: false, invite: true })
-                        )
-                      }
-                    >
-                      <View style={styles.inviteButton}>
-                        <Text style={styles.inviteText}>Invite</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                {/* <View style={styles.line} />
-          <TouchableOpacity
-                activeOpacity={0.7}
-                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}>
-          <View style={styles.viewMore}>
-            <Text style={styles.viewMoreText}>View more trekkers</Text>
-          </View>
-          </TouchableOpacity> */}
-              </View>
-            )}
-            keyExtractor={(item, index) => `list-item-${index}`}
-          />
-        );
-      }
     } else {
       trekkers = (
         <Text
@@ -290,11 +199,11 @@ class reduxChosenTrekkerBox extends Component {
             marginTop: "30%"
           }}
         >
-          Oops!, No trekker available in your location
+          Network error
         </Text>
       );
     }
-    if (this.state.chat && !this.state.invite) {
+    if (this.state.chat) {
       return (
         <ChatTrekkerBox
           receiver_email={
@@ -312,34 +221,6 @@ class reduxChosenTrekkerBox extends Component {
           }
           user_d_t={this.state.row.deviceToken}
           deviceToken={this.state.receiver.deviceToken}
-          receiver_id={
-            this.state.receiver ? this.state.receiver.details.first_name : null
-          }
-          receiver_image={
-            this.state.receiver ? this.state.receiver.details.image : null
-          }
-          chatFalse={this.chatFalse.bind(this)}
-        />
-      );
-    } else if (this.state.invite && !this.state.chat) {
-      return (
-        <InvitingScreen
-          navigation={this.props.navigation}
-          hideInvite={this.hideInvite.bind(this)}
-          receiver_email={
-            this.state.receiver ? this.state.receiver.details.email : null
-          }
-          receiver={this.state.receiver.details}
-          user={this.state.row.details}
-          user_d_t={this.state.row.deviceToken}
-          deviceToken={this.state.receiver.deviceToken}
-          receiver_name={
-            this.state.receiver
-              ? this.state.receiver.details.first_name +
-                " " +
-                this.state.receiver.details.last_name
-              : null
-          }
           receiver_id={
             this.state.receiver ? this.state.receiver.details.first_name : null
           }
