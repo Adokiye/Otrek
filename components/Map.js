@@ -553,10 +553,7 @@ class reduxMap extends Component {
                  fire={this.state.fire}
                  deviceToken={this.state.deviceToken}
                  /> 
-           :            <ChosenTrekkerBox  start={this.state.from?this.state.from:"Your current Location"} 
-                 endLocation={this.getEndLocation} start_location={this.state.start_location}
-                 navigation={this.props.navigation}
-                 chat={this.state.chat}
+           :            <ChosenTrekkerBox 
                  receiver={this.state.receiver}
                  fire={this.state.fire}
                  deviceToken={this.state.deviceToken}

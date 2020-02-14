@@ -48,89 +48,8 @@ class reduxChosenTrekkerBox extends Component {
     };
     //  this.hideInvite = this.hideInvite.bind(this)
   }
-  getLatLonDiffInMeters(lat1, lon1, lat2, lon2) {
-    var R = 6371; // radius of the earth in km
-    var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
-    var dLon = this.deg2rad(lon2 - lon1);
-    var a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.deg2rad(lat1)) *
-        Math.cos(this.deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c; // distance in km
-    return d * 1000;
-  }
-  deg2rad(deg) {
-    return deg * (Math.PI / 180);
-  }
-  hideInvite() {
-    console.log("sas");
-    this.setState({ invite: false });
-  }
   componentDidMount() {
-    const { params } = this.props.navigation.state;
-    // this.setState({ regLoader: true });
-    if (this.props.chat) {
-      this.props.chat = false;
-      console.log(JSON.stringify(this.props.receiver));
-      this.setState({ receiver: this.props.receiver }, () =>
-        this.setState({ chat: true, invite: false })
-      );
-    }
-    if (this.props.start_location && this.props.end_location) {
-      this.setState({ regLoader: true });
-      this.getMarker().then(data => {
-        console.log(data);
-        var len = data ? data.length : null;
-        for (let i = 0; i < len; i++) {
-          let row = data[i];
-          if (row.details.start_location && row.details.end_location) {
-            console.log(row);
-            let diff_in_meters_start = this.getLatLonDiffInMeters(
-              row.details.start_location.latitude,
-              row.details.start_location.longitude,
-              this.props.start_location.latitude,
-              this.props.start_location.longitude
-            );
-            let diff_in_meters_end = this.getLatLonDiffInMeters(
-              row.details.end_location.latitude,
-              row.details.end_location.longitude,
-              this.props.end_location.latitude,
-              this.props.end_location.longitude
-            );
-            if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
-              console.log("distance checked and true");
-              if (row.details.email != this.props.token) {
-                this.setState(prevState => ({
-                  trekkers: [...prevState.trekkers, row]
-                }));
-              } else {
-                this.setState({ row });
-              }
-            }
-          }
-        }
-        this.setState({ regLoader: false });
-      });
-    }
-  }
-  async getMarker() {
-    const snapshot = await firebase
-      .firestore()
-      .collection("users")
-      .get();
-    return snapshot.docs.map(doc => doc.data());
-  }
-  async getUser() {}
-  chatFalse(value) {
-    if (value == "false") {
-      if (this.props.start_location && this.props.end_location) {
-        this.props.find;
-        this.setState({ chat: false });
-      }
-    }
+
   }
 
   componentDidUpdate() {
@@ -207,25 +126,24 @@ class reduxChosenTrekkerBox extends Component {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.state.receiver ? this.state.receiver.details.email : null
+            this.props.receiver ? this.props.receiver.details.email : null
           }
           receiver_name={
-            this.state.receiver
-              ? this.state.receiver.details.first_name +
+            this.props.receiver
+              ? this.props.receiver.details.first_name +
                 " " +
-                this.state.receiver.details.last_name
+                this.props.receiver.details.last_name
               : null
           }
           receiver_first_name={
-            this.state.receiver ? this.state.receiver.details.first_name : null
+            this.props.receiver ? this.props.receiver.details.first_name : null
           }
-          user_d_t={this.state.row.deviceToken}
-          deviceToken={this.state.receiver.deviceToken}
+          deviceToken={this.props.receiver.deviceToken}
           receiver_id={
-            this.state.receiver ? this.state.receiver.details.first_name : null
+            this.props.receiver ? this.props.receiver.details.first_name : null
           }
           receiver_image={
-            this.state.receiver ? this.state.receiver.details.image : null
+            this.props.receiver ? this.props.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />
