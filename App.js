@@ -193,7 +193,8 @@ class App extends Component<Props> {
                 deviceToken: notification.data.deviceToken,
                 receiver_start_location: notification.data.receiver_start_location,
                 receiver_first_name: notification.data.receiver_first_name,
-                receiver_image: notification.data.receiver_image
+                receiver_image: notification.data.receiver_image,
+                receiver: notification.data.receiver
               })
             // this.showAccept.bind(
             //   this,
