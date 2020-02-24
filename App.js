@@ -184,15 +184,7 @@ class App extends Component<Props> {
             // chatId: `${data.channelId}`
           });
         } else if (notification.data.title === "Invite Cancelled") {
-        } else if (notification.data.title === "New Message") {
-          NavigationService.navigate("Map", {
-            receiver: notification.data.receiver,
-            fire: notification.data.fire,
-            deviceToken: notification.data.deviceToken,
-            notification: true,
-            chat: true
-          });
-        }
+        } 
         console.log("received");
         const localNotification = new firebase.notifications.Notification({
           sound: "default",
@@ -283,47 +275,6 @@ class App extends Component<Props> {
       //process data message
     });
   }
-  showReject(name, image) {
-    // if (this.state.invite) {
-    NavigationService.navigate("Notification", {
-      // chatName: `${data.channelName}`,
-      // chatId: `${data.channelId}`
-    });
-    return (
-      <RejectedInviteScreen receiver_image={image} receiver_first_name={name} />
-    );
-    // } else {
-    //   return null;
-    // }
-  }
-  showAccept = (name, image) => {
-    if (this.state.invite) {
-      return (
-        <AcceptedInviteScreen
-          receiver_image={image}
-          receiver_first_name={name}
-        />
-      );
-    } else {
-      return null;
-    }
-  };
-  showInvite = (receiver, sender, fire, deviceToken) => {
-    // if (this.state.invite) {
-    //   console.log("true  ")
-    return (
-      <InviteScreen
-        receiver={receiver}
-        fire={fire}
-        sender={sender}
-        deviceToken={deviceToken}
-      />
-    );
-    // } else {
-    //   console.log("false  ")
-    //   return null;
-    // }
-  };
   render() {
     if (this.state.new_invite) {
     } else if (this.state.accept_invite) {

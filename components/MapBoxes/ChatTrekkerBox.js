@@ -18,9 +18,10 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ActivityIndicator
 } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
 import _ from "lodash";
 import firebase from "react-native-firebase";
 import { GiftedChat } from "react-native-gifted-chat";
@@ -48,7 +49,7 @@ class reduxChatTrekkerBox extends Component {
       isTyping: false,
       oppTyping: false,
       lastId: "",
-      fcmToken
+      fcmToken: ""
     };
     this.onSend = this.onSend.bind(this);
     this.isTyping = this.isTyping.bind(this);
@@ -92,7 +93,7 @@ class reduxChatTrekkerBox extends Component {
           function() {
             this.sendPushNotification(
               "New Message",
-              this.props.receiver.first_name + ":" + messages[0].text
+              this.props.receiver_first_name + ":" + messages[0].text
             );
           }.bind(this)
         );
@@ -218,7 +219,7 @@ class reduxChatTrekkerBox extends Component {
                     messages: GiftedChat.append(
                       previousState.messages,
                       doc.data().messages[0]
-                    ),
+                    )
                   }));
                 } else {
                   console.log("else ");
@@ -335,44 +336,44 @@ class reduxChatTrekkerBox extends Component {
   async checkPermission() {
     const enabled = await firebase.messaging().hasPermission();
     if (enabled) {
-        console.log("enabled")
-        this.getToken();
+      console.log("enabled");
+      this.getToken();
     } else {
-      console.log("unenabled")
-        this.requestPermission();
+      console.log("unenabled");
+      this.requestPermission();
     }
   }
-  
-    //3
+
+  //3
   async getToken() {
-    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    let fcmToken = await AsyncStorage.getItem("fcmToken");
     if (!fcmToken) {
-        fcmToken = await firebase.messaging().getToken();
-        if (fcmToken) {
-            // user has a device token
-            this.setState({fcmToken});
-            console.log(fcmToken);
-            await AsyncStorage.setItem('fcmToken', fcmToken);
-        }else{
-          console.log("\n"+"\n"+"no token"+"\n"+"\n")
-        }
-    }else{
-      console.log("here")
-      this.setState({fcmToken});
+      fcmToken = await firebase.messaging().getToken();
+      if (fcmToken) {
+        // user has a device token
+        this.setState({ fcmToken });
+        console.log(fcmToken);
+        await AsyncStorage.setItem("fcmToken", fcmToken);
+      } else {
+        console.log("\n" + "\n" + "no token" + "\n" + "\n");
+      }
+    } else {
+      console.log("here");
+      this.setState({ fcmToken });
       console.log(fcmToken);
     }
   }
-  
-    //2
+
+  //2
   async requestPermission() {
     try {
-        await firebase.messaging().requestPermission();
-        console.log("admin authorised")
-        // User has authorised
-        this.getToken();
+      await firebase.messaging().requestPermission();
+      console.log("admin authorised");
+      // User has authorised
+      this.getToken();
     } catch (error) {
-        // User has rejected permissions
-        console.log('permission rejected');
+      // User has rejected permissions
+      console.log("permission rejected");
     }
   }
 
@@ -469,16 +470,21 @@ class reduxChatTrekkerBox extends Component {
           />
           <Text style={styles.name}>{this.props.receiver_name}</Text>
         </View>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          extraData={this.state}
-          user={{
-            _id: this.props.token
-          }}
-          onInputTextChanged={this.detectTyping}
-          renderFooter={this.renderFooter}
-        />
+        {this.state.messages ? (
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={messages => this.onSend(messages)}
+            extraData={this.state}
+            user={{
+              _id: this.props.token
+            }}
+            onInputTextChanged={this.detectTyping}
+            renderFooter={this.renderFooter}
+          />
+        ) : (
+          <ActivityIndicator size={"large"} color={"#1bc47d"} />
+        )}
+
         <LoaderModal regLoader={this.state.regLoader} />
       </View>
     );

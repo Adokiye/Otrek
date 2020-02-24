@@ -111,54 +111,53 @@ class reduxFirstTrekkerBox extends Component {
     console.log("sas");
     this.setState({ invite: false });
   }
-  componentDidMount() {
+  async componentDidMount() {
     const { params } = this.props.navigation.state;
     // this.setState({ regLoader: true });
-    if(this.props.chat){
+    if (this.props.chat) {
       this.props.chat = false;
-      console.log(JSON.stringify(this.props.receiver))
-      this.setState({receiver: this.props.receiver,
-     }, ()=> this.setState({chat: true, invite: false}))
+      await this.setState({ receiver: this.props.receiver }, () =>
+      this.setState({ chat: true, invite: false })
+    );
+      console.log(JSON.stringify(this.props.receiver));
 
-          }
-          if(this.props.start_location
-            && this.props.end_location){
-                  this.setState({ regLoader: true });
-    this.getMarker().then(data => {
-      console.log(data);
-      var len = data ? data.length : null;
-      for (let i = 0; i < len; i++) {
-        let row = data[i];
-        if (row.details.start_location && row.details.end_location) {
-          console.log(row);
-          let diff_in_meters_start = this.getLatLonDiffInMeters(
-            row.details.start_location.latitude,
-            row.details.start_location.longitude,
-            this.props.start_location.latitude,
-            this.props.start_location.longitude
-          );
-          let diff_in_meters_end = this.getLatLonDiffInMeters(
-            row.details.end_location.latitude,
-            row.details.end_location.longitude,
-            this.props.end_location.latitude,
-            this.props.end_location.longitude
-          );
-          if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
-            console.log("distance checked and true");
-            if (row.details.email != this.props.token) {
-              this.setState(prevState => ({
-                trekkers: [...prevState.trekkers, row]
-              }));
-            } else {
-              this.setState({ row });
+    }
+    if (this.props.start_location && this.props.end_location) {
+      this.setState({ regLoader: true });
+      this.getMarker().then(data => {
+        console.log(data);
+        var len = data ? data.length : null;
+        for (let i = 0; i < len; i++) {
+          let row = data[i];
+          if (row.details.start_location && row.details.end_location) {
+            console.log(row);
+            let diff_in_meters_start = this.getLatLonDiffInMeters(
+              row.details.start_location.latitude,
+              row.details.start_location.longitude,
+              this.props.start_location.latitude,
+              this.props.start_location.longitude
+            );
+            let diff_in_meters_end = this.getLatLonDiffInMeters(
+              row.details.end_location.latitude,
+              row.details.end_location.longitude,
+              this.props.end_location.latitude,
+              this.props.end_location.longitude
+            );
+            if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
+              console.log("distance checked and true");
+              if (row.details.email != this.props.token) {
+                this.setState(prevState => ({
+                  trekkers: [...prevState.trekkers, row]
+                }));
+              } else {
+                this.setState({ row });
+              }
             }
           }
         }
-      }
-      this.setState({ regLoader: false });
-    });
-            }
-
+        this.setState({ regLoader: false });
+      });
+    }
   }
   async getMarker() {
     const snapshot = await firebase
@@ -169,24 +168,22 @@ class reduxFirstTrekkerBox extends Component {
   }
   async getUser() {}
   chatFalse(value) {
-    if (value == "false") {  
-      if(this.props.start_location
-        && this.props.end_location){
-          this.props.find; 
-          this.setState({ chat: false });
-        }
+    if (value == "false") {
+      if (this.props.start_location && this.props.end_location) {
+        this.props.find;
+        this.setState({ chat: false });
+      }
     }
   }
-  
-   componentDidUpdate(){
-     if(this.props.chat){
-       this.props.chat = false;
-       console.log(JSON.stringify(this.props.receiver))
-       this.setState({receiver: this.props.receiver,
-      }, ()=> this.setState({chat: true, invite: false}))
-           }
-   }
 
+  async componentDidUpdate() {
+    if (this.props.chat) {
+      this.props.chat = false;
+     await this.setState({ receiver: this.props.receiver }, () =>
+        this.setState({ chat: true, invite: false }));   
+           console.log(JSON.stringify(this.props.receiver));
+    }
+  }
 
   render() {
     let trekkers = "";
@@ -345,7 +342,9 @@ class reduxFirstTrekkerBox extends Component {
             color: "#000000",
             fontFamily: "mont-medium",
             fontSize: 14,
-            marginTop: "30%"
+            marginTop: "30%",
+            width: '80%',
+            textAlign: 'center'
           }}
         >
           Oops!, No trekker available in your location
@@ -356,25 +355,26 @@ class reduxFirstTrekkerBox extends Component {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.state.receiver ? this.state.receiver.details.email : null
+            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.email : null
           }
           receiver_name={
-            this.state.receiver
+            this.state.receiver && this.state.receiver.details
               ? this.state.receiver.details.first_name +
                 " " +
                 this.state.receiver.details.last_name
               : null
           }
           receiver_first_name={
-            this.state.receiver ? this.state.receiver.details.first_name : null
+            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.first_name : null
           }
           user_d_t={this.state.row.deviceToken}
+          receiver={this.state.receiver}
           deviceToken={this.state.receiver.deviceToken}
           receiver_id={
-            this.state.receiver ? this.state.receiver.details.first_name : null
+            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.first_name : null
           }
           receiver_image={
-            this.state.receiver ? this.state.receiver.details.image : null
+            this.state.receiver  && this.state.receiver.details? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />
