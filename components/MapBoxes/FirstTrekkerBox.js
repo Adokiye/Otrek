@@ -119,7 +119,7 @@ class reduxFirstTrekkerBox extends Component {
       await this.setState({ receiver: this.props.receiver }, () =>
       this.setState({ chat: true, invite: false })
     );
-      console.log(",,,"+JSON.stringify(this.props.receiver));
+      console.log("1,,");
 
     }
     if (this.props.start_location && this.props.end_location) {
@@ -181,7 +181,7 @@ class reduxFirstTrekkerBox extends Component {
       this.props.chat = false;
      await this.setState({ receiver: this.props.receiver }, () =>
         this.setState({ chat: true, invite: false }));   
-           console.log("jjj"+JSON.stringify(this.props.receiver));
+           console.log("jjj");
     }
   }
 

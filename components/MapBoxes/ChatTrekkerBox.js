@@ -60,7 +60,6 @@ class reduxChatTrekkerBox extends Component {
   onSend(messages = []) {
     let fire;
     this.setState({ messageLoader: true });
-    console.log(JSON.stringify(messages) + "\n");
     messages[0].sent = true;
     messages[0].received = false;
     messages[0].delivered = false;
@@ -79,7 +78,6 @@ class reduxChatTrekkerBox extends Component {
       received: false,
       delivered: false
     };
-    console.log("\n" + "to be sent" + " " + JSON.stringify(letSend) + "\n");
     fire = this.state.fire
       ? this.state.fire
       : this.props.token + "_" + this.props.receiver_email;
@@ -195,11 +193,6 @@ class reduxChatTrekkerBox extends Component {
               if (this.state.messages.length >= 1) {
                 let state_length = this.state.messages.length;
                 doc.data().messages = doc.data().messages.reverse();
-                console.log(
-                  JSON.stringify(this.state.messages) +
-                    "\n" +
-                    JSON.stringify(doc.data().messages)
-                );
                 if (
                   this.state.messages[state_length - 1]._id !=
                     doc.data().messages[0]._id &&
@@ -211,7 +204,6 @@ class reduxChatTrekkerBox extends Component {
                   console.log(
                     doc.data().messages.length + " :doc-messages length"
                   );
-                  console.log(JSON.stringify(doc.data().messages[0]));
                   doc.data().messages[0].createdAt = doc
                     .data()
                     .messages[0].createdAt.toDate();
@@ -271,11 +263,6 @@ class reduxChatTrekkerBox extends Component {
               if (this.state.messages.length >= 1) {
                 let state_length = this.state.messages.length;
                 doc.data().messages = doc.data().messages.reverse();
-                console.log(
-                  JSON.stringify(this.state.messages) +
-                    "\n" +
-                    JSON.stringify(doc.data().messages)
-                );
                 if (
                   this.state.messages[state_length - 1]._id !=
                     doc.data().messages[0]._id &&
@@ -287,7 +274,6 @@ class reduxChatTrekkerBox extends Component {
                   console.log(
                     doc.data().messages.length + " :doc-messages length"
                   );
-                  console.log(JSON.stringify(doc.data().messages[0]));
                   doc.data().messages[0].createdAt = doc
                     .data()
                     .messages[0].createdAt.toDate();

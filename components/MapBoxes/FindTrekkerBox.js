@@ -99,7 +99,7 @@ export default class FindTrekkerBox extends Component {
   componentDidUpdate(){
     if(this.props.chat){
       this.props.chat = false;
-      console.log("find!!!")
+      console.log("findu!!!")
       this.setState({receiver: this.props.receiver,
      }, ()=> this.setState({chat: true, first: true, find: false}))
           }
@@ -107,7 +107,7 @@ export default class FindTrekkerBox extends Component {
   componentDidMount() {
     if(this.props.chat){
       this.props.chat = false;
-      console.log("find!!!"+JSON.stringify(this.props.receiver))
+      console.log("findm!!!")
       this.setState({receiver: this.props.receiver,
      }, ()=> this.setState({chat: true, first: true, find: false}))
           }
