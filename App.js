@@ -253,6 +253,7 @@ class App extends Component<Props> {
         } else if (notification.data.title === "New Message") {
           NavigationService.navigate("Map", {
             receiver: JSON.parse(notification.data.receiver),
+            user_name: notification.data.user_name,
             fire: notification.data.fire,
             deviceToken: notification.data.deviceToken,
             notification: true,

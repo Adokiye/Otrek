@@ -132,6 +132,7 @@ class reduxMap extends Component {
       invited_location: null,
       find: true,
       chosen: false,
+      user_name: ''
     };
     this.mergeLot = this.mergeLot.bind(this);
     this.getDirectionsTo = this.getDirectionsTo.bind(this);
@@ -150,6 +151,7 @@ class reduxMap extends Component {
       this.setState(
         {
           receiver: params.receiver,
+          user_name: params.user_name,
           fire: params.fire,
           deviceToken: params.deviceToken,
         },
@@ -602,6 +604,7 @@ class reduxMap extends Component {
             navigation={this.props.navigation}
             chat={this.state.chat}
             receiver={this.state.receiver}
+            user_name={this.state.user_name}
             fire={this.state.fire}
             deviceToken={this.state.deviceToken}
             setChat={this.setChat.bind(this)}

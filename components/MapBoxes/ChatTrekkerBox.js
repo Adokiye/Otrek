@@ -91,7 +91,7 @@ class reduxChatTrekkerBox extends Component {
           function() {
             this.sendPushNotification(
               "New Message",
-              this.props.receiver_first_name + ":" + messages[0].text
+              this.props.user_name + ": " + messages[0].text
             );
           }.bind(this)
         );
@@ -108,7 +108,7 @@ class reduxChatTrekkerBox extends Component {
           function() {
             this.sendPushNotification(
               "New Message",
-              this.props.receiver_first_name + ":" + messages[0].text
+              this.props.user_name + ": " + messages[0].text
             );
           }.bind(this)
         );
@@ -133,6 +133,7 @@ class reduxChatTrekkerBox extends Component {
         title: title,
         body: body,
         receiver: this.props.receiver,
+        user_name: this.props.user_name,
         //      sender: this.props.receiver,
         deviceToken: this.state.fcmToken,
         fire: this.state.fire
@@ -176,6 +177,7 @@ class reduxChatTrekkerBox extends Component {
     }
   }
   async componentDidMount() {
+    this.setState({regLoader: true})
     console.log(this.props.receiver_email);
     await this.checkPermission();
     db.collection("messages")
@@ -318,6 +320,7 @@ class reduxChatTrekkerBox extends Component {
           }
         }.bind(this)
       );
+      this.setState({regLoader: false})
   }
 
   async checkPermission() {
@@ -457,7 +460,6 @@ class reduxChatTrekkerBox extends Component {
           />
           <Text style={styles.name}>{this.props.receiver_name}</Text>
         </View>
-        {this.state.messages ? (
           <GiftedChat
             messages={this.state.messages}
             onSend={messages => this.onSend(messages)}
@@ -468,9 +470,6 @@ class reduxChatTrekkerBox extends Component {
             onInputTextChanged={this.detectTyping}
             renderFooter={this.renderFooter}
           />
-        ) : (
-          <ActivityIndicator size={"large"} color={"#1bc47d"} />
-        )}
 
         <LoaderModal regLoader={this.state.regLoader} />
       </View>
@@ -524,6 +523,8 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontFamily: "mont-bold",
     fontSize: 20,
-    marginLeft: 10
+    marginLeft: 10,
+    flex: 1,
+    flexWrap: 'wrap'
   }
 });
