@@ -50,7 +50,8 @@ class reduxChatTrekkerBox extends Component {
       oppTyping: false,
       x: true,
       lastId: "",
-      fcmToken: ""
+      fcmToken: "",
+      receiver_email: ''
     };
     this.onSend = this.onSend.bind(this);
     this.isTyping = this.isTyping.bind(this);
@@ -178,9 +179,18 @@ class reduxChatTrekkerBox extends Component {
     }
   }
   async componentDidMount() {
-
+    this.setState({receiver_email: this.props.receiver_email})
     console.log(this.props.receiver_email);
+
     await this.checkPermission();
+  this.getMessages.bind(this);
+
+  }
+
+   getMessages = () => {
+     if(this.state.receiver_email !== this.props.receiver_email){
+            this.setState({regLoader: true})
+     }
     db.collection("messages")
       .doc(this.props.token + "_" + this.props.receiver_email)
       .onSnapshot(
@@ -330,9 +340,7 @@ class reduxChatTrekkerBox extends Component {
           }
         }.bind(this)
       );
-
-  }
-
+   }
   async checkPermission() {
     const enabled = await firebase.messaging().hasPermission();
     if (enabled) {
@@ -423,6 +431,10 @@ class reduxChatTrekkerBox extends Component {
     } else {
       //  console.log("not typing fn");
       this.notTyping();
+    }
+    if(this.props.update){
+     this.getMessages.bind(this);
+     this.props.updateFalse();
     }
   }
   notTyping() {

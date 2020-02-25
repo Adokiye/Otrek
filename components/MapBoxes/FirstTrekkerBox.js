@@ -46,7 +46,8 @@ class reduxFirstTrekkerBox extends Component {
       row: {},
       more: false,
       receiver: {},
-      sender: {}
+      sender: {},
+      update: false
     };
     //  this.hideInvite = this.hideInvite.bind(this)
   }
@@ -173,10 +174,13 @@ class reduxFirstTrekkerBox extends Component {
     if (value == "false") {
       if (this.props.start_location && this.props.end_location) {
         this.props.find;
-        this.setState({ chat: false });
+        this.setState({chat: false });
       }
     }
   }
+updateFalse = () => {
+  this.setState({update: false})
+}
 
   componentDidUpdate() {
     if (this.props.chat) {    
@@ -184,7 +188,8 @@ class reduxFirstTrekkerBox extends Component {
         this.setState(
           { 
             chat: true, 
-          invite: false
+          invite: false,
+          update: true
          }, ()=> console.log("first trekker set state!!"))); 
 
            this.props.setChat();                    
@@ -386,6 +391,8 @@ class reduxFirstTrekkerBox extends Component {
             this.state.receiver  ? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
+          update={this.state.update}
+          updateFalse={this.updateFalse.bind(this)}
         />
       );
     } else if (this.state.invite && !this.state.chat) {

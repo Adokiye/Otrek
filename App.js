@@ -252,7 +252,7 @@ class App extends Component<Props> {
         } else if (notification.data.title === "Invite Cancelled") {
         } else if (notification.data.title === "New Message") {
           NavigationService.navigate("Map", {
-            receiver: JSON.parse(notification.data.receiver) || null,
+            receiver: notification.data.receiver? JSON.parse(notification.data.receiver) : null,
             user_name: notification.data.user_name || null,
             fire: notification.data.fire || null,
             deviceToken: notification.data.deviceToken || null,
