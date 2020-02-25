@@ -177,13 +177,17 @@ class reduxFirstTrekkerBox extends Component {
     }
   }
 
-  async componentDidUpdate() {
+  componentDidUpdate() {
     if (this.props.chat) {    
-             console.log("cvcvc"); 
-     await this.setState({ receiver: this.props.receiver }, () =>
-        this.setState({ chat: true, invite: false })); 
+    this.setState({ receiver: this.props.receiver }, () =>
+        this.setState(
+          { 
+            chat: true, 
+          invite: false
+         }, ()=> console.log("first trekker set state!!"))); 
 
-           this.props.setChat();         
+           this.props.setChat();                    
+           console.log("cvcvc");   
     }
   }
 
