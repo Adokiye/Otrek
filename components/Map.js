@@ -160,9 +160,8 @@ class reduxMap extends Component {
     }
     if (params && params.invite) {
       console.log(params.start_location)
-      console.log(JSON.log(params.start_location))
       params.invite = false;
-      this.setState({ invited_location: params.start_location });
+      this.setState({ invited_location: JSON.parse(params.start_location) });
     }
     if (params && params.chosen) {
       params.chosen = false;
