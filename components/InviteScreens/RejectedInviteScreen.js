@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     backgroundColor: "#B70000",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: 'center'
   },
   houseView: {
     flexDirection: "column",

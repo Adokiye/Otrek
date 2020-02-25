@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     backgroundColor: "#377848",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: 'center'
   },
   checkImage: {
     width: "30%",

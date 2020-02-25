@@ -164,7 +164,7 @@ class App extends Component<Props> {
             receiver_start_location: notification.data.receiver_start_location,
             receiver_first_name: notification.data.receiver_first_name,
             receiver_image: notification.data.receiver_image,
-            receiver: notification.data.receiver
+            receiver: JSON.parse(notification.data.receiver)
           });
         } else if (notification.data.title === "Invite Rejected") {
           NavigationService.navigate("RejectedInviteScreen", {
@@ -225,7 +225,7 @@ class App extends Component<Props> {
             receiver_start_location: notification.data.receiver_start_location,
             receiver_first_name: notification.data.receiver_first_name,
             receiver_image: notification.data.receiver_image,
-            receiver: notification.data.receiver
+            receiver: JSON.parse(notification.data.receiver)
           });
         } else if (notification.data.title === "Invite Rejected") {
           NavigationService.navigate("RejectedInviteScreen", {
