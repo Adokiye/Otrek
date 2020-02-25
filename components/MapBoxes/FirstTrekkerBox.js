@@ -116,14 +116,13 @@ class reduxFirstTrekkerBox extends Component {
     const { params } = this.props.navigation.state;
     // this.setState({ regLoader: true });
     if (this.props.chat) {
-      console.log(this.props.receiver)
-      await this.setState({ receiver: this.props.receiver }, () =>{
+      console.log(this.props.receiver);
+      await this.setState({ receiver: this.props.receiver }, () => {
         console.log(JSON.stringify(this.state.receiver));
-             this.setState({ chat: true, invite: false });
-      }
-    );
+        this.setState({ chat: true, invite: false });
+      });
       console.log("1,,");
-      this.props.setChat();  
+      this.props.setChat();
     }
     if (this.props.start_location && this.props.end_location) {
       this.setState({ regLoader: true });
@@ -173,31 +172,34 @@ class reduxFirstTrekkerBox extends Component {
   chatFalse(value) {
     if (value == "false") {
       if (this.props.start_location && this.props.end_location) {
-        this.props.find;
-        this.setState({chat: false });
+        this.setState({ chat: false });
+      } else {
+        this.props.find();
+        this.setState({ chat: false });
       }
     }
   }
-updateFalse = () => {
-  this.setState({update: false})
-}
+  updateFalse = () => {
+    this.setState({ update: false });
+  };
 
   componentDidUpdate() {
-    if (this.props.chat) {    
-    this.setState({ receiver: this.props.receiver }, () =>
+    if (this.props.chat) {
+      this.setState({ receiver: this.props.receiver }, () =>
         this.setState(
-          { 
-            chat: true, 
-          invite: false,
-          update: true
-         }, ()=> console.log("first trekker set state!!"))); 
+          {
+            chat: true,
+            invite: false,
+            update: true
+          },
+          () => console.log("first trekker set state!!")
+        )
+      );
 
-           this.props.setChat();                    
-           console.log("cvcvc");   
+      this.props.setChat();
+      console.log("cvcvc");
     }
   }
-
-
 
   render() {
     let trekkers = "";
@@ -349,46 +351,54 @@ updateFalse = () => {
         );
       }
     } else {
-      trekkers = (
-        <Text
-          style={{
-            alignSelf: "center",
-            color: "#000000",
-            fontFamily: "mont-medium",
-            fontSize: 14,
-            marginTop: "30%",
-            width: '80%',
-            textAlign: 'center'
-          }}
-        >
-          Oops!, No trekker available in your location
-        </Text>
-      );
+      if (!this.state.regLoader) {
+        trekkers = (
+          <Text
+            style={{
+              alignSelf: "center",
+              color: "#000000",
+              fontFamily: "mont-medium",
+              fontSize: 14,
+              marginTop: "30%",
+              width: "80%",
+              textAlign: "center"
+            }}
+          >
+            Oops!, No trekker available in your location
+          </Text>
+        );
+      } else {
+        trekkers = <View />;
+      }
     }
     if (this.state.chat && !this.state.invite) {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.state.receiver  ? this.state.receiver.details.email : null
+            this.state.receiver ? this.state.receiver.details.email : null
           }
           receiver_name={
-            this.state.receiver 
+            this.state.receiver
               ? this.state.receiver.details.first_name +
                 " " +
                 this.state.receiver.details.last_name
               : null
           }
           receiver_first_name={
-            this.state.receiver  ? this.state.receiver.details.first_name : null
+            this.state.receiver ? this.state.receiver.details.first_name : null
           }
-          user_name={this.state.row?this.state.row.details.first_name:this.props.user_name}
+          user_name={
+            this.state.row && this.state.row.details
+              ? this.state.row.details.first_name
+              : this.props.user_name
+          }
           receiver={this.state.receiver}
           deviceToken={this.state.receiver.deviceToken}
           receiver_id={
-            this.state.receiver  ? this.state.receiver.details.first_name : null
+            this.state.receiver ? this.state.receiver.details.first_name : null
           }
           receiver_image={
-            this.state.receiver  ? this.state.receiver.details.image : null
+            this.state.receiver ? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
           update={this.state.update}
@@ -428,13 +438,19 @@ updateFalse = () => {
         <View
           style={this.state.more ? styles.more_container : styles.container}
         >
-          <View style={styles.cancelView}>
-            <Image
-              source={require("../../assets/images/cancel.png")}
-              resizeMode="contain"
-              style={styles.cancelImage}
-            />
-          </View>
+          <TouchableOpacity
+            hitSlop={{ left: 2, right: 2, top: 2, bottom: 2 }}
+            activeOpacity={0.7}
+            onPress={()=>this.props.find()}
+          >
+            <View style={styles.cancelView}>
+              <Image
+                source={require("../../assets/images/cancel.png")}
+                resizeMode="contain"
+                style={styles.cancelImage}
+              />
+            </View>
+          </TouchableOpacity>
           <ScrollView>{trekkers}</ScrollView>
           <SearchModal regLoader={this.state.regLoader} />
         </View>
@@ -487,12 +503,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     alignItems: "center",
-    width: "90%",
-    justifyContent: "space-between",
+    width: "100%",
+    justifyContent: "space-around",
     height: 75,
-    marginTop: 15,
-    flex: 1,
-    flexWrap: 'wrap'
+    marginTop: 15
   },
   profileImage: {
     height: 75,
@@ -509,7 +523,7 @@ const styles = StyleSheet.create({
     fontFamily: "mont-medium",
     fontSize: 14,
     flex: 1,
-    flexWrap: 'wrap'
+    flexWrap: "wrap"
   },
   gender: {
     color: "#2B9656",

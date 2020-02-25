@@ -465,7 +465,9 @@ class reduxChatTrekkerBox extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.goBack.bind(this)}>
+        <TouchableOpacity onPress={this.goBack.bind(this)}
+                    hitSlop={{ left: 2, right: 2, top: 2, bottom: 2 }}
+                    activeOpacity={0.7}>
           <View style={styles.cancelView}>
             <Image
               source={require("../../assets/images/cancel.png")}
