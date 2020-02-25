@@ -115,12 +115,13 @@ class reduxFirstTrekkerBox extends Component {
     const { params } = this.props.navigation.state;
     // this.setState({ regLoader: true });
     if (this.props.chat) {
+      console.log("1,,");
       this.props.chat = false;
       await this.setState({ receiver: this.props.receiver }, () =>
       this.setState({ chat: true, invite: false })
     );
       console.log("1,,");
-
+      this.props.setChat();  
     }
     if (this.props.start_location && this.props.end_location) {
       this.setState({ regLoader: true });
@@ -177,13 +178,16 @@ class reduxFirstTrekkerBox extends Component {
   }
 
   async componentDidUpdate() {
-    if (this.props.chat) {
-      this.props.chat = false;
+    if (this.props.chat) {    
+             console.log("cvcvc"); 
      await this.setState({ receiver: this.props.receiver }, () =>
-        this.setState({ chat: true, invite: false }));   
-           console.log("jjj");
+        this.setState({ chat: true, invite: false })); 
+
+           this.props.setChat();         
     }
   }
+
+
 
   render() {
     let trekkers = "";

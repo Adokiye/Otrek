@@ -41,13 +41,14 @@ export default class FindTrekkerBox extends Component {
       error: false,
       error_message: "",
       location: "dk",
-      receiver: '',
-      chat: false
+      receiver: "",
+      chat: false,
+      new: false
     };
   }
   find = () => {
     this.setState({ first: false, find: true, more: false });
-  }
+  };
   view() {
     if (this.state.end_location) {
       this.setState({ first: true, find: false, more: false });
@@ -96,21 +97,45 @@ export default class FindTrekkerBox extends Component {
   getEndLocation = (lat, long) => {
     this.props.endLocation(lat, long);
   };
-  componentDidUpdate(){
-    if(this.props.chat){
-      this.props.chat = false;
-      console.log("findu!!!")
-      this.setState({receiver: this.props.receiver,
-     }, ()=> this.setState({chat: true, first: true, find: false}))
-          }
+  componentDidUpdate() {
+    if (this.props.chat) {
+      this.setState({ receiver: this.props.receiver }, () =>
+        this.setState({ find: false }, () =>
+          this.setState(
+            {
+              chat: true,
+              first: true
+            },
+            () => console.log("TRUE TIMES")
+          )
+        )
+      );
+      this.props.setChat();
+      console.log("findu!!!");
+    }
   }
+
+  setChat = () => {
+    this.setState({ chat: false }, () => console.log("find--chat==> false"));
+  };
+
   componentDidMount() {
-    if(this.props.chat){
+    if (this.props.chat) {
+      console.log("findm!!!");
+      this.setState({ receiver: this.props.receiver }, () =>
+        this.setState({ find: false }, () =>
+          this.setState(
+            {
+              chat: true,
+              first: true
+            },
+            () => console.log("TRUE TIMES")
+          )
+        )
+      );
       this.props.chat = false;
-      console.log("findm!!!")
-      this.setState({receiver: this.props.receiver,
-     }, ()=> this.setState({chat: true, first: true, find: false}))
-          }
+      this.props.setChat();
+    }
   }
   render() {
     let main = "";
@@ -121,10 +146,10 @@ export default class FindTrekkerBox extends Component {
           end_location={this.state.end_location}
           navigation={this.props.navigation}
           receiver={this.props.receiver}
-                 fire={this.props.fire}
-                 deviceToken={this.props.deviceToken}
-                 chat={this.state.chat}
-                 find={this.find.bind(this)}
+          fire={this.props.fire}
+          deviceToken={this.props.deviceToken}
+          chat={this.state.chat}
+          find={this.find.bind(this)}
         />
       );
     } else if (this.state.find) {
@@ -137,7 +162,7 @@ export default class FindTrekkerBox extends Component {
           {/*    <View style={styles.textInputView}>
       <View style={styles.greenCircle}></View>
       <Text style={styles.text}>{this.props.start}</Text>
-    </View> 
+    </View>
     <View style={styles.textInputView}>
       <View style={styles.redCircle}></View>*/}
           <ScrollView>
@@ -214,7 +239,7 @@ export default class FindTrekkerBox extends Component {
         placeholderStyle={{ fontSize: 14, fontFamily: "mont-medium" }}
         placeholderTextColor="#000000"
         style={styles.textInput}
-      />  
+      />
     </View>*/}
           <TouchableOpacity onPress={this.view.bind(this)}>
             <View style={styles.findTrekkerButton}>
@@ -232,7 +257,127 @@ export default class FindTrekkerBox extends Component {
     } else if (this.state.more) {
       main = <MoreTrekkersBox />;
     }
-    return <View style={{ flex: 1 }}>{main}</View>;
+    return (
+      <View style={{ flex: 1 }}>
+        {this.state.first && (
+          <FirstTrekkerBox
+            start_location={this.state.start_location}
+            end_location={this.state.end_location}
+            navigation={this.props.navigation}
+            receiver={this.props.receiver}
+            fire={this.props.fire}
+            deviceToken={this.props.deviceToken}
+            chat={this.state.chat}
+            find={this.find.bind(this)}
+            setChat={this.setChat.bind(this)}
+          />
+        )}
+        {this.state.find && (
+          <View
+            style={
+              this.state.enterLocation
+                ? styles.container
+                : styles.containerSmall
+            }
+          >
+            {/*    <View style={styles.textInputView}>
+      <View style={styles.greenCircle}></View>
+      <Text style={styles.text}>{this.props.start}</Text>
+    </View>
+    <View style={styles.textInputView}>
+      <View style={styles.redCircle}></View>*/}
+            <ScrollView>
+              <View style={styles.redCircle} />
+              <GooglePlacesAutocomplete
+                ref="endlocation"
+                placeholder="Where to?"
+                textInputProps={{
+                  onTouchStart: () => {
+                    this.setState({ enterLocation: true });
+                  }
+                }}
+                minLength={1}
+                returnKeyType={"search"}
+                listViewDisplayed="auto"
+                fetchDetails={true}
+                onPress={this.selectDestination}
+                query={{
+                  key: "AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w",
+                  language: "en",
+                  components: "country:ng"
+                }}
+                nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GooglePlacesDetailsQuery={{
+                  fields: "formatted_address"
+                }}
+                styles={{
+                  textInputContainer: {
+                    width: "60.267%",
+                    height: 34,
+                    backgroundColor: "white",
+                    alignItems: "center",
+                    alignSelf: "center"
+                  },
+                  textInput: {
+                    width: "100%",
+                    height: 34,
+                    color: "#000000",
+                    fontSize: 14,
+                    fontFamily: "mont-medium"
+                  },
+                  description: {
+                    fontFamily: "mont-medium",
+                    fontSize: 14,
+                    color: "#000000",
+                    alignSelf: "center"
+                  },
+                  predefinedPlacesDescription: {
+                    fontFamily: "mont-medium",
+                    fontSize: 14,
+                    color: "#000000"
+                  },
+                  placeholderStyle: {
+                    fontSize: 14,
+                    fontFamily: "mont-medium",
+                    color: "#000000"
+                  },
+                  listView: {
+                    //   alignSelf: 'center'
+                  },
+                  row: {
+                    width: "80%",
+                    alignSelf: "center"
+                    //       opacity: !this.state.enterLocation?0:1
+                  }
+                }}
+                debounce={200}
+              />
+            </ScrollView>
+            {/*  <TextInput
+        underlineColorAndroid={"transparent"}
+        allowFontScaling={false}
+        placeholder="End"
+        placeholderStyle={{ fontSize: 14, fontFamily: "mont-medium" }}
+        placeholderTextColor="#000000"
+        style={styles.textInput}
+      />
+    </View>*/}
+            <TouchableOpacity onPress={this.view.bind(this)}>
+              <View style={styles.findTrekkerButton}>
+                <Text style={styles.findTrekkerText}>Find Trekker</Text>
+              </View>
+            </TouchableOpacity>
+            <ErrorModal
+              error={this.state.error}
+              error_message={this.state.error_message}
+              location={this.state.location}
+              hideError={this.hideErrorModal}
+            />
+          </View>
+        )}
+        {this.state.more && <MoreTrekkersBox />}
+      </View>
+    );
   }
 }
 const styles = StyleSheet.create({
