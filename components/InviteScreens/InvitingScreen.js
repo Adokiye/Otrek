@@ -70,7 +70,7 @@ class reduxInvitingScreen extends Component {
       data: {
         title: title,
         body: body,
-        //    receiver: this.props.user,
+          receiver: this.props.user,
         receiver_first_name: this.props.user.first_name,
         receiver_last_name: this.props.user.last_name,
         receiver_email: this.props.user.email,
@@ -80,7 +80,7 @@ class reduxInvitingScreen extends Component {
         receiver_gender: this.props.user.gender,
         sender_first_name: this.props.receiver.first_name,
         sender_image: this.props.receiver.image,
-        //      sender: this.props.receiver,
+             sender: this.props.receiver,
         deviceToken: this.props.user_d_t,
         fire: this.state.fire
       }

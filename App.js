@@ -174,9 +174,9 @@ class App extends Component<Props> {
           });
         } else if (notification.data.title === "New Invite") {
           NavigationService.navigate("InviteScreen", {
-            receiver: notification.data.receiver,
+            receiver: JSON.parse(notification.data.receiver),
             fire: notification.data.fire,
-            sender: notification.data.sender,
+            sender: JSON.parse(notification.data.sender),
             deviceToken: notification.data.deviceToken,
             receiver_first_name: notification.data.receiver_first_name,
             receiver_last_name: notification.data.receiver_last_name,
@@ -235,9 +235,9 @@ class App extends Component<Props> {
           });
         } else if (notification.data.title === "New Invite") {
           NavigationService.navigate("InviteScreen", {
-            receiver: notification.data.receiver,
+            receiver: JSON.parse(notification.data.receiver),
             fire: notification.data.fire,
-            sender: notification.data.sender,
+            sender: JSON.parse(notification.data.sender),
             deviceToken: notification.data.deviceToken,
             receiver_first_name: notification.data.receiver_first_name,
             receiver_last_name: notification.data.receiver_last_name,

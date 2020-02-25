@@ -33,6 +33,7 @@ class reduxAcceptedInviteScreen extends Component {
   }
   componentDidMount() {
     const { params } = this.props.navigation.state;
+    console.log(params)
     setTimeout(
       function() {
         this.props.navigation.navigate("Map", {
