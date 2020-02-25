@@ -490,7 +490,9 @@ const styles = StyleSheet.create({
     width: "90%",
     justifyContent: "space-between",
     height: 75,
-    marginTop: 15
+    marginTop: 15,
+    flex: 1,
+    flexWrap: 'wrap'
   },
   profileImage: {
     height: 75,

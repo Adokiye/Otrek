@@ -183,7 +183,7 @@ class reduxChatTrekkerBox extends Component {
     console.log(this.props.receiver_email);
 
     await this.checkPermission();
-  this.getMessages.bind(this);
+  this.getMessages();
 
   }
 
@@ -191,6 +191,7 @@ class reduxChatTrekkerBox extends Component {
      if(this.state.receiver_email !== this.props.receiver_email){
             this.setState({regLoader: true})
      }
+     console.log("trust trust!!!")
     db.collection("messages")
       .doc(this.props.token + "_" + this.props.receiver_email)
       .onSnapshot(
@@ -433,7 +434,7 @@ class reduxChatTrekkerBox extends Component {
       this.notTyping();
     }
     if(this.props.update){
-     this.getMessages.bind(this);
+     this.getMessages();
      this.props.updateFalse();
     }
   }
