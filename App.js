@@ -184,7 +184,9 @@ class App extends Component<Props> {
             receiver_interests: notification.data.receiver_interests,
             receiver_image: notification.data.receiver_image,
             receiver_gender: notification.data.receiver_gender,
-            sender_first_name: notification.data.sender_first_name
+            sender_first_name: notification.data.sender_first_name,
+            sender_image:  notification.data.sender_image,
+            sender_start_location: notification.data.sender_start_location
             // chatName: `${data.channelName}`,
             // chatId: `${data.channelId}`
           });
@@ -224,6 +226,7 @@ class App extends Component<Props> {
             deviceToken: notification.data.deviceToken,
             receiver_start_location: notification.data.receiver_start_location,
             receiver_first_name: notification.data.receiver_first_name,
+            
             receiver_image: notification.data.receiver_image,
             receiver: JSON.parse(notification.data.receiver)
           });
@@ -245,7 +248,9 @@ class App extends Component<Props> {
             receiver_interests: notification.data.receiver_interests,
             receiver_image: notification.data.receiver_image,
             receiver_gender: notification.data.receiver_gender,
-            sender_first_name: notification.data.sender_first_name
+            sender_first_name: notification.data.sender_first_name,
+            sender_image:  notification.data.sender_image,
+            sender_start_location: notification.data.sender_start_location,
             // chatName: `${data.channelName}`,
             // chatId: `${data.channelId}`
           });

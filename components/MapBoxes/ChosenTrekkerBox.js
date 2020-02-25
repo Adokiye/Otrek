@@ -62,21 +62,21 @@ class reduxChosenTrekkerBox extends Component {
           <View style={styles.underView}>
             <View style={styles.firstView}>
               <Image
-                source={{ uri: this.props.receiver.details.image }}
+                source={{ uri: this.props.receiver.image }}
                 resizeMode="cover"
                 style={styles.profileImage}
               />
               <View style={styles.aboutView}>
                 <Text style={styles.name}>
-                  {this.props.receiver.details.first_name +
+                  {this.props.receiver.first_name +
                     " " +
-                    this.props.receiver.details.last_name}
+                    this.props.receiver.last_name}
                 </Text>
                 <Text style={styles.gender}>
-                  {this.props.receiver.details.gender}
+                  {this.props.receiver.gender}
                 </Text>
                 <Text style={styles.interests}>
-                  {this.props.receiver.details.interests}
+                  {this.props.receiver.interests}
                 </Text>
               </View>
               <View style={styles.iconBox}>
@@ -126,24 +126,24 @@ class reduxChosenTrekkerBox extends Component {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.props.receiver ? this.props.receiver.details.email : null
+            this.props.receiver ? this.props.receiver.email : null
           }
           receiver_name={
             this.props.receiver
-              ? this.props.receiver.details.first_name +
+              ? this.props.receiver.first_name +
                 " " +
-                this.props.receiver.details.last_name
+                this.props.receiver.last_name
               : null
           }
           receiver_first_name={
-            this.props.receiver ? this.props.receiver.details.first_name : null
+            this.props.receiver ? this.props.receiver.first_name : null
           }
           deviceToken={this.props.receiver.deviceToken}
           receiver_id={
-            this.props.receiver ? this.props.receiver.details.first_name : null
+            this.props.receiver ? this.props.receiver.first_name : null
           }
           receiver_image={
-            this.props.receiver ? this.props.receiver.details.image : null
+            this.props.receiver ? this.props.receiver.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />
