@@ -98,7 +98,7 @@ export default class FindTrekkerBox extends Component {
     this.props.endLocation(lat, long);
   };
   componentDidUpdate() {
-    if (this.props.chat) {
+    if (this.props.chat ) {
       this.setState({ receiver: this.props.receiver }, () =>
         this.setState({ find: false }, () =>
           this.setState(

@@ -115,10 +115,11 @@ class reduxFirstTrekkerBox extends Component {
     const { params } = this.props.navigation.state;
     // this.setState({ regLoader: true });
     if (this.props.chat) {
-      console.log("1,,");
-      this.props.chat = false;
-      await this.setState({ receiver: this.props.receiver }, () =>
-      this.setState({ chat: true, invite: false })
+      console.log(this.props.receiver)
+      await this.setState({ receiver: this.props.receiver }, () =>{
+        console.log(JSON.stringify(this.state.receiver));
+             this.setState({ chat: true, invite: false });
+      }
     );
       console.log("1,,");
       this.props.setChat();  
@@ -363,26 +364,26 @@ class reduxFirstTrekkerBox extends Component {
       return (
         <ChatTrekkerBox
           receiver_email={
-            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.email : null
+            this.state.receiver  ? this.state.receiver.details.email : null
           }
           receiver_name={
-            this.state.receiver && this.state.receiver.details
+            this.state.receiver 
               ? this.state.receiver.details.first_name +
                 " " +
                 this.state.receiver.details.last_name
               : null
           }
           receiver_first_name={
-            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.first_name : null
+            this.state.receiver  ? this.state.receiver.details.first_name : null
           }
           user_d_t={this.state.row.deviceToken}
           receiver={this.state.receiver}
           deviceToken={this.state.receiver.deviceToken}
           receiver_id={
-            this.state.receiver && this.state.receiver.details ? this.state.receiver.details.first_name : null
+            this.state.receiver  ? this.state.receiver.details.first_name : null
           }
           receiver_image={
-            this.state.receiver  && this.state.receiver.details? this.state.receiver.details.image : null
+            this.state.receiver  ? this.state.receiver.details.image : null
           }
           chatFalse={this.chatFalse.bind(this)}
         />

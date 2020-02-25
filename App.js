@@ -152,7 +152,12 @@ class App extends Component<Props> {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        console.log("data===>" + JSON.stringify(notification.data));
+
+        if(notification.data && notification.data.receiver){
+          console.log("data===>" + JSON.stringify(notification.data));
+        console.log("\n"+"receiver===>" + notification.data.receiver);          
+        }
+
         if (notification.data.title === "Invite Accepted") {
           NavigationService.navigate("AcceptedInviteScreen", {
             deviceToken: notification.data.deviceToken,
@@ -247,7 +252,7 @@ class App extends Component<Props> {
         } else if (notification.data.title === "Invite Cancelled") {
         } else if (notification.data.title === "New Message") {
           NavigationService.navigate("Map", {
-            receiver: notification.data.receiver,
+            receiver: JSON.parse(notification.data.receiver),
             fire: notification.data.fire,
             deviceToken: notification.data.deviceToken,
             notification: true,

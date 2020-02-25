@@ -176,6 +176,7 @@ class reduxChatTrekkerBox extends Component {
     }
   }
   async componentDidMount() {
+    console.log(this.props.receiver_email);
     await this.checkPermission();
     db.collection("messages")
       .doc(this.props.token + "_" + this.props.receiver_email)
