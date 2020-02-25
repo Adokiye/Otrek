@@ -7,7 +7,7 @@
  * @flow
  */
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import {
   StyleSheet,
   Text,
@@ -43,11 +43,12 @@ class reduxChatTrekkerBox extends Component {
     super(props);
     this.state = {
       trekkers: [],
-      regLoader: false,
+      regLoader: true,
       messages: [],
       fire: "",
       isTyping: false,
       oppTyping: false,
+      x: true,
       lastId: "",
       fcmToken: ""
     };
@@ -177,7 +178,7 @@ class reduxChatTrekkerBox extends Component {
     }
   }
   async componentDidMount() {
-    this.setState({regLoader: true})
+
     console.log(this.props.receiver_email);
     await this.checkPermission();
     db.collection("messages")
@@ -216,6 +217,7 @@ class reduxChatTrekkerBox extends Component {
                       doc.data().messages[0]
                     )
                   }));
+
                 } else {
                   console.log("else ");
                   for (let i = doc.data().messages.length - 1; i < 0; i--) {
@@ -245,8 +247,11 @@ class reduxChatTrekkerBox extends Component {
                   }),
                   () => console.log(this.state.messages)
                 );
+                this.setState({regLoader: false});
               }
             }
+          }else{
+            this.setState({x: false})
           }
         }.bind(this)
       );
@@ -315,12 +320,17 @@ class reduxChatTrekkerBox extends Component {
                   }),
                   () => console.log(this.state.messages)
                 );
+                this.setState({regLoader: false});
               }
+            }
+          }else{
+            if(!this.state.x){
+              this.setState({regLoader: false})
             }
           }
         }.bind(this)
       );
-      this.setState({regLoader: false})
+
   }
 
   async checkPermission() {
@@ -379,8 +389,7 @@ class reduxChatTrekkerBox extends Component {
     }
   }
   goBack() {
-    value = "false";
-    this.props.chatFalse(value);
+    this.props.chatFalse("false");
   }
   isTyping() {
     //   console.log("here " + this.props.received);
@@ -452,6 +461,10 @@ class reduxChatTrekkerBox extends Component {
             />
           </View>
         </TouchableOpacity>
+        {this.state.regLoader ?
+        <ActivityIndicator color={'#1bc47d'} size={'large'} />
+        :
+                <Fragment>
         <View style={styles.firstView}>
           <Image
             source={{ uri: this.props.receiver_image }}
@@ -470,8 +483,9 @@ class reduxChatTrekkerBox extends Component {
             onInputTextChanged={this.detectTyping}
             renderFooter={this.renderFooter}
           />
+</Fragment>
+        }
 
-        <LoaderModal regLoader={this.state.regLoader} />
       </View>
     );
   }

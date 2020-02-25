@@ -498,7 +498,9 @@ const styles = StyleSheet.create({
   name: {
     color: "#000000",
     fontFamily: "mont-medium",
-    fontSize: 14
+    fontSize: 14,
+    flex: 1,
+    flexWrap: 'wrap'
   },
   gender: {
     color: "#2B9656",
