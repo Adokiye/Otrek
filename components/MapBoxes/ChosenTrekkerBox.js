@@ -54,6 +54,16 @@ class reduxChosenTrekkerBox extends Component {
 
   componentDidUpdate() {
   }
+  chatFalse(value) {
+    if (value == "false") {
+      if (this.props.start_location && this.props.end_location) {
+        this.setState({ chat: false });
+      } else {
+        this.props.find();
+        this.setState({ chat: false });
+      }
+    }
+  }
 
   render() {
     let trekkers = "";
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
-    height: 226,
+    height: 200,
     width: "100%",
     borderTopLeftRadius: 40,
     borderWidth: 1,
