@@ -337,6 +337,7 @@ class reduxMap extends Component {
                   .then(user_doc => {
                     this.setState({user: user_doc.data().details})
                     if (user_doc.data().invite.isInvited) {
+                      console.log("dfdfdd")
                       this.setState(
                         {
                           invited_location: user_doc.data().invite
@@ -389,8 +390,9 @@ class reduxMap extends Component {
     db.collection("users")
     .doc(this.props.token)
     .update({
-      "invited.isInvited": false,
-      "invited.receiver": null,
+      "invite.isInvited": false,
+      "invite.receiver": null,
+      "invite.start_location": null,
     })
     .then(function() {
       console.log("Document successfully updated!");
