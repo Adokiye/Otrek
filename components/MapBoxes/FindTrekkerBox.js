@@ -17,7 +17,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   PermissionsAndroid
-} from "react-native";
+} from "react-native"; 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import FirstTrekkerBox from "./FirstTrekkerBox";
 import ErrorModal from "../Modals/ErrorModal";
@@ -245,11 +245,13 @@ export default class FindTrekkerBox extends Component {
         style={styles.textInput}
       />
     </View>*/}
-            <TouchableOpacity onPress={this.view.bind(this)}>
+          {this.state.enterLocation ?
+          null: <TouchableOpacity onPress={this.view.bind(this)}
+            activeOpacity={0.7}>
               <View style={styles.findTrekkerButton}>
                 <Text style={styles.findTrekkerText}>Find Trekker</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity>}  
             <ErrorModal
               error={this.state.error}
               error_message={this.state.error_message}
