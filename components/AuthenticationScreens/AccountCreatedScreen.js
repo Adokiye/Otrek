@@ -30,7 +30,7 @@ export default class AccountCreatedScreen extends Component {
   componentDidMount() {
     setTimeout(
       function() {
-          this.props.navigation.navigate('Map');
+          this.props.navigation.pop('Map');
       }
       .bind(this),
       2000

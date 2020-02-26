@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
-    height: 200,
+    height: 160,
     width: "100%",
     borderTopLeftRadius: 40,
     borderWidth: 1,

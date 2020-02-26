@@ -142,7 +142,7 @@ class reduxRegisterScreen extends Component {
                 this.props.setLastName(this.state.last_name);
                 this.props.setFirstName(this.state.first_name);
                 this.setState({ regLoader: false, }, );
-                this.props.navigation.navigate("AccountCreatedScreen");
+                this.props.navigation.pop("AccountCreatedScreen");
               }.bind(this)) })  ).catch(error =>
           this.setState({
             error_message: error.message,

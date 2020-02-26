@@ -92,7 +92,7 @@ class reduxLoginScreen extends Component {
                       }
                     ).then(function(){
                       this.setState({ regLoader: false, }, );
-                      this.props.navigation.navigate("Map");
+                      this.props.navigation.pop("Map");
                     }.bind(this));
                 } else {
                   this.setState({ regLoader: false, }, );

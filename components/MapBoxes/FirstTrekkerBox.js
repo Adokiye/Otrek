@@ -552,8 +552,8 @@ const styles = StyleSheet.create({
     height: 20
   },
   inviteButton: {
-    width: 60,
-    height: 20,
+    width: 65,
+    height: 25,
     borderRadius: 4,
     backgroundColor: "#55C18E",
     alignItems: "center",
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   inviteText: {
     color: "#ffffff",
     fontFamily: "mont-bold",
-    fontSize: 10
+    fontSize: 14
   },
   line: {
     width: "89.067%",
