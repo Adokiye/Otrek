@@ -186,7 +186,8 @@ class App extends Component<Props> {
             receiver_gender: notification.data.receiver_gender,
             sender_first_name: notification.data.sender_first_name,
             sender_image:  notification.data.sender_image,
-            sender_start_location: notification.data.sender_start_location
+            sender_start_location: notification.data.sender_start_location,
+            receiver_start_location: notification.data.receiver_start_location
             // chatName: `${data.channelName}`,
             // chatId: `${data.channelId}`
           });
@@ -251,6 +252,7 @@ class App extends Component<Props> {
             sender_first_name: notification.data.sender_first_name,
             sender_image:  notification.data.sender_image,
             sender_start_location: notification.data.sender_start_location,
+            receiver_start_location: notification.data.receiver_start_location
             // chatName: `${data.channelName}`,
             // chatId: `${data.channelId}`
           });

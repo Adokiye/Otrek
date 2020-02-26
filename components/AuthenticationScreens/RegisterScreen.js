@@ -130,7 +130,11 @@ class reduxRegisterScreen extends Component {
                       end_location: null,
                       gender: this.state.gender,
                     },
-                    deviceToken: this.state.fcmToken
+                    deviceToken: this.state.fcmToken,
+                    invite: {
+                      isInvited: false,
+                      receiver: null
+                    }
                 },
                 { merge: true }
               ).then(function(){

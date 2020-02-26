@@ -76,6 +76,7 @@ class reduxInvitingScreen extends Component {
         receiver_email: this.props.user.email,
         receiver_interests: this.props.user.interests,
         sender_start_location: this.props.receiver.start_location,
+        receiver_start_location: this.props.user.start_location,
         receiver_image: this.props.user.image,
         receiver_gender: this.props.user.gender,
         sender_first_name: this.props.receiver.first_name,
@@ -111,6 +112,16 @@ class reduxInvitingScreen extends Component {
     var VRef = db
       .collection("invites")
       .doc(this.props.receiver_email + "_" + this.props.token);
+      // db
+      // .collection('users')
+      // .doc(this.props.receiver_email)
+      // .get().then(user_doc => {
+      // if(user_doc.data().invite && user_doc.invite.isInvited){
+   
+      // }else{
+
+      // }
+      // })
     Ref.get().then(doc => {
       if (doc.exists) {
         this.setState({

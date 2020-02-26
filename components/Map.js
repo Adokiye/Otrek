@@ -4,7 +4,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -21,29 +21,29 @@ import {
   Alert,
   TouchableNativeFeedback,
   BackHandler,
-  DeviceEventEmitter,
-} from 'react-native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
+  DeviceEventEmitter
+} from "react-native";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import MapView, {
   Marker,
   Callout,
   AnimatedRegion,
-  Animated,
-} from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
-import Geocoder from 'react-native-geocoding';
-import FindTrekkerBox from './MapBoxes/FindTrekkerBox';
-import FirstTrekkerBox from './MapBoxes/FirstTrekkerBox';
-import ChosenTrekkerBox from './MapBoxes/ChosenTrekkerBox';
-import ChatTrekkerBox from './MapBoxes/ChatTrekkerBox';
-import Polyline from '@mapbox/polyline';
-import Geolocation from '@react-native-community/geolocation';
-const google_api_key = 'AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w';
-import firebase from 'react-native-firebase';
-import LinearGradient from 'react-native-linear-gradient';
+  Animated
+} from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
+import Geocoder from "react-native-geocoding";
+import FindTrekkerBox from "./MapBoxes/FindTrekkerBox";
+import FirstTrekkerBox from "./MapBoxes/FirstTrekkerBox";
+import ChosenTrekkerBox from "./MapBoxes/ChosenTrekkerBox";
+import ChatTrekkerBox from "./MapBoxes/ChatTrekkerBox";
+import Polyline from "@mapbox/polyline";
+import Geolocation from "@react-native-community/geolocation";
+const google_api_key = "AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w";
+import firebase from "react-native-firebase";
+import LinearGradient from "react-native-linear-gradient";
 var db = firebase.firestore();
-const haversine = require('haversine');
+const haversine = require("haversine");
 Geocoder.init(google_api_key);
 const LATITUDE_DELTA = 0.0005;
 const LONGITUDE_DELTA = 0.005;
@@ -51,40 +51,40 @@ const default_region = {
   latitude: 6.45407,
   longitude: 3.39467,
   latitudeDelta: 1,
-  longitudeDelta: 1,
+  longitudeDelta: 1
 };
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 const mapStateToProps = state => ({
-  ...state,
+  ...state
 });
 class reduxMap extends Component {
   getMapRegion = () => ({
     latitude: this.state.changedLatitude,
     longitude: this.state.changedLongitude,
     latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA
   });
   static navigationOptions = {
     header: null,
-    drawerLockMode: 'locked-closed',
+    drawerLockMode: "locked-closed"
   };
   getEndLocation = (lat, long) => {
     this.setState(
       {
         end_location: {
           latitude: lat,
-          longitude: long,
-        },
+          longitude: long
+        }
       },
       () =>
         db
-          .collection('users')
+          .collection("users")
           .doc(this.props.token)
           .update({
-            'details.end_location': { latitude: lat, longitude: long },
+            "details.end_location": { latitude: lat, longitude: long }
           })
           .then(function() {
-            console.log('Document successfully updated!');
+            console.log("Document successfully updated!");
           })
     );
   };
@@ -93,19 +93,19 @@ class reduxMap extends Component {
     this.from_region = null;
     //  this.watchId = null;
     this.state = {
-      destinationRegion: '',
+      destinationRegion: "",
       latitude: null,
       longitude: null,
       concat: null,
       concatCord: null,
       coords: [],
-      x: 'false',
+      x: "false",
       cordLatitude: null,
       cordLongitude: null,
-      y: '',
-      z: '',
-      from: '',
-      to: '',
+      y: "",
+      z: "",
+      from: "",
+      to: "",
       region: default_region,
       start_location: null,
       end_location: null,
@@ -113,11 +113,11 @@ class reduxMap extends Component {
         latitude: 6.45407,
         longitude: 3.39467,
         latitudeDelta: 0,
-        longitudeDelta: 0,
+        longitudeDelta: 0
       }),
-      distanceTravelled: '',
+      distanceTravelled: "",
       prevLatLng: [],
-      debugText: '',
+      debugText: "",
       changedLatitude: null,
       changedLongitude: null,
       marginBottom: 1,
@@ -127,12 +127,13 @@ class reduxMap extends Component {
       startTrek: false,
       chat: false,
       receiver: {},
-      fire: '',
-      deviceToken: '',
+      fire: "",
+      deviceToken: "",
       invited_location: null,
       find: true,
       chosen: false,
-      user_name: ''
+      user_name: "",
+      user: {}
     };
     this.mergeLot = this.mergeLot.bind(this);
     this.getDirectionsTo = this.getDirectionsTo.bind(this);
@@ -147,33 +148,61 @@ class reduxMap extends Component {
     const { params } = this.props.navigation.state;
     if (params && params.chat) {
       params.chat = false;
-      console.log('chat true');
+      console.log("chat true");
       this.setState(
         {
           receiver: params.receiver,
           user_name: params.user_name,
           fire: params.fire,
-          deviceToken: params.deviceToken,
+          deviceToken: params.deviceToken
         },
         () => this.setState({ chat: true })
       );
     }
     if (params && params.invite) {
-      console.log(params.start_location)
+      console.log(params.start_location);
       params.invite = false;
-      this.setState({ invited_location: JSON.parse(params.start_location) });
+      this.setState({ invited_location: JSON.parse(params.start_location) }, ()=> {
+        this.watchInvite.bind(this)
+      } );
     }
     if (params && params.chosen) {
       params.chosen = false;
-      this.setState({ receiver: params.receiver }, () =>
+      db.collection("users")
+      .doc(params.receiver.email)
+      .update({
+        "invite.start_location": {
+          latitude: this.state.latitude,
+          longitude: this.state.longitude
+        },
+        "invite.isInvited": true,
+        "invite.receiver": this.state.user,
+      })
+      .then(function() {
+        console.log("DocumentInvite successfully updated!");
+      });
+      this.setState({ receiver: params.receiver,           
+        deviceToken: params.deviceToken }, () =>
         this.setState({ find: false })
       );
     }
   }
 
   setChat = () => {
-    this.setState({ chat: false }, ()=> console.log("chat==> false"));
+    this.setState({ chat: false }, () => console.log("chat==> false"));
   };
+
+  watchInvite = () => {
+    if(!this.state.find){
+      db.collection("users")
+      .doc(this.state.receiver.email)
+      .onSnapshot(
+        function(doc) {
+          if (doc.data() && doc.data().invite && doc.data().invite.start_location) {
+           this.setState({invited_location: doc.data().invite.start_location})
+          }});
+    }
+  }
 
   regionFrom(lat, lon, accuracy) {
     const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
@@ -186,12 +215,36 @@ class reduxMap extends Component {
       latitude: lat,
       longitude: lon,
       latitudeDelta: Math.max(0, latDelta),
-      longitudeDelta: Math.max(0, lonDelta),
+      longitudeDelta: Math.max(0, lonDelta)
     };
+  }
+  updateLocation = (lat, long) => {
+   if(!this.state.find){
+    db.collection("users")
+    .doc(this.state.receiver.email)
+    .update({
+      "invite.start_location": {
+        latitude: lat,
+        longitude: long
+      }
+    })
+    .then(function() {
+      console.log("Document2 successfully updated!");
+    });
+   }else{
+    db.collection("users")
+    .doc(this.props.token)
+    .update({
+      "details.start_location": {
+        latitude: lat,
+        longitude: long
+      }
+    })
+   }
   }
   getLocation() {
     this.watchID = Geolocation.watchPosition(
-      position => {
+      async position => {
         /*   var region = this.regionFrom(
                 position.coords.latitude,
                 position.coords.longitude,
@@ -201,7 +254,7 @@ class reduxMap extends Component {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA
         };
         /*      this.setState({
                 latitude: position.coords.latitude,
@@ -213,9 +266,10 @@ class reduxMap extends Component {
                     longitudeDelta: LONGITUDE_DELTA
                 }
               }) */
-        if (Platform.OS === 'android') {
+        if (Platform.OS === "android") {
+          await this.updateLocation(position.coords.latitude, position.coords.longitude);
           if (this.marker) {
-            console.log('marker exists');
+            console.log("marker exists");
             this.marker._component.animateMarkerToCoordinate(
               newCoordinate,
               500
@@ -227,26 +281,34 @@ class reduxMap extends Component {
         this.mergeLot();
       },
       error => console.log(error.message),
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        //        maximumAge: 0,
-        distanceFilter: 1,
-      }
     );
   }
   hideErrorModal = value => {
-    if (value == 'true') {
+    if (value == "true") {
       this.setState({ error: false });
     }
   };
+  getLatLonDiffInMeters(lat1, lon1, lat2, lon2) {
+    var R = 6371; // radius of the earth in km
+    var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = this.deg2rad(lon2 - lon1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) *
+        Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // distance in km
+    return d * 1000;
+  }
   async requestGeolocationPermission() {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
-          title: 'Otrek Geolocation Permission',
-          message: 'Otrek needs access to your current location',
+          title: "Otrek Geolocation Permission",
+          message: "Otrek needs access to your current location"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -259,49 +321,88 @@ class reduxMap extends Component {
                 longitude: position.coords.longitude,
                 start_location: {
                   latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
+                  longitude: position.coords.longitude
                 },
                 currentCoordinate: {
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude,
                   latitudeDelta: LATITUDE_DELTA,
-                  longitudeDelta: LONGITUDE_DELTA,
-                },
+                  longitudeDelta: LONGITUDE_DELTA
+                }
               },
-              () =>
-                db
-                  .collection('users')
+              () => {
+                db.collection("users")
+                  .doc(this.props.token)
+                  .get()
+                  .then(user_doc => {
+                    this.setState({user: user_doc.data().details})
+                    if (user_doc.data().invite.isInvited) {
+                      this.setState(
+                        {
+                          invited_location: user_doc.data().invite
+                            .start_location,
+                          receiver: user_doc.data().invite.receiver
+                        },
+                        () => this.setState({ find: false })
+                      );
+                      db.collection("users")
+                        .doc(user_doc.data().invite.receiver.email)
+                        .update({
+                          "invite.start_location": {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                          }
+                        })
+                        .then(function() {
+                          console.log("Document2 successfully updated!");
+                        });
+                    }
+                  });
+                db.collection("users")
                   .doc(this.props.token)
                   .update({
-                    'details.start_location': {
+                    "details.start_location": {
                       latitude: position.coords.latitude,
-                      longitude: position.coords.longitude,
-                    },
+                      longitude: position.coords.longitude
+                    }
                   })
                   .then(function() {
-                    console.log('Document successfully updated!');
-                  })
+                    console.log("Document successfully updated!");
+                  });
+              }
             );
           },
-          error => console.log(error.message + ' issues')
+          error => console.log(error.message + " issues")
           // {enableHighAccuracy: false, timeout: 20000,
 
           // },
         );
       } else {
-        console.log('Geolocation permission denied');
+        console.log("Geolocation permission denied");
       }
     } catch (err) {
-      console.warn(err + 'fkfk');
+      console.warn(err + "fkfk");
     }
+  }
+  back = () => {
+    this.setState({find: true, invited_location: null});
+    db.collection("users")
+    .doc(this.props.token)
+    .update({
+      "invited.isInvited": false,
+      "invited.receiver": null,
+    })
+    .then(function() {
+      console.log("Document successfully updated!");
+    });
   }
   async requestGeolocationPermissionSecond() {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
-          title: 'Otrek Geolocation Permission',
-          message: 'Otrek needs access to your current location',
+          title: "Otrek Geolocation Permission",
+          message: "Otrek needs access to your current location"
         }
       );
 
@@ -317,7 +418,7 @@ class reduxMap extends Component {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
               latitudeDelta: LATITUDE_DELTA,
-              longitudeDelta: LONGITUDE_DELTA,
+              longitudeDelta: LONGITUDE_DELTA
             };
             this.setState({
               latitude: position.coords.latitude,
@@ -326,12 +427,12 @@ class reduxMap extends Component {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
                 latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              },
+                longitudeDelta: LONGITUDE_DELTA
+              }
             });
-            if (Platform.OS === 'android') {
+            if (Platform.OS === "android") {
               if (this.marker) {
-                console.log('marker exists');
+                console.log("marker exists");
                 this.marker._component.animateMarkerToCoordinate(
                   newCoordinate,
                   500
@@ -373,13 +474,13 @@ class reduxMap extends Component {
           error => console.log(error.message),
           {
             enableHighAccuracy: true,
-            timeout: 10000,
+            timeout: 10000
             //maximumAge: 3000
           }
         );
         //   timer = setInterval(this.getLocation,3000);
       } else {
-        console.log('Geolocation permission denied');
+        console.log("Geolocation permission denied");
       }
     } catch (err) {
       console.warn(err);
@@ -394,7 +495,7 @@ class reduxMap extends Component {
         {
           receiver: params.receiver,
           fire: params.fire,
-          deviceToken: params.deviceToken,
+          deviceToken: params.deviceToken
         },
         () => this.setState({ chat: true })
       );
@@ -414,25 +515,25 @@ class reduxMap extends Component {
     this.setState({ startTrek: true });
   }
   tweakDestination = () => {
-    console.log('tweak');
+    console.log("tweak");
     Geocoder.from({
       latitude: evt.nativeEvent.coordinate.latitude,
-      longitude: evt.nativeEvent.coordinate.longitude,
+      longitude: evt.nativeEvent.coordinate.longitude
     }).then(response => {
       this.setState({
-        to: response.results[0].formatted_address,
+        to: response.results[0].formatted_address
       });
     });
     this.setState({
-      end_location: evt.nativeEvent.coordinate,
+      end_location: evt.nativeEvent.coordinate
     });
   };
   _onMapReady = () => this.setState({ marginBottom: 0 });
   mergeLot() {
     if (this.state.latitude != null && this.state.longitude != null) {
-      let concatLot = this.state.latitude + ',' + this.state.longitude;
+      let concatLot = this.state.latitude + "," + this.state.longitude;
       this.setState({
-        concat: concatLot,
+        concat: concatLot
       });
     }
   }
@@ -442,10 +543,10 @@ class reduxMap extends Component {
   };
   getDirectionsTo() {
     if (this.state.cordLatitude != null && this.state.cordLongitude != null) {
-      let concatLot = this.state.cordLatitude + ',' + this.state.cordLongitude;
+      let concatLot = this.state.cordLatitude + "," + this.state.cordLongitude;
       this.setState(
         {
-          concatCord: concatLot,
+          concatCord: concatLot
         },
         () => {
           this.getDirections(this.state.concat, concatLot);
@@ -463,15 +564,15 @@ class reduxMap extends Component {
       let coords = points.map((point, index) => {
         return {
           latitude: point[0],
-          longitude: point[1],
+          longitude: point[1]
         };
       });
       this.setState({ coords: coords });
-      this.setState({ x: 'true' });
+      this.setState({ x: "true" });
       return coords;
     } catch (error) {
       console.log(JSON.stringify(error));
-      this.setState({ x: 'error' });
+      this.setState({ x: "error" });
       return error;
     }
   }
@@ -480,11 +581,11 @@ class reduxMap extends Component {
       <View style={styles.container}>
         <MapView
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            bottom: 90,
+            bottom: 90
             //      marginBottom: this.state.marginBottom
           }}
           showsUserLocation={true}
@@ -497,7 +598,7 @@ class reduxMap extends Component {
               ? this.state.longitude
               : default_region.longitude,
             latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA
           }}
           zoomEnabled={true}
           zoomControlEnabled={true}
@@ -541,7 +642,7 @@ class reduxMap extends Component {
               ref={marker => {
                 this.marker = marker;
               }}
-              image={require('../assets/images/person-walking.png')}
+              image={require("../assets/images/person-walking.png")}
               coordinate={this.state.currentCoordinate}
             />
           )}
@@ -550,7 +651,7 @@ class reduxMap extends Component {
               ref={marker => {
                 this.marker = marker;
               }}
-              image={require('../assets/images/personwalk.png')}
+              image={require("../assets/images/personwalk.png")}
               coordinate={this.state.invited_location}
             />
           )}
@@ -558,27 +659,27 @@ class reduxMap extends Component {
             <MapViewDirections
               origin={{
                 latitude: this.state.start_location.latitude,
-                longitude: this.state.start_location.longitude,
+                longitude: this.state.start_location.longitude
               }}
               destination={{
                 latitude: this.state.end_location.latitude,
-                longitude: this.state.end_location.longitude,
+                longitude: this.state.end_location.longitude
               }}
               strokeWidth={5}
-              strokeColor={'#39ffb3'}
+              strokeColor={"#39ffb3"}
               // mode={"WALKING"}
-              apikey={'AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w'}
+              apikey={"AIzaSyBRWIXQCbRpusFNiQitxMJy_89gguGk66w"}
             />
           )}
         </MapView>
         {this.state.start_location && this.state.end_location && (
           <TouchableNativeFeedback onPress={this.startTrek.bind(this)}>
             <LinearGradient
-              colors={['#57C693', '#377848']}
+              colors={["#57C693", "#377848"]}
               style={styles.startTrekButton}
             >
               <Image
-                source={require('../assets/images/person-walking-white.png')}
+                source={require("../assets/images/person-walking-white.png")}
                 resizeMode="contain"
                 style={{ height: 20, width: 10 }}
               />
@@ -587,11 +688,11 @@ class reduxMap extends Component {
         )}
         <TouchableNativeFeedback onPress={this.navigator.bind(this)}>
           <LinearGradient
-            colors={['#57C693', '#377848']}
+            colors={["#57C693", "#377848"]}
             style={styles.myLocationButton}
           >
             <Image
-              source={require('../assets/images/location.png')}
+              source={require("../assets/images/location.png")}
               resizeMode="contain"
               style={{ height: 20, width: 20 }}
             />
@@ -599,7 +700,7 @@ class reduxMap extends Component {
         </TouchableNativeFeedback>
         {this.state.find ? (
           <FindTrekkerBox
-            start={this.state.from ? this.state.from : 'Your current Location'}
+            start={this.state.from ? this.state.from : "Your current Location"}
             endLocation={this.getEndLocation}
             start_location={this.state.start_location}
             navigation={this.props.navigation}
@@ -615,6 +716,8 @@ class reduxMap extends Component {
             receiver={this.state.receiver}
             fire={this.state.fire}
             deviceToken={this.state.deviceToken}
+            back={this.back.bind(this)}
+            deviceToken={this.state.deviceToken}
           />
         )}
       </View>
@@ -626,56 +729,56 @@ export default Map;
 const styles = StyleSheet.create({
   map: {},
   container: {
-    flex: 1,
+    flex: 1
   },
   startCircleBig: {
-    backgroundColor: 'rgba(89, 172, 123, 0.56)',
+    backgroundColor: "rgba(89, 172, 123, 0.56)",
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center"
   },
   startCircleSmall: {
-    backgroundColor: 'rgba(89, 172, 123, 1)',
+    backgroundColor: "rgba(89, 172, 123, 1)",
     width: 16,
     height: 16,
-    borderRadius: 10,
+    borderRadius: 10
   },
   endCircleBig: {
-    backgroundColor: 'rgba(255, 0, 0, 0.56)',
+    backgroundColor: "rgba(255, 0, 0, 0.56)",
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center"
   },
   endCircleSmall: {
-    backgroundColor: 'rgba(255, 0, 0, 1)',
+    backgroundColor: "rgba(255, 0, 0, 1)",
     width: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 8
   },
   startTrekButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     left: 8,
     width: 35,
     height: 35,
     borderRadius: 9,
     //     backgroundColor: 'rgba(89, 172, 123, 1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center"
   },
   myLocationButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     right: 8,
     width: 35,
     height: 35,
     borderRadius: 9,
     //     backgroundColor: 'rgba(89, 172, 123, 1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    alignItems: "center",
+    justifyContent: "center"
+  }
 });

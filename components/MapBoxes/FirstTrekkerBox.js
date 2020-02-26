@@ -145,16 +145,18 @@ class reduxFirstTrekkerBox extends Component {
               this.props.end_location.latitude,
               this.props.end_location.longitude
             );
-            if (diff_in_meters_start <= 5000 && diff_in_meters_end <= 5000) {
-              console.log("distance checked and true");
+            if (diff_in_meters_start <= 50000 && diff_in_meters_end <= 50000 ) {
+              if(row.invite && !row.invite.isInvited){
+              console.log("else invitedistance checked and true");
               if (row.details.email != this.props.token) {
-                this.setState(prevState => ({
-                  trekkers: [...prevState.trekkers, row]
-                }));
+              this.setState(prevState => ({
+              trekkers: [...prevState.trekkers, row]
+              }));
               } else {
-                this.setState({ row });
+              this.setState({ row });
               }
-            }
+
+              }}
           }
         }
         this.setState({ regLoader: false });
@@ -392,7 +394,6 @@ class reduxFirstTrekkerBox extends Component {
               ? this.state.row.details.first_name
               : this.props.user_name
           }
-          receiver={this.state.receiver}
           deviceToken={this.state.receiver.deviceToken}
           receiver_id={
             this.state.receiver ? this.state.receiver.details.first_name : null

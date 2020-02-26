@@ -48,75 +48,65 @@ class reduxChosenTrekkerBox extends Component {
     };
     //  this.hideInvite = this.hideInvite.bind(this)
   }
-  componentDidMount() {
+  componentDidMount() {}
 
-  }
-
-  componentDidUpdate() {
-  }
+  componentDidUpdate() {}
   chatFalse(value) {
     if (value == "false") {
-      if (this.props.start_location && this.props.end_location) {
-        this.setState({ chat: false });
-      } else {
-        this.props.find();
-        this.setState({ chat: false });
-      }
+      this.setState({ chat: false });
     }
   }
 
   render() {
     let trekkers = "";
     if (this.props.receiver) {
-        trekkers = (
-          <View style={styles.underView}>
-            <View style={styles.firstView}>
-              <Image
-                source={{ uri: this.props.receiver.image }}
-                resizeMode="cover"
-                style={styles.profileImage}
-              />
-              <View style={styles.aboutView}>
-                <Text style={styles.name}>
-                  {this.props.receiver.first_name +
-                    " " +
-                    this.props.receiver.last_name}
-                </Text>
-                <Text style={styles.gender}>
-                  {this.props.receiver.gender}
-                </Text>
-                <Text style={styles.interests}>
-                  {this.props.receiver.interests}
-                </Text>
-              </View>
-              <View style={styles.iconBox}>
-                {/*  <Image
+      trekkers = (
+        <View style={styles.underView}>
+          <View style={styles.firstView}>
+            <Image
+              source={{ uri: this.props.receiver.image }}
+              resizeMode="cover"
+              style={styles.profileImage}
+            />
+            <View style={styles.aboutView}>
+              <Text style={styles.name}>
+                {this.props.receiver.first_name +
+                  " " +
+                  this.props.receiver.last_name}
+              </Text>
+              <Text style={styles.gender}>{this.props.receiver.gender}</Text>
+              <Text style={styles.interests}>
+                {this.props.receiver.interests}
+              </Text>
+            </View>
+            <View style={styles.iconBox}>
+              {/*  <Image
            source={require("../../assets/images/phoneCall.png")}
            resizeMode="contain"
            style={styles.phoneIcon}
          />*/}
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
-                  onPress={() =>
-                    this.setState({ receiver: this.props.receiver }, () =>
-                      this.setState({ chat: true, invite: false })
-                    )
-                  }
-                >
-                  <View style={styles.commentIcon}>
-                    <Image
-                      source={require("../../assets/images/message.png")}
-                      resizeMode="contain"
-                      style={styles.commentIcon}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
+                onPress={() =>
+                  this.setState({ receiver: this.props.receiver }, () =>
+                    this.setState({ chat: true, invite: false })
+                  )
+                }
+              >
+                <View style={styles.commentIcon}>
+                  <Image
+                    source={require("../../assets/images/message.png")}
+                    resizeMode="contain"
+                    style={styles.commentIcon}
+                  />
+                </View>
+              </TouchableOpacity>
             </View>
-            <View style={styles.line} />
           </View>
-        );
+          <View style={styles.line} />
+        </View>
+      );
     } else {
       trekkers = (
         <Text
@@ -148,7 +138,8 @@ class reduxChosenTrekkerBox extends Component {
           receiver_first_name={
             this.props.receiver ? this.props.receiver.first_name : null
           }
-          deviceToken={this.props.receiver.deviceToken}
+          user_name={this.props.first_name}
+          deviceToken={this.props.deviceToken}
           receiver_id={
             this.props.receiver ? this.props.receiver.first_name : null
           }
@@ -163,13 +154,19 @@ class reduxChosenTrekkerBox extends Component {
         <View
           style={this.state.more ? styles.more_container : styles.container}
         >
-          <View style={styles.cancelView}>
-            <Image
-              source={require("../../assets/images/cancel.png")}
-              resizeMode="contain"
-              style={styles.cancelImage}
-            />
-          </View>
+          <TouchableOpacity
+            hitSlop={{ left: 2, right: 2, top: 2, bottom: 2 }}
+            activeOpacity={0.7}
+            onPress={() => this.props.back()}
+          >
+            <View style={styles.cancelView}>
+              <Image
+                source={require("../../assets/images/cancel.png")}
+                resizeMode="contain"
+                style={styles.cancelImage}
+              />
+            </View>
+          </TouchableOpacity>
           <ScrollView>{trekkers}</ScrollView>
           <SearchModal regLoader={this.state.regLoader} />
         </View>
