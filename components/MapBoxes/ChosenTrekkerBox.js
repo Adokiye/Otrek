@@ -157,7 +157,15 @@ class reduxChosenTrekkerBox extends Component {
           <TouchableOpacity
             hitSlop={{ left: 2, right: 2, top: 2, bottom: 2 }}
             activeOpacity={0.7}
-            onPress={() => this.props.back()}
+            onPress={() => {
+              this.props.passMessage(
+                "danger",
+                "Trek with " + this.props.receiver
+                  ? this.props.receiver.first_name
+                  : null + " ended"
+              );
+              this.props.back();
+            }}
           >
             <View style={styles.cancelView}>
               <Image

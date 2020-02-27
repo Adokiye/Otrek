@@ -274,6 +274,10 @@ class reduxRegisterScreen extends Component {
             <TextInput
               underlineColorAndroid={"transparent"}
               allowFontScaling={false}
+              autoFocus={true}
+                    returnKeyType={'next'}
+                    blurOnSubmit={false}
+                    onSubmitEditing={()=> {this.lastName.focus();}}
               placeholder="First Name"
               value={this.state.first_name}
               onChangeText={first_name => this.setState({ first_name })}
@@ -288,6 +292,10 @@ class reduxRegisterScreen extends Component {
               allowFontScaling={false}
               placeholder="Last Name"
               value={this.state.last_name}
+              returnKeyType={'next'}
+                    blurOnSubmit={false}
+                    onSubmitEditing={()=> {this.email.focus();}}
+                    ref={(input) => this.lastName = input}
               onChangeText={last_name => this.setState({ last_name })}
               placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
               placeholderTextColor="#000302"
@@ -300,6 +308,10 @@ class reduxRegisterScreen extends Component {
               allowFontScaling={false}
               placeholder="Email"
               value={this.state.email}
+              returnKeyType={'next'}
+                    blurOnSubmit={false}
+                    onSubmitEditing={()=> {this.password.focus();}}
+                    ref={(input) => this.email = input}
               onChangeText={email => this.setState({ email })}
               placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
               placeholderTextColor="#000302"
@@ -313,6 +325,9 @@ class reduxRegisterScreen extends Component {
               secureTextEntry={this.state.eye_of_tiger}
               placeholder="Password"
               value={this.state.password}
+              returnKeyType={'next'}
+                    blurOnSubmit={false}
+                    ref={(input) => this.password = input}
               onChangeText={password => this.setState({ password })}
               placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
               placeholderTextColor="#000302"
@@ -355,6 +370,7 @@ class reduxRegisterScreen extends Component {
               allowFontScaling={false}
               placeholder="Interests; separate with comma, i.e Food, Music"
               value={this.state.interests}
+              onSubmitEditing={this.registerUser.bind(this)}
               onChangeText={interests => this.setState({ interests })}
               placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
               placeholderTextColor="#000302"
@@ -365,9 +381,10 @@ class reduxRegisterScreen extends Component {
           <Text style={styles.agreeText}>
             Already have an Account?
           </Text>
-          <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('LoginScreen')}>
-          <View><Text style={styles.logInText}>LOG IN</Text></View>
-          </TouchableNativeFeedback>
+          <TouchableOpacity onPress={()=>this.props.navigation.navigate('LoginScreen')}
+          activeOpacity={0.7}               hitSlop={{left: 2, right: 2, bottom: 2, top: 2}}>
+          <View><Text style={styles.logInText}> LOG IN</Text></View>
+          </TouchableOpacity>
           </View>
           <TouchableNativeFeedback onPress={this.registerUser.bind(this)}>
             <View style={styles.nextButton}>
@@ -408,13 +425,13 @@ const styles = StyleSheet.create({
   alreadyView: {
      flexDirection: 'row',
      alignItems: 'center',
-     justifyContent: 'space-around',
+     justifyContent: 'center',
      marginTop: 20,
-     width:180,
+     width:'80%',
      alignSelf: 'center'
   },
   logInText: {
-    fontSize: 10,
+    fontSize: 16,
     color: "#56C391",
     fontFamily: "mont-bold"
   },
@@ -438,11 +455,11 @@ const styles = StyleSheet.create({
    alignSelf: 'center'
   },
   textFieldView: {
-    width: "69.33%",
+    width: "80%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#707070",
-    height: 37,
+    height: 42,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 26,
@@ -459,7 +476,7 @@ const styles = StyleSheet.create({
    genderText: {
     color: "#000302",
     fontFamily: "mont-light",
-    fontSize: 10,
+    fontSize: 14,
     marginLeft: 11,
     alignSelf: 'center'
    },
@@ -484,20 +501,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
    },
   textFieldInput: {
-    height: 33,
+    height: 38,
     width: "95%",
     backgroundColor: "#ffffff",
     color: "#000302",
     fontFamily: "mont-light",
-    fontSize: 10,
+    fontSize: 14,
     paddingLeft: 11
   },
   passwordView: {
-    width: "69.33%",
+    width: "80%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#707070",
-    height: 37,
+    height: 42,
   //  alignItems: "center",
     justifyContent: "space-between",
     marginTop: 26,
@@ -505,12 +522,12 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   passwordTextFieldInput: {
-    height: 33,
+    height: 38,
     width: "80%",
     backgroundColor: "#ffffff",
     color: "#000302",
     fontFamily: "mont-light",
-    fontSize: 10,
+    fontSize: 14,
     paddingLeft: 11
   },
   eyeView: {
@@ -525,7 +542,7 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   agreeText: {
-    fontSize: 10,
+    fontSize: 14,
     color: "#000302",
     fontFamily: "mont-bold"
   },
@@ -542,7 +559,7 @@ const styles = StyleSheet.create({
   },
   nextText: {
     color: "#ffffff",
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "mont-bold"
   },
   bottomImage: {

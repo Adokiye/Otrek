@@ -105,8 +105,8 @@ class reduxInviteScreen extends Component {
       .get()
       .then(user_doc => {
         if (user_doc.data().invite.isInvited) {
-          this.props.navigation.navigate("Map", {
-            message: "User already accepted another invite"
+          this.props.navigation.pop("Map", {
+            message: {message: "User is not available", status: 'danger'}
           });
         } else {
           Ref.get().then(doc => {
@@ -127,7 +127,7 @@ class reduxInviteScreen extends Component {
                     "Invite Accepted",
                     params.sender_first_name + " accepted your invite"
                   );
-                  this.props.navigation.navigate("Map", {
+                  this.props.navigation.pop("Map", {
                     invite: true,
                     chosen: true,
                     receiver: params.receiver,
@@ -156,7 +156,7 @@ class reduxInviteScreen extends Component {
                     "Invite Accepted",
                     params.sender_first_name + " accepted your invite"
                   );
-                  this.props.navigation.navigate("Map", {
+                  this.props.navigation.pop("Map", {
                     invite: true,
                     chosen: true,
                     receiver: params.receiver,

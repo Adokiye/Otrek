@@ -21,6 +21,7 @@ import {
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import FirstTrekkerBox from "./FirstTrekkerBox";
 import ErrorModal from "../Modals/ErrorModal";
+
 export default class FindTrekkerBox extends Component {
   static navigationOptions = {
     header: null,
@@ -98,6 +99,9 @@ export default class FindTrekkerBox extends Component {
   getEndLocation = (lat, long) => {
     this.props.endLocation(lat, long);
   };
+  passMessage = (status, message) => {
+    this.props.passMessage(status, message)
+  }
   componentDidUpdate() {
     if (this.props.chat ) {
       this.setState({ receiver: this.props.receiver, user_name: this.props.user_name }, () =>
@@ -151,6 +155,7 @@ export default class FindTrekkerBox extends Component {
             deviceToken={this.props.deviceToken}
             chat={this.state.chat}
             find={this.find.bind(this)}
+            passMessage={this.props.passMessage.bind(this)}
             user_name={this.props.user_name}
             setChat={this.setChat.bind(this)}
           />
@@ -177,7 +182,7 @@ export default class FindTrekkerBox extends Component {
                 textInputProps={{
                   onTouchStart: () => {
                     this.setState({ enterLocation: true });
-                  }
+                  },
                 }}
                 minLength={1}
                 returnKeyType={"search"}
@@ -252,6 +257,15 @@ export default class FindTrekkerBox extends Component {
                 <Text style={styles.findTrekkerText}>Find Trekker</Text>
               </View>
             </TouchableOpacity>}  
+            
+            {this.state.enterLocation ?<TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.setState({enterLocation: false})}
+          >
+            <View style={styles.cancelTrekkerButton}>
+                <Text style={styles.findTrekkerText}>Cancel</Text>
+              </View>
+          </TouchableOpacity> : null}
             <ErrorModal
               error={this.state.error}
               error_message={this.state.error_message}
@@ -289,6 +303,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     position: "absolute",
     bottom: 0
+  },
+  cancelView: {
+    width: 20,
+    height: 20,
+    top: 12,
+    position: "absolute",
+    left: "15%"
+  },
+  cancelImage: {
+    flex: 1
   },
   textInputView: {
     width: "60.267%",
@@ -336,6 +360,26 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     alignSelf: "center",
     backgroundColor: "#55C18E",
+    width: "60.267%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10
+  },
+  findTrekkerButton: {
+    height: 36,
+    borderRadius: 9,
+    alignSelf: "center",
+    backgroundColor: "#55C18E",
+    width: "60.267%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10
+  },
+  cancelTrekkerButton: {
+    height: 36,
+    borderRadius: 9,
+    alignSelf: "center",
+    backgroundColor: "#FA4A84",
     width: "60.267%",
     alignItems: "center",
     justifyContent: "center",

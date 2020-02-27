@@ -29,8 +29,8 @@ class reduxSplash extends Component<Props> {
   componentDidMount(){
    if(this.props.token){
      this.setState({regLoader: false})
-   this.props.navigation.navigate('Map')
-    //  this.props.navigation.navigate('RegisterScreen')
+  this.props.navigation.navigate('Map')
+    // this.props.navigation.navigate('RegisterScreen')
    }else{
     this.setState({regLoader: false})
     this.props.navigation.navigate('RegisterScreen')

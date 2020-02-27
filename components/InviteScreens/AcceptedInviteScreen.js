@@ -36,7 +36,7 @@ class reduxAcceptedInviteScreen extends Component {
     console.log(params)
     setTimeout(
       function() {
-        this.props.navigation.navigate("Map", {
+        this.props.navigation.pop("Map", {
           invite: true,
           chosen: true,
           receiver: params.receiver,
@@ -53,9 +53,11 @@ class reduxAcceptedInviteScreen extends Component {
         <View style={styles.houseView}>
           <View style={styles.checkImageView}>
             <Image
-              source={require("../../assets/images/check.png")}
+              source={{uri: params.receiver_image}}
               resizeMode="contain"
-              style={styles.checkImage}
+              style={{    width: 140,
+    height: 140,
+    borderRadius: 70,}}
             />
           </View>
           <Text style={styles.name}>{params.receiver_first_name}</Text>

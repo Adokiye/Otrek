@@ -21,10 +21,12 @@ import {
   Alert,
   TouchableNativeFeedback,
   BackHandler,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  SafeAreaView
 } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+
 import MapView, {
   Marker,
   Callout,
@@ -34,6 +36,7 @@ import MapView, {
 import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
 import FindTrekkerBox from "./MapBoxes/FindTrekkerBox";
+import AlertModal from "./Modals/AlertModal"
 import FirstTrekkerBox from "./MapBoxes/FirstTrekkerBox";
 import ChosenTrekkerBox from "./MapBoxes/ChosenTrekkerBox";
 import ChatTrekkerBox from "./MapBoxes/ChatTrekkerBox";
@@ -57,6 +60,7 @@ import { connect } from "react-redux";
 const mapStateToProps = state => ({
   ...state
 });
+
 class reduxMap extends Component {
   getMapRegion = () => ({
     latitude: this.state.changedLatitude,
@@ -68,6 +72,7 @@ class reduxMap extends Component {
     header: null,
     drawerLockMode: "locked-closed"
   };
+
   getEndLocation = (lat, long) => {
     this.setState(
       {
@@ -133,7 +138,9 @@ class reduxMap extends Component {
       find: true,
       chosen: false,
       user_name: "",
-      user: {}
+      user: {},
+      status: 'success',
+      message: null
     };
     this.mergeLot = this.mergeLot.bind(this);
     this.getDirectionsTo = this.getDirectionsTo.bind(this);
@@ -142,6 +149,11 @@ class reduxMap extends Component {
   componentWillUnmount() {
     clearInterval(this.intervalId);
     Geolocation.clearWatch(this.watchID);
+  }
+  passMessage = (status, message) => {
+    this.setStatus({
+      status
+    }, ()=> this.setState({message}))
   }
 
   componentDidUpdate() {
@@ -159,31 +171,45 @@ class reduxMap extends Component {
         () => this.setState({ chat: true })
       );
     }
+    if( params && params.message){
+      
+      console.log("message true");
+      this.setState(
+        {
+          status: params.message.status,
+        },
+        () => this.setState({ message: params.message.message, },
+          ()=>params.message = false )
+      );
+    }
     if (params && params.invite) {
       console.log(params.start_location);
       params.invite = false;
-      this.setState({ invited_location: null }, ()=> {
-        this.setState({invited_location: JSON.parse(params.start_location)}, ()=> this.watchInvite.bind(this));
-      } );
+      this.setState({ invited_location: null }, () => {
+        this.setState(
+          { invited_location: JSON.parse(params.start_location) },
+          () => this.watchInvite.bind(this)
+        );
+      });
     }
     if (params && params.chosen) {
       params.chosen = false;
       db.collection("users")
-      .doc(params.receiver.email)
-      .update({
-        "invite.start_location": {
-          latitude: this.state.latitude,
-          longitude: this.state.longitude
-        },
-        "invite.isInvited": true,
-        "invite.receiver": this.state.user,
-      })
-      .then(function() {
-        console.log("DocumentInvite successfully updated!");
-      });
-      this.setState({ receiver: params.receiver,           
-        deviceToken: params.deviceToken }, () =>
-        this.setState({ find: false })
+        .doc(params.receiver.email)
+        .update({
+          "invite.start_location": {
+            latitude: this.state.latitude,
+            longitude: this.state.longitude
+          },
+          "invite.isInvited": true,
+          "invite.receiver": this.state.user
+        })
+        .then(function() {
+          console.log("DocumentInvite successfully updated!");
+        });
+      this.setState(
+        { receiver: params.receiver, deviceToken: params.deviceToken },
+        () => this.setState({ find: false })
       );
     }
   }
@@ -193,16 +219,30 @@ class reduxMap extends Component {
   };
 
   watchInvite = () => {
-    if(!this.state.find){
+    if (!this.state.find) {
       db.collection("users")
-      .doc(this.state.receiver.email)
-      .onSnapshot(
-        function(doc) {
-          if (doc.data() && doc.data().invite && doc.data().invite.start_location) {
-           this.setState({invited_location: doc.data().invite.start_location})
-          }});
+        .doc(this.state.receiver.email)
+        .onSnapshot(function(doc) {
+          if (
+            doc.data() &&
+            doc.data().invite &&
+            doc.data().invite.start_location
+          ) {
+            if (this.markerQ) {
+              console.log("markerq exists");
+              this.markerQ._component.animateMarkerToCoordinate(
+                doc.data().invite.start_location,
+                500
+              );
+            }
+            this.setState({
+              invited_location: doc.data().invite.start_location
+            });
+
+          }
+        });
     }
-  }
+  };
 
   regionFrom(lat, lon, accuracy) {
     const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
@@ -219,55 +259,43 @@ class reduxMap extends Component {
     };
   }
   updateLocation = (lat, long) => {
-   if(!this.state.find){
-    db.collection("users")
-    .doc(this.state.receiver.email)
-    .update({
-      "invite.start_location": {
-        latitude: lat,
-        longitude: long
-      }
-    })
-    .then(function() {
-      console.log("Document2 successfully updated!");
-    });
-   }else{
-    db.collection("users")
-    .doc(this.props.token)
-    .update({
-      "details.start_location": {
-        latitude: lat,
-        longitude: long
-      }
-    })
-   }
-  }
+    if (!this.state.find) {
+      db.collection("users")
+        .doc(this.state.receiver.email)
+        .update({
+          "invite.start_location": {
+            latitude: lat,
+            longitude: long
+          }
+        })
+        .then(function() {
+          console.log("Document2 successfully updated!");
+        });
+    } else {
+      db.collection("users")
+        .doc(this.props.token)
+        .update({
+          "details.start_location": {
+            latitude: lat,
+            longitude: long
+          }
+        });
+    }
+  };
   getLocation() {
     this.watchID = Geolocation.watchPosition(
       async position => {
-        /*   var region = this.regionFrom(
-                position.coords.latitude,
-                position.coords.longitude,
-                position.coords.accuracy
-              ); */
         const newCoordinate = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA
         };
-        /*      this.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-               currentCoordinate: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                }
-              }) */
         if (Platform.OS === "android") {
-          await this.updateLocation(position.coords.latitude, position.coords.longitude);
+          this.updateLocation(
+            position.coords.latitude,
+            position.coords.longitude
+          );
           if (this.marker) {
             console.log("marker exists");
             this.marker._component.animateMarkerToCoordinate(
@@ -281,6 +309,13 @@ class reduxMap extends Component {
         this.mergeLot();
       },
       error => console.log(error.message),
+
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        //        maximumAge: 0,
+        distanceFilter: 1
+      }
     );
   }
   hideErrorModal = value => {
@@ -335,9 +370,9 @@ class reduxMap extends Component {
                   .doc(this.props.token)
                   .get()
                   .then(user_doc => {
-                    this.setState({user: user_doc.data().details})
+                    this.setState({ user: user_doc.data().details });
                     if (user_doc.data().invite.isInvited) {
-                      console.log("dfdfdd")
+                      console.log("dfdfdd");
                       this.setState(
                         {
                           invited_location: user_doc.data().invite
@@ -355,7 +390,7 @@ class reduxMap extends Component {
                           }
                         })
                         .then(function() {
-                          console.log("Document2 successfully updated!");
+                          console.log(user_doc.data().invite.receiver.email+"Documentkkk successfully updated!");
                         });
                     }
                   });
@@ -386,18 +421,18 @@ class reduxMap extends Component {
     }
   }
   back = () => {
-    this.setState({find: true, invited_location: null});
+    this.setState({ find: true, invited_location: null });
     db.collection("users")
-    .doc(this.props.token)
-    .update({
-      "invite.isInvited": false,
-      "invite.receiver": null,
-      "invite.start_location": null,
-    })
-    .then(function() {
-      console.log("Document successfully updated!");
-    });
-  }
+      .doc(this.props.token)
+      .update({
+        "invite.isInvited": false,
+        "invite.receiver": null,
+        "invite.start_location": null
+      })
+      .then(function() {
+        console.log("Document successfully updated!");
+      });
+  };
   async requestGeolocationPermissionSecond() {
     try {
       const granted = await PermissionsAndroid.request(
@@ -491,6 +526,7 @@ class reduxMap extends Component {
 
   componentDidMount() {
     const { params } = this.props.navigation.state;
+    console.log("gfg"+params)
     if (params && params.chat) {
       params.chat = false;
       this.setState(
@@ -501,6 +537,17 @@ class reduxMap extends Component {
         },
         () => this.setState({ chat: true })
       );
+    }
+    if( params && params.message){
+
+      console.log("message true"+JSON.stringify(params.message));
+      this.setState(
+        {
+          status: params.message.status,message: params.message.message,
+        },
+        ()=> params.message = false)
+      
+           
     }
     this.requestGeolocationPermission();
     console.log(this.props.first_name);
@@ -580,7 +627,9 @@ class reduxMap extends Component {
   }
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+
+              {/* <AlertModal status={this.state.status} message={this.state.message} /> */}
         <MapView
           style={{
             position: "absolute",
@@ -591,7 +640,7 @@ class reduxMap extends Component {
             //      marginBottom: this.state.marginBottom
           }}
           showsUserLocation={true}
-          followsUserLocation={this.state.startTrek}
+     //     followsUserLocation={this.state.startTrek}
           region={{
             latitude: this.state.latitude
               ? this.state.latitude
@@ -611,7 +660,7 @@ class reduxMap extends Component {
               pinColor="#39ffb3"
             />*/}
 
-          {this.state.start_location && (
+          {/* {this.state.start_location && (
             <Marker
               coordinate={this.state.start_location}
               draggable
@@ -624,7 +673,7 @@ class reduxMap extends Component {
                 <View style={styles.startCircleSmall} />
               </View>
             </Marker>
-          )}
+          )} */}
           {this.state.end_location && (
             <Marker
               coordinate={this.state.end_location}
@@ -639,7 +688,7 @@ class reduxMap extends Component {
               </View>
             </Marker>
           )}
-          {this.state.end_location && this.state.startTrek && (
+          {this.state.startTrek && (
             <Marker.Animated
               ref={marker => {
                 this.marker = marker;
@@ -650,8 +699,8 @@ class reduxMap extends Component {
           )}
           {this.state.invited_location && (
             <Marker.Animated
-              ref={marker => {
-                this.marker = marker;
+              ref={markerQ => {
+                this.markerQ = markerQ;
               }}
               image={require("../assets/images/personwalk.png")}
               coordinate={this.state.invited_location}
@@ -674,7 +723,7 @@ class reduxMap extends Component {
             />
           )}
         </MapView>
-        {this.state.start_location && this.state.end_location && (
+        {this.state.start_location  && (
           <TouchableNativeFeedback onPress={this.startTrek.bind(this)}>
             <LinearGradient
               colors={["#57C693", "#377848"]}
@@ -688,7 +737,7 @@ class reduxMap extends Component {
             </LinearGradient>
           </TouchableNativeFeedback>
         )}
-        <TouchableNativeFeedback onPress={this.navigator.bind(this)}>
+        {/* <TouchableNativeFeedback onPress={this.navigator.bind(this)}>
           <LinearGradient
             colors={["#57C693", "#377848"]}
             style={styles.myLocationButton}
@@ -699,7 +748,7 @@ class reduxMap extends Component {
               style={{ height: 20, width: 20 }}
             />
           </LinearGradient>
-        </TouchableNativeFeedback>
+        </TouchableNativeFeedback> */}
         {this.state.find ? (
           <FindTrekkerBox
             start={this.state.from ? this.state.from : "Your current Location"}
@@ -712,6 +761,7 @@ class reduxMap extends Component {
             fire={this.state.fire}
             deviceToken={this.state.deviceToken}
             setChat={this.setChat.bind(this)}
+            passMessage={this.passMessage.bind(this)}
           />
         ) : (
           <ChosenTrekkerBox
@@ -720,9 +770,10 @@ class reduxMap extends Component {
             deviceToken={this.state.deviceToken}
             back={this.back.bind(this)}
             deviceToken={this.state.deviceToken}
+            passMessage={this.passMessage.bind(this)}
           />
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 }

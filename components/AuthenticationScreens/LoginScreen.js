@@ -18,7 +18,8 @@ import {
   TouchableWithoutFeedback,
   TouchableNativeFeedback
 } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
+import { NavigationActions, StackActions } from "react-navigation";
+import AsyncStorage from "@react-native-community/async-storage";
 import firebase from "react-native-firebase";
 import ErrorModal from "../Modals/ErrorModal";
 import LoaderModal from "../Modals/LoaderModal";
@@ -38,6 +39,20 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => ({
   ...state
 });
+export const resetAction = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({
+      routeName: "Map",
+      params: {
+        message: {
+          message: "Login Successful",
+          status: "success"
+        }
+      }
+    })
+  ]
+});
 class reduxLoginScreen extends Component {
   static navigationOptions = {
     header: null,
@@ -51,9 +66,9 @@ class reduxLoginScreen extends Component {
       password: null,
       error: false,
       error_message: null,
-      location: 'LoginScreen',
+      location: "LoginScreen",
       eye_of_tiger: true,
-      fcmToken: ''
+      fcmToken: ""
     };
   }
   hideErrorModal = value => {
@@ -61,128 +76,158 @@ class reduxLoginScreen extends Component {
       this.setState({ error: false });
     }
   };
-  logIn(){
+  logIn() {
     let regg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    var Ref = db
-    .collection("users")
-    .doc(this.state.email);
+    var Ref = db.collection("users").doc(this.state.email);
     if (!this.state.password || this.state.password < 8) {
-          this.setState({
-            error: true,
-            error_message: "Invalid Credentials"
-          });
-        }else if (regg.test(this.state.email) === false) {
-          this.setState({ error: true, error_message: "Invalid Credentials" });
-        }else{
-          this.setState({regLoader: true});
-          firebase
-          .auth()
-          .signInWithEmailAndPassword(this.state.email, this.state.password)
-          .then(
-            function(){
-              db.collection('users').doc(this.state.email).get().then(function(doc) {
-                if (doc.exists) {
+      this.setState({
+        error: true,
+        error_message: "Invalid Credentials"
+      });
+    } else if (regg.test(this.state.email) === false) {
+      this.setState({ error: true, error_message: "Invalid Credentials" });
+    } else {
+      this.setState({ regLoader: true });
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(
+          function() {
+            db.collection("users")
+              .doc(this.state.email)
+              .get()
+              .then(
+                function(doc) {
+                  if (doc.exists) {
                     console.log("Document data:", doc.data());
                     this.props.setFirstName(doc.data().details.first_name);
                     this.props.setLastName(doc.data().details.last_name);
                     this.props.setToken(this.state.email);
-                    Ref.update(
-                      {
-                            deviceToken: this.state.fcmToken
-                      }
-                    ).then(function(){
-                      this.setState({ regLoader: false, }, );
-                      this.props.navigation.pop("Map");
-                    }.bind(this));
-                } else {
-                  this.setState({ regLoader: false, }, );
+                    Ref.update({
+                      deviceToken: this.state.fcmToken
+                    }).then(
+                      function() {
+                        this.setState({ regLoader: false });
+                        this.props.navigation.dispatch(resetAction);
+                        // this.props.navigation.push("Map", {
+                        //   message:{
+                        //     message: 'Login Successful',
+                        //     status: 'success'
+                        //   }
+                        // });
+                      }.bind(this)
+                    );
+                  } else {
+                    this.setState({ regLoader: false });
                     console.log("No such document!");
-                }
-            }.bind(this)).catch(function(error) {
-                console.log("Error getting document:", error);
-                this.setState({ error_message: "Error", error: true, regLoader: false })
-            }.bind(this));
-              
-            }.bind(this)).catch(error => 
-              this.setState({ error_message: error.message, error: true, regLoader: false }))
-        } 
+                  }
+                }.bind(this)
+              )
+              .catch(
+                function(error) {
+                  console.log("Error getting document:", error);
+                  this.setState({
+                    error_message: "Error",
+                    error: true,
+                    regLoader: false
+                  });
+                }.bind(this)
+              );
+          }.bind(this)
+        )
+        .catch(error =>
+          this.setState({
+            error_message: error.message,
+            error: true,
+            regLoader: false
+          })
+        );
+    }
   }
-  async componentDidMount(){
+  async componentDidMount() {
     this.checkPermission();
   }
   async checkPermission() {
     const enabled = await firebase.messaging().hasPermission();
     if (enabled) {
-        console.log("enabled")
-        this.getToken();
+      console.log("enabled");
+      this.getToken();
     } else {
-      console.log("unenabled")
-        this.requestPermission();
+      console.log("unenabled");
+      this.requestPermission();
     }
   }
-  
-    //3
+
+  //3
   async getToken() {
-    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    let fcmToken = await AsyncStorage.getItem("fcmToken");
     if (!fcmToken) {
-        fcmToken = await firebase.messaging().getToken();
-        if (fcmToken) {
-            // user has a device token
-            this.setState({fcmToken});
-            console.log(fcmToken);
-            await AsyncStorage.setItem('fcmToken', fcmToken);
-        }else{
-          console.log("\n"+"\n"+"no token"+"\n"+"\n")
-        }
-    }else{
-      console.log("here")
-      this.setState({fcmToken});
+      fcmToken = await firebase.messaging().getToken();
+      if (fcmToken) {
+        // user has a device token
+        this.setState({ fcmToken });
+        console.log(fcmToken);
+        await AsyncStorage.setItem("fcmToken", fcmToken);
+      } else {
+        console.log("\n" + "\n" + "no token" + "\n" + "\n");
+      }
+    } else {
+      console.log("here");
+      this.setState({ fcmToken });
       console.log(fcmToken);
     }
   }
-  
-    //2
+
+  //2
   async requestPermission() {
     try {
-        await firebase.messaging().requestPermission();
-        console.log("admin authorised")
-        // User has authorised
-        this.getToken();
+      await firebase.messaging().requestPermission();
+      console.log("admin authorised");
+      // User has authorised
+      this.getToken();
     } catch (error) {
-        // User has rejected permissions
-        console.log('permission rejected');
+      // User has rejected permissions
+      console.log("permission rejected");
     }
   }
   render() {
     return (
       <View style={styles.container}>
         <ScrollView>
-        <Text style={styles.registerText}>Log in</Text>
-        <View style={styles.textFieldView}>
-          <TextInput 
-            underlineColorAndroid={"transparent"}
-            allowFontScaling={false}
-            placeholder="Email"
-            value={this.state.email}
-            onChangeText={email => this.setState({ email })}
-            placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
-            placeholderTextColor="#000302"
-            style={styles.textFieldInput}
-          />
-        </View>
-        <View style={styles.passwordView}>
-          <TextInput 
-            underlineColorAndroid={"transparent"}
-            allowFontScaling={false}
-            secureTextEntry={this.state.eye_of_tiger}
-            placeholder="Password"
-            value={this.state.password}
-            onChangeText={password => this.setState({ password })}
-            placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
-            placeholderTextColor="#000302"
-            style={styles.passwordTextFieldInput}
-          />
-          <TouchableNativeFeedback
+          <Text style={styles.registerText}>Log in</Text>
+          <View style={styles.textFieldView}>
+            <TextInput
+              underlineColorAndroid={"transparent"}
+              allowFontScaling={false}
+              autoFocus={true}
+              returnKeyType={"next"}
+              blurOnSubmit={false}
+              onSubmitEditing={() => {
+                this.password.focus();
+              }}
+              placeholder="Email"
+              value={this.state.email}
+              onChangeText={email => this.setState({ email })}
+              placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
+              placeholderTextColor="#000302"
+              style={styles.textFieldInput}
+            />
+          </View>
+          <View style={styles.passwordView}>
+            <TextInput
+              underlineColorAndroid={"transparent"}
+              allowFontScaling={false}
+              secureTextEntry={this.state.eye_of_tiger}
+              placeholder="Password"
+              value={this.state.password}
+              ref={input => (this.password = input)}
+              onSubmitEditing={this.logIn.bind(this)}
+              onChangeText={password => this.setState({ password })}
+              placeholderStyle={{ fontSize: 10, fontFamily: "mont-light" }}
+              placeholderTextColor="#000302"
+              style={styles.passwordTextFieldInput}
+            />
+            <TouchableNativeFeedback
               onPress={() =>
                 this.setState({ eye_of_tiger: !this.state.eye_of_tiger })
               }
@@ -195,27 +240,32 @@ class reduxLoginScreen extends Component {
                 />
               </View>
             </TouchableNativeFeedback>
-        </View>
-        <View style={styles.alreadyView}>
-          <Text style={styles.agreeText}>
-            Don't have an Account?
-          </Text>
-          <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-          <View><Text style={styles.logInText}>REGISTER</Text></View>
-          </TouchableNativeFeedback>
           </View>
-        <TouchableNativeFeedback onPress={this.logIn.bind(this)}>
-       <View style={styles.nextButton}>
-         <Text style={styles.nextText}>Log in</Text>
-       </View>
-       </TouchableNativeFeedback>
+          <View style={styles.alreadyView}>
+            <Text style={styles.agreeText}>Don't have an Account?</Text>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              hitSlop={{left: 2, right: 2, bottom: 2, top: 2}}
+              onPress={() => this.props.navigation.navigate("RegisterScreen")}
+            >
+              <View>
+                <Text style={styles.logInText}> REGISTER</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <TouchableNativeFeedback onPress={this.logIn.bind(this)}>
+            <View style={styles.nextButton}>
+              <Text style={styles.nextText}>Log in</Text>
+            </View>
+          </TouchableNativeFeedback>
         </ScrollView>
         <HideWithKeyboard>
-        <Image
-          source={require("../../assets/images/authBottom.png")}
-          resizeMode="cover"
-          style={styles.bottomImage}
-        /></HideWithKeyboard>
+          <Image
+            source={require("../../assets/images/authBottom.png")}
+            resizeMode="cover"
+            style={styles.bottomImage}
+          />
+        </HideWithKeyboard>
         <ErrorModal
           error={this.state.error}
           error_message={this.state.error_message}
@@ -240,15 +290,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   alreadyView: {
-     flexDirection: 'row',
-     alignItems: 'center',
-     justifyContent: 'space-around',
-     marginTop: 20,
-     width:180,
-     alignSelf: 'center'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    width: "80%",
+    alignSelf: "center"
   },
   logInText: {
-    fontSize: 10,
+    fontSize: 16,
     color: "#56C391",
     fontFamily: "mont-bold"
   },
@@ -268,48 +318,48 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontFamily: "mont-bold",
     marginTop: 47.5 + StatusBar.currentHeight,
- //   marginLeft: "16%"
-   alignSelf: 'center'
+    //   marginLeft: "16%"
+    alignSelf: "center"
   },
   textFieldView: {
-    width: "69.33%",
+    width: "80%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#707070",
-    height: 37,
+    height: 42,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 26,
     marginBottom: 10
   },
   textFieldInput: {
-    height: 33,
+    height: 38,
     width: "95%",
     backgroundColor: "#ffffff",
     color: "#000302",
     fontFamily: "mont-light",
-    fontSize: 10,
+    fontSize: 14,
     paddingLeft: 11
   },
   passwordView: {
-    width: "69.33%",
+    width: "80%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#707070",
-    height: 37,
-  //  alignItems: "center",
+    height: 42,
+    //  alignItems: "center",
     justifyContent: "space-between",
     marginTop: 26,
     flexDirection: "row",
     marginBottom: 10
   },
   passwordTextFieldInput: {
-    height: 33,
+    height: 38,
     width: "80%",
     backgroundColor: "#ffffff",
     color: "#000302",
     fontFamily: "mont-light",
-    fontSize: 10,
+    fontSize: 14,
     paddingLeft: 11
   },
   eyeView: {
@@ -324,7 +374,7 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   agreeText: {
-    fontSize: 10,
+    fontSize: 14,
     color: "#000302",
     fontFamily: "mont-bold"
   },
@@ -341,11 +391,11 @@ const styles = StyleSheet.create({
   },
   nextText: {
     color: "#ffffff",
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "mont-bold"
   },
   bottomImage: {
     width: "100%",
-    height: 50,
+    height: 50
   }
 });

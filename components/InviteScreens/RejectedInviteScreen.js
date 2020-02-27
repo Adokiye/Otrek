@@ -34,7 +34,7 @@ class reduxRejectedInviteScreen extends Component {
   componentDidMount() {
     setTimeout(
       function() {
-          this.props.navigation.navigate('Map');
+          this.props.navigation.pop('Map');
       }
       .bind(this),
       4000
@@ -46,11 +46,13 @@ class reduxRejectedInviteScreen extends Component {
       <View style={styles.container}>
         <View style={styles.houseView}>
         <View style={styles.checkImageView}>
-          <Image
-            source={require("../../assets/images/check.png")}
-            resizeMode="contain"
-            style={styles.checkImage}
-          />
+            <Image
+              source={{uri: params.receiver_image}}
+              resizeMode="contain"
+              style={{    width: 140,
+    height: 140,
+    borderRadius: 70,}}
+            />
           </View>
           <Text style={styles.name}>{params.receiver_first_name}</Text>
           <Text style={styles.accepted}>Rejected your request</Text>

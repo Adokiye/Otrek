@@ -145,18 +145,18 @@ class reduxFirstTrekkerBox extends Component {
               this.props.end_location.latitude,
               this.props.end_location.longitude
             );
-            if (diff_in_meters_start <= 50000 && diff_in_meters_end <= 50000 ) {
-              if(row.invite && !row.invite.isInvited){
-              console.log("else invitedistance checked and true");
-              if (row.details.email != this.props.token) {
-              this.setState(prevState => ({
-              trekkers: [...prevState.trekkers, row]
-              }));
-              } else {
-              this.setState({ row });
+            if (diff_in_meters_start <= 50000 && diff_in_meters_end <= 50000) {
+              if (row.invite && !row.invite.isInvited) {
+                console.log("else invitedistance checked and true");
+                if (row.details.email != this.props.token) {
+                  this.setState(prevState => ({
+                    trekkers: [...prevState.trekkers, row]
+                  }));
+                } else {
+                  this.setState({ row });
+                }
               }
-
-              }}
+            }
           }
         }
         this.setState({ regLoader: false });
@@ -269,7 +269,13 @@ class reduxFirstTrekkerBox extends Component {
             <View style={styles.line} />
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => this.setState({ more: true })}
+              onPress={() => {
+                if (this.state.trekkers && this.state.trekkers.length > 1) {
+                  this.setState({ more: true });
+                }else{
+                  this.props.passMessage("danger", "No other trekkers available at the moment");
+                }
+              }}
               hitSlop={{ top: 2, left: 2, right: 2, bottom: 2 }}
             >
               <View style={styles.viewMore}>
@@ -360,8 +366,8 @@ class reduxFirstTrekkerBox extends Component {
               alignSelf: "center",
               color: "#000000",
               fontFamily: "mont-medium",
-              fontSize: 14,
-              marginTop: "30%",
+              fontSize: 16,
+              marginTop: "20%",
               width: "80%",
               textAlign: "center"
             }}
@@ -442,7 +448,7 @@ class reduxFirstTrekkerBox extends Component {
           <TouchableOpacity
             hitSlop={{ left: 2, right: 2, top: 2, bottom: 2 }}
             activeOpacity={0.7}
-            onPress={()=>this.props.find()}
+            onPress={() => this.props.find()}
           >
             <View style={styles.cancelView}>
               <Image
